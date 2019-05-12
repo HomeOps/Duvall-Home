@@ -10,13 +10,15 @@ homeassistant:
   time_zone: America/Los_Angeles
   # Customization file
   customize: !include customize.yaml
+  auth_providers:
+   - type: homeassistant
 
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
 # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
 http:
-  api_password: !secret http_api_password
+#  api_password: !secret http_api_password
   ssl_certificate: !secret http_ssl_certificate
   ssl_key: !secret http_ssl_key
   base_url: !secret http_base_url
