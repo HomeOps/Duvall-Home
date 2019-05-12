@@ -1,1 +1,14 @@
-[]
+- id: 'pause_all_automations_after_restart'
+  alias: Pause automations for 15s on restart
+  trigger:
+  - event: start
+    platform: homeassistant
+  condition: []
+  action:
+  - data:
+      entity_id: group.all_automations
+    service: automation.turn_off
+  - delay: '15'
+  - data:
+      entity_id: group.all_automations
+    service: automation.turn_on
