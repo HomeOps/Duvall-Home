@@ -1,0 +1,35 @@
+# Python package
+# Create and test a Python package on multiple Python versions.
+# Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/python
+
+trigger:
+- master
+
+jobs:
+
+- job: 'Build'
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  strategy:
+    matrix:
+      Python36:
+        python.version: '3.6'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: 'x64'
+
+  - script: |
+      mv -v travis/travis_secrets.yaml secrets.yaml
+      mv -v travis/fake_ssl_crt.pem fake_ssl_crt.pem
+      mv -v travis/fake_ssl_key.pem fake_ssl_key.pem
+    displayName: 'Move fake secrets'
+
+  - script: pip3 install homeassistant
+    displayName: 'Install dependencies'
+
+  - script: hass -c . --script check_config
+    displayName: 'Check config'
