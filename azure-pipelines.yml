@@ -28,7 +28,7 @@ jobs:
       mv -v travis/fake_ssl_key.pem fake_ssl_key.pem
     displayName: 'Move fake secrets'
     
-  - script: sudo apt-get libudev-dev
+  - script: sudo apt-get install libudev-dev
     displayName: 'Install dependencies'
 
   - script: pip3 install homeassistant
