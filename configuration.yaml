@@ -16,6 +16,12 @@ homeassistant:
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
+#custom_updater:
+#  track:
+#    - components
+#  component_urls:
+#    - https://raw.githubusercontent.com/elad-bar/ha-edgeos/master/edgeos.json
+
 frontend:
   javascript_version: auto
   themes: !include_dir_merge_named themes
@@ -55,4 +61,32 @@ tts:
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
+
+edgeos:
+  #Hostname / IP
+  host: !secret edge_os_host
+  #Supports SSL (true/false) - should be true
+  ssl: !secret edge_os_ssl
+  #Username of EdgeOS
+  username: !secret edge_os_username
+  #Password of EdgeOS
+  password: !secret edge_os_password
+  #Path to the certificate (full-chain)
+  #cert_file: !secret edge_os_ssl_certificate
+  #List of interfaces
+  monitored_interfaces:
+    - eth0
+    - eth1
+    - switch0
+  #List of network devices to monitor
+  monitored_devices:
+    - server
+    - Oscar-Phone
+  #Optional - Allowed values:
+  #  '' - represents bytes
+  #  'K' - represents Kilobytes
+  #  'M' - represents Megabytes
+  unit: 'M'
+
+device_tracker: !include device_tracker.yaml
 
