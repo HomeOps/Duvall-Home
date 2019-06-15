@@ -49,19 +49,6 @@ zha:
 
 mobile_app:
 
-# Sensors
-sensor:
-  # Weather prediction
-  - platform: yr
-
-# Text to speech
-tts:
-  - platform: google_translate
-
-group: !include groups.yaml
-automation: !include automations.yaml
-script: !include scripts.yaml
-
 edgeos:
   #Hostname / IP
   host: !secret edge_os_host
@@ -82,11 +69,65 @@ edgeos:
   monitored_devices:
     - server
     - Oscar-Phone
+    - Hazel-Phone
   #Optional - Allowed values:
   #  '' - represents bytes
   #  'K' - represents Kilobytes
   #  'M' - represents Megabytes
   unit: 'M'
 
+ecobee:
+  api_key: !secret ecobee_api_key
+
+arlo:
+  username: !secret arlo_username
+  password: !secret arlo_password
+
+ring:
+  username: !secret ring_username
+  password: !secret ring_password
+
+# Sensors
+sensor:
+  # Weather prediction
+  - platform: yr
+  - platform: arlo
+    monitored_conditions:
+      - captured_today
+      - last_capture
+      - total_cameras
+      - battery_level
+      - signal_strength
+  - platform: ring
+
+binary_sensor:
+  - platform: ring
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+alarm_control_panel:
+  - platform: arlo
+
+camera:
+  - platform: arlo
+    ffmpeg_arguments: '-pred 1 -q:v 2'
+  - platform: ring
+
+cover:
+  - platform: myq
+    username: !secret myq_username
+    password: !secret myq_password
+    type: liftmaster
+
+tesla:
+  username: !secret tesla_username
+  password: !secret tesla_password
+
 device_tracker: !include device_tracker.yaml
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
 
