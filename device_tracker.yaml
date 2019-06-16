@@ -4,3 +4,8 @@
       - server
       - Oscar-Phone
       - Hazel-Phone
+  - platform: ping
+    scan_interval: 30
+    hosts:
+      Oscar_Phone: 192.168.1.56
+      Hazel_Phone: 192.168.1.54
