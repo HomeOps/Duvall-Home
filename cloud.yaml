@@ -1,0 +1,6 @@
+alexa:
+  filter:
+    include_entities: !include cloud.include.entities.yaml
+google_actions:
+  filter:
+    include_entities: !include cloud.include.entities.yaml

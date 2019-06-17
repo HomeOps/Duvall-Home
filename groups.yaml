@@ -1,10 +1,9 @@
-group:
-  living:
-    name: Living
-    entities:
-  kitchen:
-    name: Kitchen
-    entities:
-  climate:
-    name: Climate
-    entities:
+living:
+  name: Living
+  entities:
+kitchen:
+  name: Kitchen
+  entities:
+climate:
+  name: Climate
+  entities:

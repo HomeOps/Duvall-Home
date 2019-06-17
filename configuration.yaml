@@ -31,25 +31,18 @@ custom_updater:
   python_script_urls:
     - https://raw.githubusercontent.com/pnbruckner/homeassistant-config/master/python_scripts.json
 
-#custom_updater:
-#  track:
-#    - components
-#  component_urls:
-#    - https://raw.githubusercontent.com/elad-bar/ha-edgeos/master/edgeos.json
-
 frontend:
   javascript_version: auto
   themes: !include_dir_merge_named themes
 
 # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
 http:
-#  api_password: !secret http_api_password
   ssl_certificate: !secret http_ssl_certificate
   ssl_key: !secret http_ssl_key
   base_url: !secret http_base_url
 
 # Example configuration.yaml entry to enable the cloud component
-cloud:
+cloud: !include cloud.yaml
 
 # Discover some devices automatically
 discovery:
