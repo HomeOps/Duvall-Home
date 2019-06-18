@@ -117,6 +117,7 @@ tts:
 
 alarm_control_panel:
   - platform: arlo
+  - platform: manual
 
 camera:
   - platform: arlo
@@ -146,3 +147,7 @@ group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
 
+#logger:
+#  default: info
+#  logs:
+#    homeassistant.components.smartthings: debug

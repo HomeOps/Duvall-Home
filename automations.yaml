@@ -1,4 +1,4 @@
-- id: 'pause_all_automations_after_restart'
+- id: pause_all_automations_after_restart
   alias: Pause automations for 15s on restart
   trigger:
   - event: start
@@ -12,3 +12,23 @@
   - data:
       entity_id: group.all_automations
     service: automation.turn_on
+- id: '1560743327162'
+  alias: Turn on pantry lights when door opens
+  trigger:
+  - entity_id: binary_sensor.pantry_door_contact
+    platform: state
+    to: Open
+  action:
+  - data:
+      entity_id: light.pantry
+    service: light.turn_on
+- id: '1560824051488'
+  alias: Turn off pantry lights when door closes
+  trigger:
+  - entity_id: binary_sensor.pantry_door_contact
+    platform: state
+    to: Closed
+  action:
+  - data:
+      entity_id: light.pantry
+    service: light.turn_off
