@@ -17,7 +17,7 @@
   trigger:
   - entity_id: binary_sensor.pantry_door_contact
     platform: state
-    to: Open
+    to: 'on'
   action:
   - data:
       entity_id: light.pantry
@@ -27,7 +27,7 @@
   trigger:
   - entity_id: binary_sensor.pantry_door_contact
     platform: state
-    to: Closed
+    to: 'off'
   action:
   - data:
       entity_id: light.pantry

@@ -1,0 +1,17 @@
+- climate.thermostat_st
+- climate.thermostat_1
+- climate.thermostat
+- binary_sensor.thermostat_bedroom_1_sensor_motion
+- binary_sensor.thermostat_bedroom_3_sensor_motion
+- binary_sensor.thermostat_masterbedroom_sensor_motion
+- binary_sensor.thermostat_presence
+- sensor.thermostat_bedroom_1_sensor_temperature_measurement
+- sensor.thermostat_bedroom_3_sensor_temperature_measurement
+- sensor.thermostat_masterbedroom_sensor_temperature_measurement
+- sensor.thermostat_thermostat_setpoint
+- camera.backyard
+- camera.front_door
+- camera.leftside
+- camera.outside
+- camera.patio
+- cover.garage_door_opener
