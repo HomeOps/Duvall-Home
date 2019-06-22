@@ -48,7 +48,7 @@ http:
 cloud: !include cloud.yaml
 
 # Discover some devices automatically
-discovery:
+#discovery:
 
 zwave:
   usb_path: /dev/ttyUSB0
@@ -98,6 +98,10 @@ ring:
   username: !secret ring_username
   password: !secret ring_password
 
+tesla:
+  username: !secret tesla_username
+  password: !secret tesla_password
+
 # Sensors
 sensor:
   # Weather prediction
@@ -110,6 +114,20 @@ sensor:
       - battery_level
       - signal_strength
   - platform: ring
+  - platform: plex
+    host: 192.168.1.101
+    port: 32400
+
+remote:
+  - platform: harmony
+    name: Remote1
+    host: 192.168.1.124
+  - platform: harmony
+    name: Remote2
+    host: 192.168.1.125
+  - platform: harmony
+    name: Remote3
+    host: 192.168.1.126
 
 binary_sensor:
   - platform: ring
@@ -122,27 +140,18 @@ alarm_control_panel:
   - platform: arlo
   - platform: manual
 
-camera: !include cameras.yaml
-
 cover:
   - platform: myq
     username: !secret myq_username
     password: !secret myq_password
     type: liftmaster
 
-tesla:
-  username: !secret tesla_username
-  password: !secret tesla_password
+media_player:
+  - platform: plex
 
-notify:
-  - platform: html5
-    name: notify_html5
-    vapid_pub_key: !secret notify_vapid_pub_key
-    vapid_prv_key: !secret notify_vapid_prv_key
-    vapid_email: !secret notify_vapid_email
-
+camera: !include cameras.yaml
+notify: !include notify.yaml
 device_tracker: !include device_tracker.yaml
-
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
@@ -151,3 +160,4 @@ logger:
   default: info
   logs:
     homeassistant.components.smartthings: debug
+    homeassistant.components.generic.camera: debug

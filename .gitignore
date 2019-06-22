@@ -10,6 +10,7 @@ appdaemon/*.log*
 
 .ios.conf
 .ring_cache.pickle
+.automatic
 check_config.log
 ecobee.conf
 fake_ssl_crt.pem

@@ -1,11 +1,18 @@
-  - platform: edgeos
-    #List of network devices to treat as device tracker
-    hosts:
-      - server
-      - Oscar-Phone
-      - Hazel-Phone
-  - platform: ping
-    scan_interval: 30
-    hosts:
-      Oscar_Phone: 192.168.1.56
-      Hazel_Phone: 192.168.1.54
+- platform: edgeos
+  #List of network devices to treat as device tracker
+  hosts:
+    - server
+    - Oscar-Phone
+    - Hazel-Phone
+- platform: ping
+  scan_interval: 30
+  hosts:
+    Oscar_Phone: 192.168.1.56
+    Hazel_Phone: 192.168.1.54
+- platform: automatic
+  client_id: !secret automatic_client_id
+  secret: !secret automatic_secret
+- platform: life360
+  username: !secret life360_username
+  password: !secret life360_password
+  prefix: life360  
