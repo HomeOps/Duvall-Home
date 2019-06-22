@@ -140,6 +140,7 @@ media_player:
   - platform: plex
 
 stream:
+ffmpeg:
 
 camera: !include cameras.yaml
 notify: !include notify.yaml
