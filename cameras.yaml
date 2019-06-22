@@ -1,0 +1,27 @@
+- platform: arlo
+  ffmpeg_arguments: '-pred 1 -q:v 2'
+- platform: ring
+- platform: generic
+  name: Den
+  still_image_url: rtsp://192.168.1.110:554/onvif/profile1/media.smp
+  stream_source: rtsp://192.168.1.110:554/onvif/profile1/media.smp
+  username: !secret camera_den_username
+  password: !secret camera_den_password
+  content_type: video/mpeg
+  verify_ssl: false
+- platform: generic
+  name: Garage
+  still_image_url: rtsp://192.168.1.111:554/onvif/profile1/media.smp
+  stream_source: rtsp://192.168.1.111:554/onvif/profile1/media.smp
+  username: !secret camera_garage_username
+  password: !secret camera_garage_password
+  content_type: video/mpeg
+  verify_ssl: false
+- platform: generic
+  name: TVRoom
+  still_image_url: rtsp://192.168.1.112:554/onvif/profile1/media.smp
+  stream_source: rtsp://192.168.1.112:554/onvif/profile1/media.smp
+  username: !secret camera_tvroom_username
+  password: !secret camera_tvroom_password
+  content_type: video/mpeg
+  verify_ssl: false
