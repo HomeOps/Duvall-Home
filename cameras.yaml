@@ -2,26 +2,23 @@
   ffmpeg_arguments: '-pred 1 -q:v 2'
 - platform: ring
 - platform: generic
-  name: Den
+  name: 'Den'
   still_image_url: https://127.0.0.1:8123/local/cam.den.png
-  stream_source: rtsp://192.168.1.110:554/onvif/profile1/media.smp
+  stream_source: !secret camera_den_url
   username: !secret camera_den_username
   password: !secret camera_den_password
-  authentication: digest
   verify_ssl: false
 - platform: generic
-  name: Garage
+  name: 'Garage'
   still_image_url: https://127.0.0.1:8123/local/cam.garage.png
-  stream_source: rtsp://192.168.1.111:554/onvif/profile1/media.smp
+  stream_source: !secret camera_garage_url
   username: !secret camera_garage_username
   password: !secret camera_garage_password
-  authentication: digest
   verify_ssl: false
 - platform: generic
-  name: TV_Room
+  name: 'TV Room'
   still_image_url: https://127.0.0.1:8123/local/cam.tv_room.png
-  stream_source: rtsp://192.168.1.112:554/onvif/profile1/media.smp
+  stream_source: !secret camera_tvroom_url
   username: !secret camera_tvroom_username
   password: !secret camera_tvroom_password
-  authentication: digest
   verify_ssl: false

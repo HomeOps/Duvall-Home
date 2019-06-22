@@ -87,7 +87,6 @@ tesla:
   username: !secret tesla_username
   password: !secret tesla_password
 
-# Sensors
 sensor:
   # Weather prediction
   - platform: yr
@@ -140,7 +139,7 @@ cover:
 media_player:
   - platform: plex
 
-#stream:
+stream:
 
 camera: !include cameras.yaml
 notify: !include notify.yaml
