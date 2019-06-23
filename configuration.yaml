@@ -119,6 +119,12 @@ wemo:
     - 192.168.1.200
     - 192.168.1.201
 
+alexa_media:
+  accounts:
+    - email: !secret alexa_amazon_user
+      password: !secret alexa_amazon_password
+      url: amazon.com
+
 binary_sensor:
   - platform: ring
 

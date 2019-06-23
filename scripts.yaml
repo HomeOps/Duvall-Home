@@ -1,0 +1,10 @@
+'1561325242198':
+  alias: Test notification
+  sequence:
+  - data:
+      data:
+        type: tts
+      message: Activating auto destruct sequence, in 1, 2, ,3,
+      target:
+      - Kitchen
+    service: notify.alexa_media

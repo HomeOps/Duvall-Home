@@ -10,6 +10,7 @@ appdaemon/*.log*
 
 .ios.conf
 .ring_cache.pickle
+alexa_media.*
 .automatic
 check_config.log
 ecobee.conf
