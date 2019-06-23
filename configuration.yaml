@@ -137,6 +137,10 @@ cover:
 
 media_player:
   - platform: plex
+  - platform: samsung_multi_room
+    name: "TV Room Speakers"
+    host: 192.168.1.82
+    max_volume: 20 # on this level glass breaks, and there are 80 levels more on K650...
 
 stream:
 ffmpeg:
