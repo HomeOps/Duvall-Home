@@ -23,13 +23,11 @@ frontend:
   javascript_version: auto
   themes: !include_dir_merge_named themes
 
-# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
 http:
   ssl_certificate: !secret http_ssl_certificate
   ssl_key: !secret http_ssl_key
   base_url: !secret http_base_url
 
-# Example configuration.yaml entry to enable the cloud component
 cloud: !include cloud.yaml
 
 # Discover some devices automatically
@@ -88,7 +86,6 @@ tesla:
   password: !secret tesla_password
 
 sensor:
-  # Weather prediction
   - platform: yr
   - platform: arlo
     monitored_conditions:
@@ -104,25 +101,27 @@ sensor:
 
 remote:
   - platform: harmony
-    name: living_room_tv
+    name: Living Room TV
+    activity: Living Room TV
     host: 192.168.1.124
   - platform: harmony
-    name: family_room_tv
+    name: Family Room TV
+    activity: Family TV
     host: 192.168.1.125
   - platform: harmony
-    name: master_bedroom_tv
+    name: Master Bedroom TV
+    activity: Master Bedroom TV
     host: 192.168.1.126
 
-#wemo:
-#  discovery: false
-#  static:
-#    - 192.168.1.200
-#    - 192.168.1.201
+wemo:
+  discovery: false
+  static:
+    - 192.168.1.200
+    - 192.168.1.201
 
 binary_sensor:
   - platform: ring
 
-# Text to speech
 tts:
   - platform: google_translate
 
@@ -149,8 +148,8 @@ group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
 
-logger:
-  default: info
-  logs:
-    homeassistant.components.smartthings: debug
-    #homeassistant.components.generic.camera: debug
+#logger:
+#  default: info
+#  logs:
+#    homeassistant.components.smartthings: debug
+#    homeassistant.components.generic.camera: debug
