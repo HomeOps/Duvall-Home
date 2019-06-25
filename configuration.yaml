@@ -124,6 +124,17 @@ alexa_media:
     - email: !secret alexa_amazon_user
       password: !secret alexa_amazon_password
       url: amazon.com
+      include_devices:
+        - "Kitchen Echo"
+        - "Living Room Cube"
+        - "Living Room Fire TV"
+        - "Kids Bathroom Echo"
+        - "Master Bathroom Echo"
+        - "Master Bedroom Look"
+        - "Master Bedroom Echo"
+        - "Den Echo"
+        - "Outside Echo"
+        - "TV Room Echo"
 
 binary_sensor:
   - platform: ring
@@ -144,7 +155,7 @@ cover:
 media_player:
   - platform: plex
   - platform: samsung_multi_room
-    name: "TV Room Speakers"
+    name: "TV Room Soundbar"
     host: 192.168.1.82
     max_volume: 20 # on this level glass breaks, and there are 80 levels more on K650...
 

@@ -7,5 +7,5 @@
         type: tts
       message: Hazel, Please the close the Den Door. You know Oscar will get mad
       target:
-      - Kitchen
+      - Kitchen Echo
     service: notify.alexa_media
