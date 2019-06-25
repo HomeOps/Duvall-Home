@@ -32,3 +32,116 @@
   - data:
       entity_id: light.pantry
     service: light.turn_off
+- id: '1561335344275'
+  alias: Highlander is back
+  trigger:
+  - entity_id: binary_sensor.highlander_presence
+    for:
+      minutes: 5
+    from: 'off'
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data:
+      entity_id: cover.garage_door_opener
+    service: cover.open_cover
+- id: '1561336574713'
+  alias: Notify Mud Room Door Open
+  trigger:
+  - entity_id: binary_sensor.mud_room_door_contact
+    for: 00:05:00
+    from: 'off'
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data:
+      data:
+        method: announce
+        type: tts
+      message: Please close the mud room door.
+      target:
+      - Kitchen
+    service: notify.alexa_media_kitchen
+  - delay: 00:00:30
+- id: '1561339381492'
+  alias: Vent Guest Bathroom
+  trigger:
+  - entity_id: switch.guest_bathroom_lights
+    for: 00:02:00
+    from: 'on'
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - delay: 00:00:20
+  - data:
+      entity_id: light.guest_bathroom_vent
+    service: light.turn_off
+  - delay: '30'
+  - data:
+      entity_id: light.guest_bathroom_vent
+    service: light.turn_off
+- id: '1561340212469'
+  alias: Turn on all patio lights when switch is on
+  trigger:
+  - entity_id: switch.patio_lights
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data:
+      entity_id: light.gazibo_gardenspot
+    service: light.turn_on
+  - data:
+      entity_id: switch.gazibo_lights
+    service: switch.turn_on
+  - data:
+      entity_id: switch.backyard
+    service: switch.turn_on
+- id: '1561340586010'
+  alias: Turn off all patio lights when switch is off
+  trigger:
+  - entity_id: switch.patio_lights
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - data:
+      entity_id: light.gazibo_gardenspot
+    service: light.turn_off
+  - data:
+      entity_id: switch.gazibo_lights
+    service: switch.turn_off
+  - data:
+      entity_id: switch.backyard
+    service: switch.turn_off
+- id: '1561414528681'
+  alias: Turn off master bed when lamp 1 is off
+  trigger:
+  - entity_id: light.master_bed_lamp_1
+    platform: state
+    to: 'off'
+  condition:
+  - condition: state
+    entity_id: light.master_bed_lamp_2
+    state: 'off'
+  action:
+  - data:
+      entity_id: light.master_bed
+    service: light.turn_off
+- id: '1561414593093'
+  alias: Turn off master bed when lamp 2 is off
+  trigger:
+  - entity_id: light.master_bed_lamp_2
+    platform: state
+    to: 'off'
+  condition:
+  - condition: state
+    entity_id: light.master_bed_lamp_1
+    state: 'off'
+  action:
+  - data:
+      entity_id: light.master_bed
+    service: light.turn_off

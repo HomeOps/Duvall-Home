@@ -3,8 +3,9 @@
   sequence:
   - data:
       data:
+        method: announce
         type: tts
-      message: Activating auto destruct sequence, in 1, 2, ,3,
+      message: Hazel, Please the close the Den Door. You know Oscar will get mad
       target:
       - Kitchen
     service: notify.alexa_media
