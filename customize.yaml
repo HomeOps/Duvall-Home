@@ -1,0 +1,35 @@
+climate.thermostat_st:
+  hidden: true
+climate.thermostat_2:
+  hidden: true
+climate.thermostat_1:
+  hidden: true
+binary_sensor.thermostat_bedroom_1_sensor_motion:
+  hidden: true
+binary_sensor.thermostat_bedroom_3_sensor_motion:
+  hidden: true
+binary_sensor.thermostat_masterbedroom_sensor_motion:
+  hidden: true
+binary_sensor.thermostat_presence:
+  hidden: true
+sensor.thermostat_bedroom_1_sensor_temperature_measurement:
+  hidden: true
+sensor.thermostat_bedroom_3_sensor_temperature_measurement:
+  hidden: true
+sensor.thermostat_masterbedroom_sensor_temperature_measurement:
+  hidden: true
+sensor.thermostat_thermostat_setpoint:
+  hidden: true
+sensor.thermostat_bedroom_1_sensor_temperature_measurement:
+  hidden: true
+sensor.thermostat_bedroom_3_sensor_temperature_measurement:
+  hidden: true
+sensor.thermostat_masterbedroom_sensor_temperature_measurement:
+  hidden: true
+sensor.thermostat_thermostat_setpoint:
+  hidden: true
+light.all_blinds:
+  hidden: true
+light.bedroom_3_vent:
+  hidden: true
+  device_class: cover
