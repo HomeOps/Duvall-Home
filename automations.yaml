@@ -145,3 +145,33 @@
   - data:
       entity_id: light.master_bed
     service: light.turn_off
+- id: '1561676291737'
+  alias: Lock Den when Oscar leaves
+  trigger:
+  - entity_id: person.oscar_calvo
+    platform: state
+    to: not_home
+  condition: []
+  action:
+  - data:
+      entity_id: lock.den
+    service: lock.lock
+- id: '1561788825399'
+  alias: I am Back
+  trigger:
+  - entity_id: ' group.person_adults'
+    platform: state
+    to: home
+  condition: []
+  action:
+  - service: script.i_am_back
+- id: '1561789045778'
+  alias: Goodbye
+  trigger:
+  - entity_id: group.person_adults
+    for: 00:05:00
+    platform: state
+    to: not_home
+  condition: []
+  action:
+  - service: script.goodbye

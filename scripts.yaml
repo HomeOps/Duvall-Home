@@ -1,11 +1,53 @@
-'1561325242198':
-  alias: Test notification
+'good_morning':
+  alias: Good Morning!
   sequence:
+  - alias: ''
+    data:
+      entity_id: alarm_control_panel.ha_alarm
+    service: alarm_control_panel.alarm_disarm
+'good_night':
+  alias: Good Night!
+  sequence:
+  - data:
+      entity_id: group.perimeter_locks
+    service: lock.lock
+  - data:
+      entity_id: climate.thermostat
+      hold_mode: sleep
+    service: climate.set_hold_mode
+  - alias: ''
+    data:
+      entity_id: alarm_control_panel.ha_alarm
+    service: alarm_control_panel.alarm_arm_night
+'goodbye':
+  alias: Goodbye!
+  sequence:
+  - alias: ''
+    data:
+      entity_id: alarm_control_panel.ha_alarm
+    service: alarm_control_panel.alarm_arm_away
   - data:
       data:
         method: announce
         type: tts
-      message: Hazel, Please the close the Den Door. You know Oscar will get mad
+      message: Arming security system
       target:
       - Kitchen Echo
     service: notify.alexa_media
+  - data:
+      away_mode: 'on'
+      entity_id: climate.thermostat
+    service: climate.set_away_mode
+'i_am_back':
+  alias: I am back!
+  sequence:
+  - alias: ''
+    data:
+      entity_id: alarm_control_panel.ha_alarm
+    service: alarm_control_panel.alarm_disarm
+  - data:
+      entity_id: lock.mud_room
+    service: lock.unlock
+  - data:
+      entity_id: climate.thermostat
+    service: climate.ecobee_resume_program

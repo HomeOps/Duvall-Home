@@ -1,9 +1,27 @@
-living:
-  name: Living
+perimeter_locks:
+  name: Perimeter Locks
   entities:
-kitchen:
-  name: Kitchen
+    - lock.den_door_lock
+    - lock.main_door_lock
+    - lock.mud_room_lock
+    - lock.server_room_lock
+perimeter_contacts:
+  name: Perimeter Contacts
   entities:
-climate:
-  name: Climate
+    - binary_sensor.main_door_sensor_contact
+    - binary_sensor.patio_door_sensor_contact
+    - binary_sensor.garage_door_sensor_contact
+sleep_motion_sensors:
+  name: Motion Sensors for Sleep
   entities:
+    - binary_sensor.living_motion_sensor_motion
+    - binary_sensor.den_motion_sensor_motion
+    - binary_sensor.hallway_motion_sensor_motion
+    - binary_sensor.tv_room_motion_sensor_motion
+    - binary_sensor.kitchen_motion_sensor_motion
+    - binary_sensor.stairs_motion_sensor_motion
+person_adults:
+  name: Adult Persons
+  entities:
+    - person.oscar_calvo
+    - person.hazel_rojas
