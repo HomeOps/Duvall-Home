@@ -33,7 +33,7 @@
       entity_id: light.pantry
     service: light.turn_off
 - id: '1561335344275'
-  alias: Highlander is back
+  alias: Open garage door when Highlander is back
   trigger:
   - entity_id: binary_sensor.highlander_presence
     for:

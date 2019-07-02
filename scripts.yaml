@@ -43,7 +43,7 @@ goodbye:
     service: climate.set_away_mode
   - service: script.lights_off
   - data:
-      entity_id: cover.garage_door
+      entity_id: group.perimeter_covers
     service: cover.close_cover
   - data:
       entity_id: group.perimeter_locks
