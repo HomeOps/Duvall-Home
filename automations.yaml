@@ -205,7 +205,7 @@
     state: armed_night
   action:
   - service: script.good_morning
-- id: '1561828039799'
+- id: close_all_blinds_after_sunset
   alias: Close all blinds after sunset
   trigger:
   - event: sunset
@@ -216,3 +216,28 @@
   - data:
       entity_id: cover.all_blinds
     service: cover.close_cover
+- id: '1562047378640'
+  alias: Notify Kid awake
+  trigger:
+  - entity_id: group.kid_doors
+    platform: state
+    to: 'on'
+  condition:
+  - after: '20:30:00'
+    before: 03:00:00
+    condition: time
+  action:
+  - data:
+      message: Kid is awake
+      title: Kid is awake
+    service: notify.pushover
+  - data:
+      data:
+        method: announce
+        type: tts
+      message: Kid is awake
+      target:
+      - media_player.kitchen_echo
+      - media_player.master_bedroom_echo
+      - media_player.master_bathroom_echo
+    service: notify.alexa_media

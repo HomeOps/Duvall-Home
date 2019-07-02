@@ -136,6 +136,10 @@ alexa_media:
         - "Den Echo"
         - "Outside Echo"
         - "TV Room Echo"
+        - "Master and Kitchen"
+        - "Everywhere"
+        - "Upstairs"
+        - "Downstairs"
 
 binary_sensor:
   - platform: ring

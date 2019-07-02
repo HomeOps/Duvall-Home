@@ -38,3 +38,8 @@ cars_presence:
   entities:
     - binary_sensor.highlander_presence
     - binary_sensor.tesla_model_3_presence
+kid_doors:
+  name: Kids Doors
+  entities:
+    - binary_sensor.bedroom_1_door_sensor_contact
+    - binary_sensor.bedroom_3_door_sensor_contact
