@@ -1,11 +1,14 @@
-'good_morning':
+good_morning:
   alias: Good Morning!
   sequence:
   - alias: ''
     data:
       entity_id: alarm_control_panel.ha_alarm
     service: alarm_control_panel.alarm_disarm
-'good_night':
+  - data:
+      entity_id: lock.mud_room_lock
+    service: lock.unlock
+good_night:
   alias: Good Night!
   sequence:
   - data:
@@ -19,7 +22,7 @@
     data:
       entity_id: alarm_control_panel.ha_alarm
     service: alarm_control_panel.alarm_arm_night
-'goodbye':
+goodbye:
   alias: Goodbye!
   sequence:
   - alias: ''
@@ -38,7 +41,14 @@
       away_mode: 'on'
       entity_id: climate.thermostat
     service: climate.set_away_mode
-'i_am_back':
+  - service: script.lights_off
+  - data:
+      entity_id: cover.garage_door
+    service: cover.close_cover
+  - data:
+      entity_id: group.perimeter_locks
+    service: lock.lock
+i_am_back:
   alias: I am back!
   sequence:
   - alias: ''
@@ -46,8 +56,21 @@
       entity_id: alarm_control_panel.ha_alarm
     service: alarm_control_panel.alarm_disarm
   - data:
-      entity_id: lock.mud_room
+      entity_id: lock.mud_room_lock
     service: lock.unlock
+  - data:
+      away_mode: 'off'
+      entity_id: climate.thermostat
+    service: climate.set_away_mode
   - data:
       entity_id: climate.thermostat
     service: climate.ecobee_resume_program
+lights_off:
+  alias: Lights off
+  sequence:
+  - data:
+      entity_id: group.all_lights
+    service: light.turn_off
+  - data:
+      entity_id: cover.all_blinds
+    service: cover.close_cover

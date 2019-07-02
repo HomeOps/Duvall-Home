@@ -175,3 +175,44 @@
   condition: []
   action:
   - service: script.goodbye
+- id: '1561790296057'
+  alias: Good night
+  trigger:
+  - entity_id: group.sleep_motion_sensors
+    for: 00:30:00
+    platform: state
+    to: 'off'
+  condition:
+  - condition: state
+    entity_id: alarm_control_panel.ha_alarm
+    state: disarmed
+  - after: sunset
+    after_offset: 02:00:00
+    condition: sun
+  action:
+  - service: script.good_night
+- id: '1561790815508'
+  alias: Good Morning
+  trigger:
+  - entity_id: group.sleep_motion_sensors
+    platform: state
+    to: 'on'
+  condition:
+  - after: sunrise
+    condition: sun
+  - condition: state
+    entity_id: alarm_control_panel.ha_alarm
+    state: armed_night
+  action:
+  - service: script.good_morning
+- id: '1561828039799'
+  alias: Close all blinds after sunset
+  trigger:
+  - event: sunset
+    offset: 00:30:00
+    platform: sun
+  condition: []
+  action:
+  - data:
+      entity_id: cover.all_blinds
+    service: cover.close_cover
