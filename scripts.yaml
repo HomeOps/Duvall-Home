@@ -22,6 +22,9 @@ good_night:
     data:
       entity_id: alarm_control_panel.ha_alarm
     service: alarm_control_panel.alarm_arm_night
+  - data:
+      sc_message: Good night!
+    service: script.notify
 goodbye:
   alias: Goodbye!
   sequence:
@@ -66,7 +69,7 @@ i_am_back:
       entity_id: climate.thermostat
     service: climate.ecobee_resume_program
 lights_off:
-  alias: Lights off
+  alias: Lights Off
   sequence:
   - data:
       entity_id: group.all_lights
@@ -74,3 +77,18 @@ lights_off:
   - data:
       entity_id: cover.all_blinds
     service: cover.close_cover
+notify:
+  alias: Notify
+  sequence:
+  - service: notify.alexa_media
+    data_template:
+      data:
+        method: announce
+        type: tts
+      message: '{{ sc_message }}
+
+        '
+      target:
+      - media_player.kitchen_echo
+      - media_player.master_bedroom_echo
+      - media_player.master_bathroom_echo
