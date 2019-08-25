@@ -246,3 +246,52 @@
       - media_player.master_bedroom_echo
       - media_player.master_bathroom_echo
     service: notify.alexa_media
+- id: '1566757562395'
+  alias: Open Upstairs Blinds
+  trigger:
+  - entity_id: binary_sensor.tv_room_motion_sensor_motion
+    platform: state
+    to: 'on'
+  - entity_id: binary_sensor.stairs_motion_sensor_motion
+    platform: state
+    to: 'on'
+  condition:
+  - after: sunrise
+    after_offset: 00:01:00
+    before: sunset
+    before_offset: 00:01:00
+    condition: sun
+  action:
+  - data:
+      entity_id: cover.tv_room_blinds
+    service: cover.open_cover
+  - data:
+      entity_id: cover.stairs_blinds
+    service: cover.open_cover
+- id: '1566757908930'
+  alias: Open downstairs blinds
+  trigger:
+  - entity_id: binary_sensor.dinning_motion_sensor_motion
+    platform: state
+    to: 'on'
+  - entity_id: binary_sensor.living_motion_sensor_motion
+    platform: state
+    to: 'on'
+  - entity_id: binary_sensor.kitchen_motion_sensor_motion
+    platform: state
+    to: 'on'
+  condition:
+  - after_offset: 00:01:00
+    before: sunset
+    before_offset: 00:01:00
+    condition: sun
+  action:
+  - data:
+      entity_id: cover.living_blinds
+    service: cover.open_cover
+  - data:
+      entity_id: cover.living_left_blinds
+    service: cover.open_cover
+  - data:
+      entity_id: cover.living_right_blinds
+    service: cover.open_cover
