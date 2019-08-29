@@ -120,6 +120,12 @@ wemo:
     - 192.168.1.200
     - 192.168.1.201
 
+telegram_bot:
+  - platform: polling
+    api_key: !secret telegram_bot_api_key
+    allowed_chat_ids:
+      - !secret telegram_bot_chat_oscar
+
 alexa_media:
   accounts:
     - email: !secret alexa_amazon_user
