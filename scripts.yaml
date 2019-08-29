@@ -16,8 +16,8 @@ good_night:
     service: lock.lock
   - data:
       entity_id: climate.thermostat
-      hold_mode: sleep
-    service: climate.set_hold_mode
+      preset_mode: sleep
+    service: climate.set_preset_mode
   - alias: ''
     data:
       entity_id: alarm_control_panel.ha_alarm
@@ -41,9 +41,9 @@ goodbye:
       - Kitchen Echo
     service: notify.alexa_media
   - data:
-      away_mode: 'on'
       entity_id: climate.thermostat
-    service: climate.set_away_mode
+      preset_mode: away
+    service: climate.set_preset_mode
   - service: script.lights_off
   - data:
       entity_id: group.perimeter_covers
@@ -62,9 +62,9 @@ i_am_back:
       entity_id: lock.mud_room_lock
     service: lock.unlock
   - data:
-      away_mode: 'off'
       entity_id: climate.thermostat
-    service: climate.set_away_mode
+      preset_mode: home
+    service: climate.set_preset_mode
   - data:
       entity_id: climate.thermostat
     service: climate.ecobee_resume_program

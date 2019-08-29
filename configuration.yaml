@@ -177,8 +177,8 @@ media_player:
 stream:
 ffmpeg:
 
-#light:
-#  - platform: ring_light
+light:
+  - platform: ring
 
 camera: !include cameras.yaml
 notify: !include notify.yaml
