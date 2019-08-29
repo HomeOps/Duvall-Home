@@ -147,6 +147,9 @@ alexa_media:
         - "Upstairs"
         - "Downstairs"
 
+stream:
+ffmpeg:
+
 binary_sensor:
   - platform: ring
 
@@ -180,12 +183,10 @@ media_player:
     host: 192.168.1.82
     max_volume: 20 # on this level glass breaks, and there are 80 levels more on K650...
 
-stream:
-ffmpeg:
-
 light:
   - platform: ring
-
+switch:
+  - platform: ring
 camera: !include cameras.yaml
 notify: !include notify.yaml
 device_tracker: !include device_tracker.yaml
