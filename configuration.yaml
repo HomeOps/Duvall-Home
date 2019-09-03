@@ -71,6 +71,21 @@ edgeos:
   #  'M' - represents Megabytes
   unit: 'M'
 
+#influxdb:
+#  host: !secret influxdb_host
+#  port: !secret influxdb_port
+#  database: !secret influxdb_database
+#  username: !secret influxdb_username
+#  password: !secret influxdb_password
+#  max_retries: 3
+#  default_measurement: state
+
+recorder:
+  db_url: !secret recorder_db_url
+  purge_keep_days: 5
+
+history:
+
 ecobee:
   api_key: !secret ecobee_api_key
 
