@@ -33,13 +33,8 @@ goodbye:
       entity_id: alarm_control_panel.ha_alarm
     service: alarm_control_panel.alarm_arm_away
   - data:
-      data:
-        method: announce
-        type: tts
-      message: Arming security system
-      target:
-      - Kitchen Echo
-    service: notify.alexa_media
+      sc_message: Arming security system
+    service: script.notify
   - data:
       entity_id: climate.thermostat
       preset_mode: away
