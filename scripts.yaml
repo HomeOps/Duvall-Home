@@ -92,3 +92,12 @@ notify:
       - media_player.kitchen_echo
       - media_player.master_bedroom_echo
       - media_player.master_bathroom_echo
+workout:
+  alias: Workout
+  sequence:
+  - data:
+      entity_id: cover.tv_room_blinds
+    service: cover.close_cover
+  - data:
+      entity_id: light.tv_room_lights
+    service: light.turn_on

@@ -86,6 +86,12 @@ recorder:
 
 history:
 
+panel_iframe:
+  grafana:
+    title: Grafana
+    icon: mdi:chart-timeline
+    url: http://192.168.1.102:3000
+
 ecobee:
   api_key: !secret ecobee_api_key
 

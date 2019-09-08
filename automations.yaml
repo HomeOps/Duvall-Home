@@ -261,6 +261,9 @@
     before: sunset
     before_offset: 00:01:00
     condition: sun
+  - below: '80'
+    condition: numeric_state
+    entity_id: sensor.treadmill_wattage
   action:
   - data:
       entity_id: cover.tv_room_blinds
@@ -295,3 +298,35 @@
   - data:
       entity_id: cover.living_right_blinds
     service: cover.open_cover
+- id: '1567613064444'
+  alias: Workout
+  trigger:
+  - above: '80'
+    entity_id: sensor.treadmill_wattage
+    platform: numeric_state
+  condition: []
+  action:
+  - alias: ''
+    data: {}
+    service: script.workout
+- id: '1567618321845'
+  alias: Lights Off
+  trigger:
+  - minutes: /5
+    platform: time_pattern
+  condition:
+  - condition: state
+    entity_id: alarm_control_panel.ha_alarm
+    state: arm_night
+  - condition: state
+    entity_id: group.sleep_motion_sensors
+    for:
+      hours: 0
+      minutes: 20
+      seconds: 0
+    state: 'off'
+  - condition: state
+    entity_id: light.master_bed
+    state: 'off'
+  action:
+  - service: script.lights_off
