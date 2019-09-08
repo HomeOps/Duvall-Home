@@ -214,7 +214,7 @@
   alias: Close all blinds after sunset
   trigger:
   - event: sunset
-    offset: 00:30:00
+    offset: 00:15:00
     platform: sun
   condition: []
   action:
@@ -257,13 +257,15 @@
     to: 'on'
   condition:
   - after: sunrise
-    after_offset: 00:01:00
+    after_offset: 00:30:00
     before: sunset
-    before_offset: 00:01:00
+    before_offset: 00:30:00
     condition: sun
   - below: '80'
     condition: numeric_state
     entity_id: sensor.treadmill_wattage
+  - after: 08:00:00
+    condition: time
   action:
   - data:
       entity_id: cover.tv_room_blinds
