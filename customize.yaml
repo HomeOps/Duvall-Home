@@ -20,14 +20,6 @@ sensor.thermostat_masterbedroom_sensor_temperature_measurement:
   hidden: true
 sensor.thermostat_thermostat_setpoint:
   hidden: true
-sensor.thermostat_bedroom_1_sensor_temperature_measurement:
-  hidden: true
-sensor.thermostat_bedroom_3_sensor_temperature_measurement:
-  hidden: true
-sensor.thermostat_masterbedroom_sensor_temperature_measurement:
-  hidden: true
-sensor.thermostat_thermostat_setpoint:
-  hidden: true
 light.all_blinds:
   hidden: true
 light.bedroom_3_vent:

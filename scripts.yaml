@@ -101,3 +101,9 @@ workout:
   - data:
       entity_id: light.tv_room_lights
     service: light.turn_on
+notify_external:
+  alias: NotifyExternal
+  sequence:
+  - service: notify.all
+    data_template:
+      message: '{{ sc_message }}'
