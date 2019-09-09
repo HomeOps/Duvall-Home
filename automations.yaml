@@ -257,15 +257,14 @@
     to: 'on'
   condition:
   - after: sunrise
-    after_offset: 00:30:00
     before: sunset
-    before_offset: 00:30:00
+    before_offset: -04:00:00
     condition: sun
+  - after: 08:00:00
+    condition: time
   - below: '80'
     condition: numeric_state
     entity_id: sensor.treadmill_wattage
-  - after: 08:00:00
-    condition: time
   action:
   - data:
       entity_id: cover.tv_room_blinds
@@ -286,10 +285,12 @@
     platform: state
     to: 'on'
   condition:
-  - after_offset: 00:01:00
+  - after: sunrise
     before: sunset
-    before_offset: 00:01:00
+    before_offset: -04:00:00
     condition: sun
+  - after: 08:00:00
+    condition: time
   action:
   - data:
       entity_id: cover.living_blinds
