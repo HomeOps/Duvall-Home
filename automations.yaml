@@ -333,3 +333,27 @@
     state: 'off'
   action:
   - service: script.lights_off
+- id: '1568044867860'
+  alias: Turn on Living Lights
+  trigger:
+  - entity_id: light.living_lights_switch
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data:
+      brightness: '255'
+      entity_id: light.living_lights
+      white_value: '255'
+    service: light.turn_on
+- id: '1568044956237'
+  alias: Turn off Living Lights
+  trigger:
+  - entity_id: light.living_lights_switch
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - data:
+      entity_id: light.living_lights
+    service: light.turn_off
