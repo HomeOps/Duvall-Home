@@ -33,9 +33,6 @@ goodbye:
       entity_id: alarm_control_panel.ha_alarm
     service: alarm_control_panel.alarm_arm_away
   - data:
-      sc_message: Arming security system
-    service: script.notify
-  - data:
       entity_id: climate.thermostat
       preset_mode: away
     service: climate.set_preset_mode
@@ -46,6 +43,9 @@ goodbye:
   - data:
       entity_id: group.perimeter_locks
     service: lock.lock
+  - data:
+      sc_message: Arming security system
+    service: script.notify
 i_am_back:
   alias: I am back!
   sequence:
@@ -63,6 +63,9 @@ i_am_back:
   - data:
       entity_id: climate.thermostat
     service: climate.ecobee_resume_program
+  - data:
+      sc_message: Welcome back
+    service: script.notify
 lights_off:
   alias: Lights Off
   sequence:
