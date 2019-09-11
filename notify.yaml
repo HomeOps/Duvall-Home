@@ -12,6 +12,12 @@
 - platform: telegram
   name: telegram.oscar
   chat_id: !secret telegram_bot_chat_oscar
+- platform: command_line
+  name: sms_oscar
+  command: !secret notify_sms_oscar
+- platform: command_line
+  name: sms_hazel
+  command: !secret notify_sms_hazel
 - platform: group
   name: all
   services:
