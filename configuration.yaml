@@ -99,6 +99,9 @@ tesla:
   username: !secret tesla_username
   password: !secret tesla_password
 
+plex:
+  host: !secret plex_host
+
 sensor:
   - platform: yr
   - platform: arlo
@@ -109,9 +112,6 @@ sensor:
       - battery_level
       - signal_strength
   - platform: ring
-  - platform: plex
-    host: 192.168.1.101
-    port: 32400
 
 remote:
   - platform: harmony
@@ -227,7 +227,6 @@ cover:
             brightness: '{{ float(position * 255 / 100) | round(0) | int }}'
 
 media_player:
-  - platform: plex
   - platform: samsung_multi_room
     name: "TV Room Soundbar"
     host: 192.168.1.82
