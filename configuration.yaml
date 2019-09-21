@@ -35,12 +35,12 @@ cloud: !include cloud.yaml
 discovery:
 
 zwave:
-  usb_path: /dev/ttyUSB0
+  usb_path: !secret zwave_usb_path
   network_key: !secret zwave_network_key
 
 zha:
-  usb_path: /dev/ttyUSB1
-  database_path: /home/homeassistant/.homeassistant/zigbee.db
+  usb_path: !secret zha_usb_path
+  database_path: !secret zha_database_path
 
 mobile_app:
 
@@ -160,6 +160,28 @@ alexa_media:
         - "Upstairs"
         - "Downstairs"
 
+netgear_lte:
+  - host: !secret netgear_lte_ip
+    password: !secret netgear_lte_password
+    notify:
+    sensor:
+      monitored_conditions:
+        - cell_id
+        - connection_text
+        - connection_type
+        - current_band
+        - current_ps_service_type
+        - radio_quality
+        - register_network_display
+        - rx_level
+        - tx_level
+        - upstream
+        - usage
+    binary_sensor:
+      monitored_conditions:
+        - wire_connected
+        - mobile_connected
+
 stream:
 ffmpeg:
 
@@ -171,15 +193,15 @@ binary_sensor:
     scan_interval: 30
     name: Internet
   - platform: ping
-    host: 192.168.100.1
+    host: !secret cable_modem_ip
     count: 3
     scan_interval: 30
-    name: "Cable Modem"
+    name: "Cable Modem Connection"
   - platform: ping
-    host: 192.168.5.1
+    host: !secret netgear_lte_ip
     count: 3
     scan_interval: 30
-    name: "LTE Modem"
+    name: "LTE Modem Connection"
 
 tts:
   - platform: google_translate
