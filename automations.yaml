@@ -12,6 +12,15 @@
   - data:
       entity_id: group.all_automations
     service: automation.turn_on
+- id: letsencrypt-renewal
+  alias: "Let's Encrypt Renewal"
+  trigger:
+  - platform: time
+    at: '00:00:00'
+  action:
+  - service: hassio.addon_restart
+    data:
+      addon: core_letsencrypt
 - id: '1560743327162'
   alias: Turn on pantry lights when door opens
   trigger:
