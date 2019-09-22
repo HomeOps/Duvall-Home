@@ -8,6 +8,7 @@ __pycache__
 appdaemon/compiled
 appdaemon/*.log*
 
+.pip_progress
 .ios.conf
 .ring_cache.pickle
 alexa_media.*

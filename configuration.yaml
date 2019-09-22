@@ -44,6 +44,8 @@ zha:
 
 mobile_app:
 
+speedtestdotnet:
+
 edgeos:
   host: !secret edge_os_host
   ssl: !secret edge_os_ssl
