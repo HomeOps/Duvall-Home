@@ -27,6 +27,7 @@ class EdgeOSWebSocket:
         self._topics = topics
         self._session = None
         self._log_events = False
+        self._is_listen = False
 
         self._stopping = False
         self._pending_payloads = []
@@ -36,12 +37,41 @@ class EdgeOSWebSocket:
         url = urlparse(self._edgeos_url)
         self._ws_url = WEBSOCKET_URL_TEMPLATE.format(url.netloc)
 
-    def initialize(self, cookies, session_id):
-        self.close()
+    async def initialize(self, cookies, session_id):
+        _LOGGER.info("Start initailzing the connection")
 
+        self.close()
+        
         self._stopping = False
         self._session_id = session_id
         self._session = aiohttp.ClientSession(cookies=cookies, loop=self._hass_loop)
+
+        is_active = True
+
+        while not self._stopping and is_active:
+            try:
+                async with self._session.ws_connect(self._ws_url,
+                                                    origin=self._edgeos_url,
+                                                    ssl=False,
+                                                    max_msg_size=MAX_MSG_SIZE,
+                                                    timeout=self._timeout) as ws:
+
+                    await self.listen(ws)
+
+            except Exception as ex:
+                error_message = str(ex)
+
+                if error_message is not None:
+                    if error_message == ERROR_SHUTDOWN:
+                        _LOGGER.warning(f'initialize - shutdown')
+                        is_active = False
+
+                        self.close()
+
+                    else:
+                        _LOGGER.warning(f"initialize - failed to listen EdgeOS, Error: {error_message}")
+
+        _LOGGER.info("initialize - finished execution")
 
     def log_events(self, log_event_enabled):
         self._log_events = log_event_enabled
@@ -84,26 +114,10 @@ class EdgeOSWebSocket:
             else:
                 self._pending_payloads.append(message)
 
-    async def start_listen(self):
-        _LOGGER.info('start_listen - Start')
+    async def listen(self, ws):
+        _LOGGER.info(f"Connection connected")
 
         subscription_data = self.get_subscription_data()
-
-        while not self._stopping:
-            try:
-                async with self._session.ws_connect(self._ws_url,
-                                                    origin=self._edgeos_url,
-                                                    ssl=False,
-                                                    max_msg_size=MAX_MSG_SIZE,
-                                                    timeout=self._timeout) as ws:
-
-                    await self.listen(ws, subscription_data)
-            except Exception as ex:
-                _LOGGER.error(f'start_listen - failed to listen EdgeOS, Error: {ex}')
-
-    async def listen(self, ws, subscription_data):
-        _LOGGER.info(f'Connection connected, Subscribing to: {subscription_data}')
-
         await ws.send_str(subscription_data)
 
         _LOGGER.info('Subscribed')
@@ -145,10 +159,13 @@ class EdgeOSWebSocket:
         return result
 
     def close(self):
+        self._is_listen = False
         self._stopping = True
 
         if self.is_initialized:
             yield from self._session.close()
+
+        self._session = None
 
     def get_subscription_data(self):
         topics_to_subscribe = [{WS_TOPIC_NAME: topic} for topic in self._topics]
