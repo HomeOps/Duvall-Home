@@ -321,15 +321,23 @@
   - alias: ''
     data: {}
     service: script.workout
-- id: '1567618321845'
+- id: lights_off
   alias: Lights Off
   trigger:
   - minutes: /5
     platform: time_pattern
   condition:
-  - condition: state
-    entity_id: alarm_control_panel.ha_alarm
-    state: armed_home
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: alarm_control_panel.ha_alarm
+      state: armed_home
+    - condition: state
+      entity_id: alarm_control_panel.ha_alarm
+      state: armed_night
+    - condition: state
+      entity_id: alarm_control_panel.ha_alarm
+      state: armed_away
   - condition: state
     entity_id: group.sleep_motion_sensors
     for:
