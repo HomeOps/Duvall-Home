@@ -12,8 +12,8 @@
   - data:
       entity_id: group.all_automations
     service: automation.turn_on
-- id: letsencrypt-renewal
-  alias: lets_encrypt_renewal
+- id: letsencrypt_renewal
+  alias: Lets encrypt renewal
   trigger:
   - platform: time
     at: 00:00:00
@@ -21,7 +21,7 @@
   - service: hassio.addon_restart
     data:
       addon: core_letsencrypt
-- id: '1560743327162'
+- id: turn_on_pantry_lights_when_door_opens
   alias: Turn on pantry lights when door opens
   trigger:
   - entity_id: binary_sensor.pantry_door_contact
@@ -31,7 +31,7 @@
   - data:
       entity_id: light.pantry
     service: light.turn_on
-- id: '1560824051488'
+- id: turn_off_pantry_lights_when_door_closes
   alias: Turn off pantry lights when door closes
   trigger:
   - entity_id: binary_sensor.pantry_door_contact
@@ -41,7 +41,7 @@
   - data:
       entity_id: light.pantry
     service: light.turn_off
-- id: '1561335344275'
+- id: open_garage_door_when_highlander_is_back
   alias: Open garage door when Highlander is back
   trigger:
   - entity_id: binary_sensor.highlander_presence
@@ -55,7 +55,7 @@
   - data:
       entity_id: cover.garage_door_opener
     service: cover.open_cover
-- id: '1561336574713'
+- id: notify_mud_room_door_open
   alias: Notify Mud Room Door Open
   trigger:
   - entity_id: binary_sensor.mud_room_door_contact
@@ -74,7 +74,7 @@
       - Kitchen
     service: notify.alexa_media_kitchen
   - delay: 00:00:30
-- id: '1561339381492'
+- id: vent_guest_bathroom
   alias: Vent Guest Bathroom
   trigger:
   - entity_id: switch.guest_bathroom_lights
@@ -92,7 +92,7 @@
   - data:
       entity_id: light.guest_bathroom_vent
     service: light.turn_off
-- id: '1561340212469'
+- id: turn_on_all_patio_lights_when_switch_is_on
   alias: Turn on all patio lights when switch is on
   trigger:
   - entity_id: switch.patio_lights
@@ -109,7 +109,7 @@
   - data:
       entity_id: switch.backyard
     service: switch.turn_on
-- id: '1561340586010'
+- id: turn_off_all_patio_lights_when_switch_is_off
   alias: Turn off all patio lights when switch is off
   trigger:
   - entity_id: switch.patio_lights
@@ -126,7 +126,7 @@
   - data:
       entity_id: switch.backyard
     service: switch.turn_off
-- id: '1561414528681'
+- id: turn_off_master_bed_when_lamp_1_is_off
   alias: Turn off master bed when lamp 1 is off
   trigger:
   - entity_id: light.master_bed_lamp_1
@@ -140,7 +140,7 @@
   - data:
       entity_id: light.master_bed
     service: light.turn_off
-- id: '1561414593093'
+- id: turn_off_master_bed_when_lamp_2_is_off
   alias: Turn off master bed when lamp 2 is off
   trigger:
   - entity_id: light.master_bed_lamp_2
@@ -154,7 +154,7 @@
   - data:
       entity_id: light.master_bed
     service: light.turn_off
-- id: '1561676291737'
+- id: Lock_den_when_oscar_leaves
   alias: Lock Den when Oscar leaves
   trigger:
   - entity_id: person.oscar_calvo
@@ -165,7 +165,7 @@
   - data:
       entity_id: lock.den
     service: lock.lock
-- id: '1561788825399'
+- id: i_am_back
   alias: I am Back
   trigger:
   - entity_id: ' group.person_adults'
@@ -174,7 +174,7 @@
   condition: []
   action:
   - service: script.i_am_back
-- id: '1561789045778'
+- id: goodbye
   alias: Goodbye
   trigger:
   - entity_id: group.person_adults
@@ -184,7 +184,7 @@
   condition: []
   action:
   - service: script.goodbye
-- id: '1561790296057'
+- id: good_night
   alias: Good night
   trigger:
   - minutes: /5
@@ -205,7 +205,7 @@
     condition: time
   action:
   - service: script.good_night
-- id: '1561790815508'
+- id: good_morning
   alias: Good Morning
   trigger:
   - entity_id: group.sleep_motion_sensors
@@ -230,7 +230,7 @@
   - data:
       entity_id: cover.all_blinds
     service: cover.close_cover
-- id: '1562047378640'
+- id: notify_kid_awake
   alias: Notify Kid awake
   trigger:
   - entity_id: group.kid_doors
@@ -255,7 +255,7 @@
       - media_player.master_bedroom_echo
       - media_player.master_bathroom_echo
     service: notify.alexa_media
-- id: '1566757562395'
+- id: open_upstairs_blinds
   alias: Open Upstairs Blinds
   trigger:
   - entity_id: binary_sensor.tv_room_motion_sensor_motion
@@ -310,7 +310,7 @@
   - data:
       entity_id: cover.living_right_blinds
     service: cover.open_cover
-- id: '1567613064444'
+- id: workout
   alias: Workout
   trigger:
   - above: '80'
@@ -350,7 +350,7 @@
     state: 'off'
   action:
   - service: script.lights_off
-- id: '1568044867860'
+- id: turn_on_living_lights
   alias: Turn on Living Lights
   trigger:
   - entity_id: light.living_lights_switch
@@ -363,7 +363,7 @@
       entity_id: light.living_lights
       white_value: '255'
     service: light.turn_on
-- id: '1568044956237'
+- id: turn_off_living_lights
   alias: Turn off Living Lights
   trigger:
   - entity_id: light.living_lights_switch
@@ -400,7 +400,7 @@
   - data:
       entity_id: light.master_bed_lamp_2
     service: light.toggle
-- id: '1570245135428'
+- id: turn_on_master_bed_lamps_when_master_lights_turned_on
   alias: Turn on Master Bed Lamps when Master Lights turned on
   trigger:
   - entity_id: light.master_bedroom_lights
@@ -414,7 +414,7 @@
   - data:
       entity_id: light.master_bed_lamp_2
     service: light.turn_on
-- id: '1570245276796'
+- id: turn_on_master_bed_when_master_lamps_turn_on
   alias: Turn on Master Bed when Master Lamps turn on
   trigger:
   - entity_id: light.master_bed_lamp_1
@@ -428,7 +428,7 @@
   - data:
       entity_id: light.master_bed
     service: light.turn_on
-- id: '1570245546850'
+- id: turn_off_master_bedroom_lights_when_lamps_are_off
   alias: Turn off Master Bedroom Lights when Lamps are off
   trigger:
   - entity_id: light.master_bed_lamp_1

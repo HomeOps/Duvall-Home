@@ -10,7 +10,7 @@ homeassistant:
   time_zone: America/Los_Angeles
   # Customization file
   customize: !include customize.yaml
-  customize_glob: !include customize_glob.yaml
+  # customize_glob: !include customize_glob.yaml
   auth_providers:
    - type: homeassistant
 
@@ -56,8 +56,8 @@ edgeos:
   password: !secret edge_os_password
   #cert_file: !secret edge_os_ssl_certificate
   monitored_interfaces:
-    - eth0
-    - eth1
+    - eth8
+    - eth9
   monitored_devices:
     - server
     - Oscar-Phone
@@ -87,7 +87,7 @@ panel_iframe:
   grafana:
     title: Grafana
     icon: mdi:chart-timeline
-    url: http://192.168.1.102:3000
+    url: https://duvall.calvonet.com:3000
 
 ecobee:
   api_key: !secret ecobee_api_key
