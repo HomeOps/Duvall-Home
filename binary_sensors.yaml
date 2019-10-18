@@ -1,0 +1,16 @@
+- platform: ring
+- platform: ping
+  host: 1.1.1.1
+  count: 3
+  scan_interval: 30
+  name: Internet
+- platform: ping
+  host: !secret cable_modem_ip
+  count: 3
+  scan_interval: 30
+  name: "Cable Modem Connection"
+- platform: ping
+  host: !secret netgear_lte_ip
+  count: 3
+  scan_interval: 30
+  name: "LTE Modem Connection"

@@ -107,37 +107,6 @@ tesla:
 plex:
   host: !secret plex_host
 
-sensor:
-  - platform: yr
-  - platform: arlo
-    monitored_conditions:
-      - captured_today
-      - last_capture
-      - total_cameras
-      - battery_level
-      - signal_strength
-  - platform: ring
-  - platform: apcupsd
-    resources:
-      - bcharge
-      - linev
-      - timeleft
-      - status
-      - loadpct
-  - platform: command_line
-    name: CPU Temperature
-    command: "cat /sys/class/thermal/thermal_zone0/temp"
-    unit_of_measurement: "°C"
-    value_template: '{{ value | multiply(0.001) | round(1) }}'
-  - platform: systemmonitor
-    resources:
-      - type: disk_use_percent
-        arg: /
-      - type: memory_free
-      - type: memory_use_percent
-      - type: processor_use
-      - type: last_boot
-
 remote:
   - platform: harmony
     name: Living Room TV
@@ -210,24 +179,6 @@ netgear_lte:
 stream:
 ffmpeg:
 
-binary_sensor:
-  - platform: ring
-  - platform: ping
-    host: 1.1.1.1
-    count: 3
-    scan_interval: 30
-    name: Internet
-  - platform: ping
-    host: !secret cable_modem_ip
-    count: 3
-    scan_interval: 30
-    name: "Cable Modem Connection"
-  - platform: ping
-    host: !secret netgear_lte_ip
-    count: 3
-    scan_interval: 30
-    name: "LTE Modem Connection"
-
 tts:
   - platform: google_translate
 
@@ -235,40 +186,12 @@ alarm_control_panel:
   - platform: arlo
   - platform: manual
 
-cover:
-  - platform: myq
-    username: !secret myq_username
-    password: !secret myq_password
-    type: liftmaster
-  - platform: template
-    covers:
-      bedroom_3_vent:
-        friendly_name: "Bedroom 3 Vent"
-        position_template: '{{ float(state_attr("light.bedroom_3_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
-        set_cover_position:
-          service: light.turn_on
-          data_template:
-            entity_id: light.bedroom_3_vent
-            brightness: '{{ float(position * 255 / 100) | round(0) | int }}'
-
-media_player:
-  - platform: samsung_multi_room
-    name: "TV Room Soundbar"
-    host: 192.168.1.82
-    max_volume: 20 # on this level glass breaks, and there are 80 levels more on K650...
-
-light:
-  - platform: ring
-  - platform: group
-    name: Living Lights
-    entities:
-      - light.living_back_left
-      - light.living_back_right
-      - light.living_front_left
-      - light.living_front_right
-
-switch:
-  - platform: ring
+cover: !include covers.yaml
+media_player: !include media_players.yaml
+switch: !include switch.yaml
+light: !include lights.yaml
+binary_sensor: !include binary_sensors.yaml
+sensor: !include sensors.yaml
 camera: !include cameras.yaml
 notify: !include notify.yaml
 device_tracker: !include device_tracker.yaml

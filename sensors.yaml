@@ -1,0 +1,34 @@
+- platform: yr
+- platform: arlo
+  monitored_conditions:
+    - captured_today
+    - last_capture
+    - total_cameras
+    - battery_level
+    - signal_strength
+- platform: ring
+- platform: apcupsd
+  resources:
+    - bcharge
+    - linev
+    - timeleft
+    - status
+    - loadpct
+- platform: command_line
+  name: CPU Temperature
+  command: "cat /sys/class/thermal/thermal_zone0/temp"
+  unit_of_measurement: "°C"
+  value_template: '{{ value | multiply(0.001) | round(1) }}'
+- platform: systemmonitor
+  resources:
+    - type: disk_use_percent
+      arg: /
+    - type: memory_free
+    - type: memory_use_percent
+    - type: processor_use
+    - type: last_boot
+- platform: template
+  sensors:
+    bedroom_3_vent:
+      friendly_name: "Bedroom 3 Vent"
+      value_template: '{{ float(state_attr("light.bedroom_3_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
