@@ -69,12 +69,26 @@ i_am_back:
 lights_off:
   alias: Lights Off
   sequence:
-  - data:
-      entity_id: group.all_lights
-    service: light.turn_off
-  - data:
-      entity_id: cover.all_blinds
-    service: cover.close_cover
+  - service: group.remove
+    data:
+      object_id: active_lights
+  - service: group.set
+    data_template:
+      object_id: active_lights
+      add_entities: "{% for l in expand('group.all_lights') -%}{%- if not l.entity_id.endswith('vent') %}{{l.entity_id }},{% endif -%}{%- endfor %}light.eof"
+  - service: light.turn_off
+    data:
+      entity_id: group.active_lights
+  - service: group.remove
+    data:
+      object_id: active_covers
+  - service: group.set
+    data_template:
+      object_id: active_covers
+      add_entities: "{% for l in expand('group.all_covers') -%}{%- if not l.entity_id.endswith('vent') %}{{l.entity_id }},{% endif -%}{%- endfor %}light.eof"
+  - service: cover.close_cover
+    data:
+      entity_id: group.active_covers
 notify:
   alias: Notify
   sequence:
