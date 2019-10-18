@@ -1,0 +1,52 @@
+bedroom_1_vent:
+  value_template: '{{ float(state_attr("light.bedroom_1_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
+  friendly_name: 'Bedroom 1 Vent'
+  unit_of_measurement: '%'
+bedroom_3_vent:
+  value_template: '{{ float(state_attr("light.bedroom_3_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
+  friendly_name: 'Bedroom 3 Vent'
+  unit_of_measurement: '%'
+den_vent:
+  value_template: '{{ float(state_attr("light.den_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
+  friendly_name: 'Den Vent'
+  unit_of_measurement: '%'
+dinning_vent:
+  value_template: '{{ float(state_attr("light.dinning_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
+  friendly_name: 'Dinning Vent'
+  unit_of_measurement: '%'
+guest_bathroom_vent:
+  value_template: '{{ float(state_attr("light.guest_bathroom_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
+  friendly_name: 'Guest Bathroom Vent'
+  unit_of_measurement: '%'
+guest_bedroom_vent:
+  value_template: '{{ float(state_attr("light.guest_bedroom_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
+  friendly_name: 'Guest Bedroom Vent'
+  unit_of_measurement: '%'
+hallway_vent:
+  value_template: '{{ float(state_attr("light.hallway_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
+  friendly_name: 'Hallway Vent'
+  unit_of_measurement: '%'
+kitchen_vent:
+  value_template: '{{ float(state_attr("light.kitchen_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
+  friendly_name: 'Kitchen Vent'
+  unit_of_measurement: '%'
+living_vent:
+  value_template: '{{ float(state_attr("light.living_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
+  friendly_name: 'Living Vent'
+  unit_of_measurement: '%'
+master_bathroom_vent:
+  value_template: '{{ float(state_attr("light.master_bathroom_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
+  friendly_name: 'Master Bathroom Vent'
+  unit_of_measurement: '%'
+master_bedroom_vent:
+  value_template: '{{ float(state_attr("light.master_bedroom_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
+  friendly_name: 'Master Bedroom Vent'
+  unit_of_measurement: '%'
+mud_room_vent:
+  value_template: '{{ float(state_attr("light.mud_room_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
+  friendly_name: 'Mud Room Vent'
+  unit_of_measurement: '%'
+tv_room_vent:
+  value_template: '{{ float(state_attr("light.tv_room_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
+  friendly_name: 'TV Room Vent'
+  unit_of_measurement: '%'

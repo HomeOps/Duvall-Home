@@ -28,7 +28,4 @@
     - type: processor_use
     - type: last_boot
 - platform: template
-  sensors:
-    bedroom_3_vent:
-      friendly_name: "Bedroom 3 Vent"
-      value_template: '{{ float(state_attr("light.bedroom_3_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
+  sensors: !include sensors.template.yaml

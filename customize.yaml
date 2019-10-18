@@ -22,6 +22,29 @@ sensor.thermostat_thermostat_setpoint:
   hidden: true
 light.all_blinds:
   hidden: true
+light.bedroom_1_vent:
+  hidden: true
 light.bedroom_3_vent:
   hidden: true
-  device_class: cover
+light.den_vent:
+  hidden: true
+light.dinning_vent:
+  hidden: true
+light.guest_bathroom_vent:
+  hidden: true
+light.guest_bedroom_vent:
+  hidden: true
+light.hallway_vent:
+  hidden: true
+light.kitchen_vent:
+  hidden: true
+light.living_vent:
+  hidden: true
+light.master_bathroom_vent:
+  hidden: true
+light.master_bedroom_vent:
+  hidden: true
+light.mud_room_vent:
+  hidden: true
+light.tv_room_vent:
+  hidden: true
