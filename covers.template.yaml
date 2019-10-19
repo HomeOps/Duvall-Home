@@ -1,5 +1,6 @@
 bedroom_1_vent:
   friendly_name: 'Bedroom 1 Vent'
+  entity_id: light.bedroom_1_vent
   position_template: '{{ float(state_attr("light.bedroom_1_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
   set_cover_position:
     service: light.turn_on
@@ -8,6 +9,7 @@ bedroom_1_vent:
       brightness: '{{ float(position * 255 / 100) | round(0) | int }}'
 bedroom_3_vent:
   friendly_name: 'Bedroom 3 Vent'
+  entity_id: light.bedroom_3_vent
   position_template: '{{ float(state_attr("light.bedroom_3_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
   set_cover_position:
     service: light.turn_on
@@ -16,6 +18,7 @@ bedroom_3_vent:
       brightness: '{{ float(position * 255 / 100) | round(0) | int }}'
 den_vent:
   friendly_name: 'Den Vent'
+  entity_id: light.den_vent
   position_template: '{{ float(state_attr("light.den_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
   set_cover_position:
     service: light.turn_on
@@ -24,6 +27,7 @@ den_vent:
       brightness: '{{ float(position * 255 / 100) | round(0) | int }}'
 dinning_vent:
   friendly_name: 'Dinning Vent'
+  entity_id: light.dinning_vent
   position_template: '{{ float(state_attr("light.dinning_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
   set_cover_position:
     service: light.turn_on
@@ -32,6 +36,7 @@ dinning_vent:
       brightness: '{{ float(position * 255 / 100) | round(0) | int }}'
 guest_bathroom_vent:
   friendly_name: 'Guest Bathroom Vent'
+  entity_id: light.guest_bathroom_vent
   position_template: '{{ float(state_attr("light.guest_bathroom_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
   set_cover_position:
     service: light.turn_on
@@ -40,6 +45,7 @@ guest_bathroom_vent:
       brightness: '{{ float(position * 255 / 100) | round(0) | int }}'
 guest_bedroom_vent:
   friendly_name: 'Guest Bedroom Vent'
+  entity_id: light.guest_bedroom_vent
   position_template: '{{ float(state_attr("light.guest_bedroom_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
   set_cover_position:
     service: light.turn_on
@@ -48,6 +54,7 @@ guest_bedroom_vent:
       brightness: '{{ float(position * 255 / 100) | round(0) | int }}'
 hallway_vent:
   friendly_name: 'Hallway Vent'
+  entity_id: light.hallway_vent
   position_template: '{{ float(state_attr("light.hallway_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
   set_cover_position:
     service: light.turn_on
@@ -56,6 +63,7 @@ hallway_vent:
       brightness: '{{ float(position * 255 / 100) | round(0) | int }}'
 kitchen_vent:
   friendly_name: 'Kitchen Vent'
+  entity_id: light.kitchen_vent
   position_template: '{{ float(state_attr("light.kitchen_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
   set_cover_position:
     service: light.turn_on
@@ -65,6 +73,7 @@ kitchen_vent:
 living_vent:
   friendly_name: 'Living Vent'
   position_template: '{{ float(state_attr("light.living_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
+  entity_id: light.living_vent
   set_cover_position:
     service: light.turn_on
     data_template:
@@ -72,6 +81,7 @@ living_vent:
       brightness: '{{ float(position * 255 / 100) | round(0) | int }}'
 master_bathroom_vent:
   friendly_name: 'Master Bathroom Vent'
+  entity_id: light.master_bathroom_vent
   position_template: '{{ float(state_attr("light.master_bathroom_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
   set_cover_position:
     service: light.turn_on
@@ -80,6 +90,7 @@ master_bathroom_vent:
       brightness: '{{ float(position * 255 / 100) | round(0) | int }}'
 master_bedroom_vent:
   friendly_name: 'Master Bedroom Vent'
+  entity_id: light.master_bedroom_vent
   position_template: '{{ float(state_attr("light.master_bedroom_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
   set_cover_position:
     service: light.turn_on
@@ -88,6 +99,7 @@ master_bedroom_vent:
       brightness: '{{ float(position * 255 / 100) | round(0) | int }}'
 mud_room_vent:
   friendly_name: 'Mud Room Vent'
+  entity_id: light.mud_room_vent
   position_template: '{{ float(state_attr("light.mud_room_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
   set_cover_position:
     service: light.turn_on
@@ -96,6 +108,7 @@ mud_room_vent:
       brightness: '{{ float(position * 255 / 100) | round(0) | int }}'
 tv_room_vent:
   friendly_name: 'TV Room Vent'
+  entity_id: light.tv_room_vent
   position_template: '{{ float(state_attr("light.tv_room_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
   set_cover_position:
     service: light.turn_on
