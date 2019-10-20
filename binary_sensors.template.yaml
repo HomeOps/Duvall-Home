@@ -1,0 +1,36 @@
+bedroom_1_vent:
+  friendly_name: "Bedroom 1 Vent"
+  device_class: door
+  entity_id: "sensor.bedroom_1_temperature, sensor.bedroom_1_vent_temperature_measurement, climate.thermostat"
+  value_template: >-
+    {% macro get_openclose(name) -%}
+    {% set target = state_attr("climate.thermostat", "target_temp_low") + ((state_attr("climate.thermostat", "target_temp_high") - state_attr("climate.thermostat", "target_temp_low"))/2.0) -%}
+    {% set vent = states("sensor."+name+"_vent_temperature_measurement")|float -%}
+    {% set room = states("sensor."+name+"_temperature")|float -%}
+    {{ not (  ((target < room) and (room < vent)) or ((room < target) and (vent < room))  ) }}
+    {%- endmacro -%}
+    {{ get_openclose("bedroom_1") }}
+bedroom_3_vent:
+  friendly_name: "Bedroom 3 Vent"
+  device_class: door
+  entity_id: "sensor.bedroom_3_temperature, sensor.bedroom_3_vent_temperature_measurement, climate.thermostat"
+  value_template: >-
+    {% macro get_openclose(name) -%}
+    {% set target = state_attr("climate.thermostat", "target_temp_low") + ((state_attr("climate.thermostat", "target_temp_high") - state_attr("climate.thermostat", "target_temp_low"))/2.0) -%}
+    {% set vent = states("sensor."+name+"_vent_temperature_measurement")|float -%}
+    {% set room = states("sensor."+name+"_temperature")|float -%}
+    {{ not (  ((target < room) and (room < vent)) or ((room < target) and (vent < room))  ) }}
+    {%- endmacro -%}
+    {{ get_openclose("bedroom_3") }}
+master_bedroom_vent:
+  friendly_name: "Master Bedroom Vent"
+  device_class: door
+  entity_id: "sensor.master_bedroom_temperature, sensor.master_bedroom_vent_temperature_measurement, climate.thermostat"
+  value_template: >-
+    {% macro get_openclose(name) -%}
+    {% set target = state_attr("climate.thermostat", "target_temp_low") + ((state_attr("climate.thermostat", "target_temp_high") - state_attr("climate.thermostat", "target_temp_low"))/2.0) -%}
+    {% set vent = states("sensor."+name+"_vent_temperature_measurement")|float -%}
+    {% set room = states("sensor."+name+"_temperature")|float -%}
+    {{ not (  ((target < room) and (room < vent)) or ((room < target) and (vent < room))  ) }}
+    {%- endmacro -%}
+    {{ get_openclose("master_bedroom") }}

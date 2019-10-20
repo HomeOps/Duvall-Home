@@ -442,3 +442,15 @@
   - data:
       entity_id: light.master_bedroom_lights
     service: light.turn_off
+- id: '1571613444671'
+  alias: Vent House
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.master_bedroom_vent
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data:
+      entity_id: cover.master_bedroom_vent
+    service: cover.open_cover
