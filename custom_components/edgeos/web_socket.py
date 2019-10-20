@@ -8,6 +8,8 @@ import logging
 import json
 from urllib.parse import urlparse
 import aiohttp
+import asyncio
+from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
 from .const import *
 
@@ -18,60 +20,64 @@ _LOGGER = logging.getLogger(__name__)
 
 class EdgeOSWebSocket:
 
-    def __init__(self, edgeos_url, topics, edgeos_callback, hass_loop):
+    def __init__(self, hass, edgeos_url, topics, edgeos_callback):
         self._last_update = datetime.now()
         self._edgeos_url = edgeos_url
         self._edgeos_callback = edgeos_callback
-        self._hass_loop = hass_loop
+        self._hass = hass
         self._session_id = None
         self._topics = topics
         self._session = None
         self._log_events = False
-        self._is_listen = False
-
-        self._stopping = False
+        self._ws = None
         self._pending_payloads = []
+        self._shutting_down = False
 
         self._timeout = SCAN_INTERVAL.seconds
 
         url = urlparse(self._edgeos_url)
+
         self._ws_url = WEBSOCKET_URL_TEMPLATE.format(url.netloc)
 
     async def initialize(self, cookies, session_id):
-        _LOGGER.info("Start initailzing the connection")
+        _LOGGER.debug("Initializing WS connection")
 
-        self.close()
-        
-        self._stopping = False
-        self._session_id = session_id
-        self._session = aiohttp.ClientSession(cookies=cookies, loop=self._hass_loop)
+        try:
+            self._shutting_down = False
 
-        is_active = True
+            self._session_id = session_id
+            self._session = async_create_clientsession(hass=self._hass, cookies=cookies)
+        except Exception as ex:
+            _LOGGER.warning(f"Failed to create session of EdgeOS WS, Error: {str(ex)}")
 
-        while not self._stopping and is_active:
+        connection_attempt = 1
+
+        while self.is_initialized and not self._shutting_down:
             try:
+                await asyncio.sleep(10)
+                _LOGGER.info(f"Connection attempt #{connection_attempt}")
+
                 async with self._session.ws_connect(self._ws_url,
                                                     origin=self._edgeos_url,
                                                     ssl=False,
                                                     max_msg_size=MAX_MSG_SIZE,
                                                     timeout=self._timeout) as ws:
+                    self._ws = ws
+                    await self.listen()
 
-                    await self.listen(ws)
+                connection_attempt = connection_attempt + 1
 
             except Exception as ex:
                 error_message = str(ex)
 
-                if error_message is not None:
-                    if error_message == ERROR_SHUTDOWN:
-                        _LOGGER.warning(f'initialize - shutdown')
-                        is_active = False
+                if error_message == ERROR_SHUTDOWN:
+                    _LOGGER.warning(f"{error_message}")
+                    break
 
-                        self.close()
+                elif error_message != "":
+                    _LOGGER.warning(f"Failed to listen EdgeOS, Error: {error_message}")
 
-                    else:
-                        _LOGGER.warning(f"initialize - failed to listen EdgeOS, Error: {error_message}")
-
-        _LOGGER.info("initialize - finished execution")
+        _LOGGER.info("WS Connection terminated")
 
     def log_events(self, log_event_enabled):
         self._log_events = log_event_enabled
@@ -103,10 +109,10 @@ class EdgeOSWebSocket:
                 self._edgeos_callback(payload_json)
                 parsed = True
             else:
-                _LOGGER.debug('parse_message - Skipping message (Empty)')
+                _LOGGER.debug('Parse message skipped (Empty)')
 
         except Exception as ex:
-            _LOGGER.debug(f'parse_message - Cannot parse partial payload, Error: {ex}')
+            _LOGGER.debug(f'Parse message failed due to partial payload, Error: {ex}')
 
         finally:
             if parsed or len(self._pending_payloads) > MAX_PENDING_PAYLOADS:
@@ -114,37 +120,33 @@ class EdgeOSWebSocket:
             else:
                 self._pending_payloads.append(message)
 
-    async def listen(self, ws):
-        _LOGGER.info(f"Connection connected")
+    async def listen(self):
+        _LOGGER.info(f"Starting to listen connected")
 
         subscription_data = self.get_subscription_data()
-        await ws.send_str(subscription_data)
+        await self._ws.send_str(subscription_data)
 
-        _LOGGER.info('Subscribed')
+        _LOGGER.info('Subscribed to WS payloads')
 
-        async for msg in ws:
-            continue_to_next = self.handle_next_message(ws, msg)
+        async for msg in self._ws:
+            continue_to_next = self.handle_next_message(msg)
 
-            if not continue_to_next:
-                break
+            if not continue_to_next or not self.is_initialized:
+                return
 
-        _LOGGER.info(f'Closing connection')
+        _LOGGER.info(f'Stop listening')
 
-        await ws.close()
-
-        _LOGGER.info(f'Connection closed')
-
-    def handle_next_message(self, ws, msg):
+    def handle_next_message(self, msg):
+        _LOGGER.debug(f"Starting to handle next message")
         result = False
 
-        if self._stopping:
-            _LOGGER.info("Connection closed (By Home Assistant)")
-
-        if msg.type == aiohttp.WSMsgType.CLOSED:
+        if msg.type in (aiohttp.WSMsgType.CLOSE,
+                        aiohttp.WSMsgType.CLOSED,
+                        aiohttp.WSMsgType.CLOSING):
             _LOGGER.info("Connection closed (By Message Close)")
 
         elif msg.type == aiohttp.WSMsgType.ERROR:
-            _LOGGER.warning(f'Connection error, Description: {ws.exception()}')
+            _LOGGER.warning(f'Connection error, Description: {self._ws.exception()}')
 
         else:
             if self._log_events:
@@ -152,20 +154,25 @@ class EdgeOSWebSocket:
 
             self._last_update = datetime.now()
 
-            self.parse_message(msg.data)
+            if msg.data == 'close':
+                result = False
+            else:
+                self.parse_message(msg.data)
 
-            result = True
+                result = True
 
         return result
 
-    def close(self):
-        self._is_listen = False
-        self._stopping = True
+    async def close(self):
+        _LOGGER.info("Closing connection to WS")
 
-        if self.is_initialized:
-            yield from self._session.close()
+        self._shutting_down = True
+        self._session_id = None
 
-        self._session = None
+        if self._ws is not None:
+            await self._ws.close()
+
+        self._ws = None
 
     def get_subscription_data(self):
         topics_to_subscribe = [{WS_TOPIC_NAME: topic} for topic in self._topics]
@@ -181,6 +188,6 @@ class EdgeOSWebSocket:
         subscription_content_length = len(subscription_content)
         subscription_data = f'{subscription_content_length}\n{subscription_content}'
 
-        _LOGGER.info(f'get_subscription_data - Subscription data: {subscription_data}')
+        _LOGGER.debug(f'get_subscription_data - Subscription data: {subscription_content}')
 
         return subscription_data

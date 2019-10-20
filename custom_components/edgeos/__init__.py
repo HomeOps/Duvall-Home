@@ -6,7 +6,6 @@ https://home-assistant.io/components/edgeos/
 import sys
 import logging
 import voluptuous as vol
-import asyncio
 
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD, CONF_SSL, CONF_HOST)
 
@@ -68,6 +67,7 @@ class EdgeOS:
         self._is_ssl = is_ssl
         self._username = username
         self._password = password
+        self._hass = hass
 
         protocol = PROTOCOL_UNSECURED
         if is_ssl:
@@ -80,56 +80,38 @@ class EdgeOS:
         self._ws_handlers = self.get_ws_handlers()
         self._topics = self._ws_handlers.keys()
 
-        self._hass_loop = hass.loop
+        self._api = EdgeOSWebAPI(hass, self._edgeos_url)
 
-        self._api = EdgeOSWebAPI(self._edgeos_url, self._hass_loop)
-
-        self._ws = EdgeOSWebSocket(self._edgeos_url,
+        self._ws = EdgeOSWebSocket(hass,
+                                   self._edgeos_url,
                                    self._topics,
-                                   self.ws_handler,
-                                   self._hass_loop)
+                                   self.ws_handler)
 
         self._edgeos_login_service = EdgeOSWebLogin(self._host, self._is_ssl, self._username, self._password)
         self._edgeos_ha = EdgeOSHomeAssistant(hass, monitored_interfaces, monitored_devices, unit, scan_interval)
 
-        @asyncio.coroutine
-        def edgeos_initialize(event_time):
-            self._initialization_counter = self._initialization_counter + 1
+        async def edgeos_initialize(*args, **kwargs):
+            _LOGGER.info(f'Starting EdgeOS')
 
-            yield from self.initialize_edgeos_connection(event_time)
+            await self.start()
 
-        def edgeos_stop(event_time):
-            _LOGGER.warning(f'Stop begun at {event_time}')
+        async def edgeos_stop(*args, **kwargs):
+            _LOGGER.info(f'Stopping EdgeOS')
 
-            try:
-                self._api.close()
-            except Exception as ex:
-                exc_type, exc_obj, tb = sys.exc_info()
-                line_number = tb.tb_lineno
+            await self.terminate()
 
-                _LOGGER.error(f"Failed to close connection to API, Error: {ex}, Line: {line_number}")
+        async def edgeos_refresh(event_time):
+            _LOGGER.debug(f'Refreshing EdgeOS ({str(event_time)})')
 
-            try:
-                self._ws.close()
-            except Exception as ex:
-                exc_type, exc_obj, tb = sys.exc_info()
-                line_number = tb.tb_lineno
+            await self.refresh_data()
 
-                _LOGGER.error(f"Failed to close connection to WS, Error: {ex}, Line: {line_number}")
-
-        @asyncio.coroutine
-        def edgeos_refresh(event_time):
-            _LOGGER.debug(f'Refresh EdgeOS components ({event_time})')
-
-            yield from self.refresh_data()
-
-        def edgeos_save_debug_data(event_time):
-            _LOGGER.info(f'Save EdgeOS debug data ({event_time})')
+        def edgeos_save_debug_data(service):
+            _LOGGER.info(f'Save EdgeOS debug data')
 
             self._edgeos_ha.store_data(self._edgeos_data)
 
         def edgeos_log_events(service):
-            _LOGGER.info(f'Log Events EdgeOS WebSocket ({service.data})')
+            _LOGGER.info(f'Log Events EdgeOS WebSocket')
 
             enabled = service.data.get(ATTR_ENABLED, False)
 
@@ -154,31 +136,43 @@ class EdgeOS:
     def is_initialized(self):
         return self._is_initialized
 
-    @asyncio.coroutine
-    def initialize_edgeos_connection(self, event_time):
-        counter = self._initialization_counter
-        _LOGGER.info(f'initialize_edgeos_connection - Initialization #{counter} begun at {event_time}')
-
+    async def terminate(self):
         try:
-            cookies = self._edgeos_login_service.cookies_data
-            session_id = self._edgeos_login_service.session_id
+            _LOGGER.debug(f'Terminating WS')
 
-            self._api.initialize(cookies)
-            yield from self.refresh_data()
+            await self._ws.close()
 
-            yield from self._ws.initialize(cookies, session_id)
-
+            _LOGGER.debug(f'WS terminated')
         except Exception as ex:
             exc_type, exc_obj, tb = sys.exc_info()
             line_number = tb.tb_lineno
 
-            _LOGGER.error(f'initialize_edgeos_connection - Error: {ex}, Line: {line_number}')
+            _LOGGER.error(f"Failed to terminate connection to WS, Error: {ex}, Line: {line_number}")
 
-    @asyncio.coroutine
-    def refresh_data(self):
+    async def start(self):
         try:
-            yield from self._api.heartbeat()
-            yield from self.load_devices_data()
+            cookies = self._edgeos_login_service.cookies_data
+            session_id = self._edgeos_login_service.session_id
+
+            _LOGGER.debug(f'Initializing API')
+
+            await self._api.initialize(cookies)
+
+            _LOGGER.debug(f'Requesting initial data')
+            await self.refresh_data()
+
+            _LOGGER.debug(f'Initializing WS using session: {session_id}')
+            await self._ws.initialize(cookies, session_id)
+        except Exception as ex:
+            exc_type, exc_obj, tb = sys.exc_info()
+            line_number = tb.tb_lineno
+
+            _LOGGER.error(f'Failed to start EdgeOS, Error: {ex}, Line: {line_number}')
+
+    async def refresh_data(self):
+        try:
+            await self._api.heartbeat()
+            await self.load_devices_data()
 
             devices = self.get_devices()
             interfaces = self.get_interfaces()
@@ -200,6 +194,8 @@ class EdgeOS:
         try:
             if payload is not None:
                 for key in payload:
+                    _LOGGER.debug(f"Running parser of {key}")
+
                     data = payload.get(key)
                     handler = self._ws_handlers.get(key)
 
@@ -223,8 +219,7 @@ class EdgeOS:
 
         return ws_handlers
 
-    @asyncio.coroutine
-    def load_devices_data(self):
+    async def load_devices_data(self):
         try:
             _LOGGER.debug('Getting devices by API')
 
@@ -234,7 +229,7 @@ class EdgeOS:
             if previous_result is None:
                 previous_result = {}
 
-            devices_data = yield from self._api.get_devices_data()
+            devices_data = await self._api.get_devices_data()
 
             if devices_data is not None:
                 service_data = devices_data.get(SERVICE, {})
