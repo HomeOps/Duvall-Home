@@ -4,9 +4,9 @@ bedroom_1_vent:
   entity_id: "sensor.bedroom_1_temperature, sensor.bedroom_1_vent_temperature_measurement, climate.thermostat"
   value_template: >-
     {% macro get_openclose(name) -%}
-    {% set target = state_attr("climate.thermostat", "target_temp_low") + ((state_attr("climate.thermostat", "target_temp_high") - state_attr("climate.thermostat", "target_temp_low"))/2.0) -%}
+    {% set target = state_attr("climate.thermostat_hk", "temperature")|float -%}
     {% set vent = states("sensor."+name+"_vent_temperature_measurement")|float -%}
-    {% set room = states("sensor."+name+"_temperature")|float -%}
+    {% set room = states("sensor."+name+"_temperature_hk")|float -%}
     {{ not (  ((target < room) and (room < vent)) or ((room < target) and (vent < room))  ) }}
     {%- endmacro -%}
     {{ get_openclose("bedroom_1") }}

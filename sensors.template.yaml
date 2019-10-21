@@ -1,3 +1,9 @@
+thermostat_target_temperature:
+  unit_of_measurement: '°C'
+  friendly_name: 'Thermostat Target Temperature'
+  device_class: temperature
+  entity_id: climate.thermostat_hk
+  value_template: '{{ state_attr("climate.thermostat_hk", "temperature")|float }}'
 bedroom_1_vent:
   entity_id: light.bedroom_1_vent
   value_template: '{{ float(state_attr("light.bedroom_1_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
