@@ -7,7 +7,7 @@ bedroom_1_vent:
     {% set target = state_attr("climate.thermostat_hk", "temperature")|float -%}
     {% set vent = states("sensor."+name+"_vent_temperature_measurement")|float -%}
     {% set room = states("sensor."+name+"_temperature_hk")|float -%}
-    {{ not (  ((target < room) and (room < vent)) or ((room < target) and (vent < room))  ) }}
+    {{ not (((room-target)>0.5 and (vent-room)>0.5) or ((target-room)>0.5 and (room-vent)>0.5))}}
     {%- endmacro -%}
     {{ get_openclose("bedroom_1") }}
 bedroom_3_vent:
@@ -19,7 +19,7 @@ bedroom_3_vent:
     {% set target = state_attr("climate.thermostat", "target_temp_low") + ((state_attr("climate.thermostat", "target_temp_high") - state_attr("climate.thermostat", "target_temp_low"))/2.0) -%}
     {% set vent = states("sensor."+name+"_vent_temperature_measurement")|float -%}
     {% set room = states("sensor."+name+"_temperature")|float -%}
-    {{ not (  ((target < room) and (room < vent)) or ((room < target) and (vent < room))  ) }}
+    {{ not (((room-target)>0.5 and (vent-room)>0.5) or ((target-room)>0.5 and (room-vent)>0.5))}}
     {%- endmacro -%}
     {{ get_openclose("bedroom_3") }}
 master_bedroom_vent:
@@ -31,6 +31,6 @@ master_bedroom_vent:
     {% set target = state_attr("climate.thermostat", "target_temp_low") + ((state_attr("climate.thermostat", "target_temp_high") - state_attr("climate.thermostat", "target_temp_low"))/2.0) -%}
     {% set vent = states("sensor."+name+"_vent_temperature_measurement")|float -%}
     {% set room = states("sensor."+name+"_temperature")|float -%}
-    {{ not (  ((target < room) and (room < vent)) or ((room < target) and (vent < room))  ) }}
+    {{ not (((room-target)>0.5 and (vent-room)>0.5) or ((target-room)>0.5 and (room-vent)>0.5))}}
     {%- endmacro -%}
     {{ get_openclose("master_bedroom") }}
