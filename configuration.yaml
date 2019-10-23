@@ -45,6 +45,8 @@ zha:
 mobile_app:
 
 speedtestdotnet:
+  manual: true
+  server_id: !secret speedtestdotnet_server_id
 
 apcupsd:
   host: 127.0.0.1

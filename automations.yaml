@@ -219,6 +219,7 @@
     state: armed_night
   action:
   - service: script.good_morning
+  - service: speedtestdotnet.speedtest
 - id: close_all_blinds_after_sunset
   alias: Close all blinds after sunset
   trigger:
