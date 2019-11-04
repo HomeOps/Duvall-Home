@@ -6,8 +6,8 @@ import logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 DEST=sys.argv[1]
-#MD="/dev/ttyUSB2"
-MD="COM10"
+MD="/dev/ttyUSB2"
+#MD="COM10"
 if (len(sys.argv) > 2):
     message=sys.argv[2]
 else:
