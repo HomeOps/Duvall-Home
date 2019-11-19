@@ -1,4 +1,4 @@
-- platform: samsung_multi_room
-  name: "TV Room Soundbar"
-  host: 192.168.1.82
-  max_volume: 20 # on this level glass breaks, and there are 80 levels more on K650...
+#- platform: samsung_multi_room
+#  name: "TV Room Soundbar"
+#  host: 192.168.1.82
+#  max_volume: 20 # on this level glass breaks, and there are 80 levels more on K650...
