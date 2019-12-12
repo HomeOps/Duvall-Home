@@ -6,7 +6,6 @@ https://home-assistant.io/components/edgeos/
 import sys
 import logging
 import voluptuous as vol
-from datetime import datetime
 
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD, CONF_SSL, CONF_HOST)
 
@@ -15,6 +14,7 @@ from homeassistant.helpers import config_validation as cv
 from .const import VERSION
 from .const import *
 from .home_assistant import (EdgeOSHomeAssistant)
+from .mocked_home_assistant import (EdgeOSMockedHomeAssistant)
 from .web_api import (EdgeOSWebAPI)
 from .web_login import (EdgeOSWebLogin)
 from .web_socket import (EdgeOSWebSocket)
@@ -60,7 +60,7 @@ def setup(hass, config):
 
 class EdgeOS:
     def __init__(self, hass, host, username, password, is_ssl, monitored_interfaces,
-                 monitored_devices, unit, scan_interval):
+                 monitored_devices, unit, scan_interval, is_mocked=False):
 
         self._initialization_counter = -1
         self._is_initialized = False
@@ -81,7 +81,7 @@ class EdgeOS:
         self._ws_handlers = self.get_ws_handlers()
         self._topics = self._ws_handlers.keys()
 
-        self._api = EdgeOSWebAPI(hass, self._edgeos_url)
+        self._api = EdgeOSWebAPI(hass, self._edgeos_url, self.edgeos_disconnection_handler)
 
         self._ws = EdgeOSWebSocket(hass,
                                    self._edgeos_url,
@@ -89,15 +89,21 @@ class EdgeOS:
                                    self.ws_handler)
 
         self._edgeos_login_service = EdgeOSWebLogin(self._host, self._is_ssl, self._username, self._password)
-        self._edgeos_ha = EdgeOSHomeAssistant(hass, monitored_interfaces, monitored_devices, unit, scan_interval)
+
+        if is_mocked:
+            self._edgeos_ha = EdgeOSMockedHomeAssistant(hass, monitored_interfaces, monitored_devices,
+                                                        unit, scan_interval)
+        else:
+            self._edgeos_ha = EdgeOSHomeAssistant(hass, monitored_interfaces, monitored_devices,
+                                                  unit, scan_interval)
 
         async def edgeos_initialize(*args, **kwargs):
-            _LOGGER.info(f'Starting EdgeOS')
+            _LOGGER.info(f'Starting EdgeOS, args: {args}, kwargs: {kwargs}')
 
             await self.start()
 
         async def edgeos_stop(*args, **kwargs):
-            _LOGGER.info(f'Stopping EdgeOS')
+            _LOGGER.info(f'Stopping EdgeOS, args: {args}, kwargs: {kwargs}')
 
             await self.terminate()
 
@@ -107,7 +113,7 @@ class EdgeOS:
             await self.refresh_data()
 
         def edgeos_save_debug_data(service):
-            _LOGGER.info(f'Save EdgeOS debug data')
+            _LOGGER.info(f'Save EdgeOS debug data: {service}')
 
             self._edgeos_ha.store_data(self._edgeos_data)
 
@@ -136,6 +142,14 @@ class EdgeOS:
     @property
     def is_initialized(self):
         return self._is_initialized
+
+    async def edgeos_disconnection_handler(self):
+        _LOGGER.debug(f'Disconnection detected, reconnecting...')
+
+        await self.terminate()
+
+        if self._edgeos_login_service.login():
+            await self.start()
 
     async def terminate(self):
         try:
@@ -183,6 +197,9 @@ class EdgeOS:
             api_last_update = self._api.last_update
             web_socket_last_update = self._ws.last_update
 
+            if system_state is not None:
+                system_state[IS_ALIVE] = self._api.is_connected
+
             self._edgeos_ha.update(interfaces, devices, unknown_devices, system_state,
                                    api_last_update, web_socket_last_update)
         except Exception as ex:
@@ -224,45 +241,49 @@ class EdgeOS:
         try:
             _LOGGER.debug('Getting devices by API')
 
-            result = {}
-
-            previous_result = self.get_devices()
-            if previous_result is None:
-                previous_result = {}
-
             devices_data = await self._api.get_devices_data()
 
             if devices_data is not None:
                 service_data = devices_data.get(SERVICE, {})
-                dhcp_server_data = service_data.get(DHCP_SERVER, {})
-                shared_network_name_data = dhcp_server_data.get(SHARED_NETWORK_NAME, {})
 
-                for shared_network_name_key in shared_network_name_data:
-                    dhcp_network_allocation = shared_network_name_data.get(shared_network_name_key, {})
-                    subnet = dhcp_network_allocation.get(SUBNET, {})
+                if isinstance(service_data, dict):
+                    result = {}
 
-                    for subnet_mask_key in subnet:
-                        subnet_mask = subnet.get(subnet_mask_key, {})
-                        static_mapping = subnet_mask.get(STATIC_MAPPING, {})
+                    previous_result = self.get_devices()
+                    if previous_result is None:
+                        previous_result = {}
 
-                        for host_name in static_mapping:
-                            host_data = static_mapping.get(host_name, {})
-                            host_ip = host_data.get(IP_ADDRESS)
-                            host_mac = host_data.get(MAC_ADDRESS)
+                    dhcp_server_data = service_data.get(DHCP_SERVER, {})
+                    shared_network_name_data = dhcp_server_data.get(SHARED_NETWORK_NAME, {})
 
-                            data = {
-                                IP: host_ip,
-                                MAC: host_mac
-                            }
+                    for shared_network_name_key in shared_network_name_data:
+                        dhcp_network_allocation = shared_network_name_data.get(shared_network_name_key, {})
+                        subnet = dhcp_network_allocation.get(SUBNET, {})
 
-                            previous_host_data = previous_result.get(host_name, {})
+                        for subnet_mask_key in subnet:
+                            subnet_mask = subnet.get(subnet_mask_key, {})
+                            static_mapping = subnet_mask.get(STATIC_MAPPING, {})
 
-                            for previous_key in previous_host_data:
-                                data[previous_key] = previous_host_data.get(previous_key)
+                            for host_name in static_mapping:
+                                host_data = static_mapping.get(host_name, {})
+                                host_ip = host_data.get(IP_ADDRESS)
+                                host_mac = host_data.get(MAC_ADDRESS)
 
-                            result[host_name] = data
+                                data = {
+                                    IP: host_ip,
+                                    MAC: host_mac
+                                }
 
-                self.set_devices(result)
+                                previous_host_data = previous_result.get(host_name, {})
+
+                                for previous_key in previous_host_data:
+                                    data[previous_key] = previous_host_data.get(previous_key)
+
+                                result[host_name] = data
+
+                    self.set_devices(result)
+                else:
+                    _LOGGER.warning(f"Invalid Service Data: {service_data}")
         except Exception as ex:
             exc_type, exc_obj, tb = sys.exc_info()
             line_number = tb.tb_lineno

@@ -79,17 +79,14 @@ edgeos:
 #  max_retries: 3
 #  default_measurement: state
 
-recorder:
-  db_url: !secret recorder_db_url
-  purge_keep_days: 5
+# Workaround https://github.com/home-assistant/home-assistant/issues/29837
+#recorder:
+#  db_url: !secret recorder_db_url
+#  purge_keep_days: 5
 
 history:
 
 panel_iframe:
-  grafana:
-    title: Grafana
-    icon: mdi:chart-timeline
-    url: https://duvall.calvonet.com:3000
 
 ecobee:
   api_key: !secret ecobee_api_key

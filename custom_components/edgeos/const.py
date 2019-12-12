@@ -26,7 +26,6 @@ EDGEOS_API_DATA = 'data'
 EDGEOS_API_HEARTBREAT = 'heartbeat'
 
 COOKIE_PHPSESSID = 'PHPSESSID'
-COOKIE_AS_STR_TEMPLATE = '{}={}'
 
 DISCONNECTED_INTERVAL = 60
 
@@ -60,8 +59,8 @@ DISCOVER_KEY = 'discover'
 UNKNOWN_DEVICES_KEY = 'unknown-devices'
 
 UPTIME = 'uptime'
+IS_ALIVE = 'is_alive'
 
-SYSTEM_STATS_ITEMS = ['cpu', 'mem', UPTIME]
 DISCOVER_DEVICE_ITEMS = ['hostname', 'product', 'uptime', 'fwversion', 'system_status']
 
 ALLOWED_UNITS = {ATTR_BYTE: BYTE, ATTR_KILO: KILO_BYTE, ATTR_MEGA: MEGA_BYTE}
@@ -80,8 +79,8 @@ IP_ADDRESS = 'ip-address'
 MAC_ADDRESS = 'mac-address'
 IP = 'ip'
 MAC = 'mac'
-CONNECTED = 'connected'
-LAST_ACTIVITY = 'last-activity'
+CONNECTED = 'Connected'
+LAST_ACTIVITY = 'Last Activity'
 
 DEFAULT_USERNAME = 'ubnt'
 
@@ -111,21 +110,16 @@ SSL_OPTIONS_CA_CERTS = 'ca_certs'
 ARG_SSL_OPTIONS = 'sslopt'
 ARG_ORIGIN = 'origin'
 
-ENTITY_ID_INTERFACE_BINARY_SENSOR = 'binary_sensor.edgeos_interface_{}'
-ENTITY_ID_INTERFACE_SENSOR = 'sensor.edgeos_interface_{}_{}'
-
-ENTITY_ID_DEVICE_BINARY_SENSOR = 'binary_sensor.edgeos_device_{}'
-ENTITY_ID_DEVICE_SENSOR = 'sensor.edgeos_device_{}_{}'
 ENTITY_ID_UNKNOWN_DEVICES = 'sensor.edgeos_unknown_devices'
 
-ENTITY_ID_SYSTEM_UPTIME = 'sensor.edgeos_system_uptime'
-
-ATTR_WEBSOCKET_LAST_UPDATE = 'WS Last Update'
+ATTR_LAST_CHANGED = "Last Changed"
+ATTR_WEB_SOCKET_LAST_UPDATE = 'WS Last Update'
 ATTR_API_LAST_UPDATE = 'API Last Update'
 ATTR_DEVICE_CLASS = 'device_class'
+ATTR_UNKNOWN_DEVICES = "Unknown Devices"
 DEVICE_CLASS_CONNECTIVITY = 'connectivity'
 
-DEFAULT_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
+DEFAULT_DATE_FORMAT = '%x %X'
 
 EDGEOS_DATA_LOG = 'edgeos_data.log'
 
@@ -172,13 +166,12 @@ SENSOR_TYPE_DEVICE = 'Device'
 
 ATTR_SECONDS = 'seconds'
 ATTR_SYSTEM_UPTIME = 'System Uptime'
+ATTR_SYSTEM_STATUS = 'System Status'
 
 STRING_DASH = '-'
 STRING_UNDERSCORE = '_'
 STRING_COMMA = ','
 STRING_COLON = ':'
-
-MIN_TIME_BETWEEN_SCANS = timedelta(seconds=30)
 
 CONF_SUPPORTED_DEVICES = 'supported_devices'
 ATTR_ENABLED = 'enabled'
