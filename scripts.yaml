@@ -75,7 +75,8 @@ lights_off:
   - service: group.set
     data_template:
       object_id: active_lights
-      add_entities: "{% for l in expand('group.all_lights') -%}{%- if not l.entity_id.endswith('vent') %}{{l.entity_id }},{% endif -%}{%- endfor %}light.eof"
+      add_entities: '{% for l in expand(''group.all_lights'') -%}{%- if not l.entity_id.endswith(''vent'')
+        %}{{l.entity_id }},{% endif -%}{%- endfor %}light.eof'
   - service: light.turn_off
     data:
       entity_id: group.active_lights
@@ -85,7 +86,8 @@ lights_off:
   - service: group.set
     data_template:
       object_id: active_covers
-      add_entities: "{% for l in expand('group.all_covers') -%}{%- if not l.entity_id.endswith('vent') %}{{l.entity_id }},{% endif -%}{%- endfor %}light.eof"
+      add_entities: '{% for l in expand(''group.all_covers'') -%}{%- if not l.entity_id.endswith(''vent'')
+        %}{{l.entity_id }},{% endif -%}{%- endfor %}light.eof'
   - service: cover.close_cover
     data:
       entity_id: group.active_covers
@@ -116,6 +118,7 @@ workout:
 notify_external:
   alias: NotifyExternal
   sequence:
-  - service: notify.all
+  - data: {}
     data_template:
-      message: '{{ sc_message }}'
+      message: Interface {{ sc_intf }} going into {{ sc_status }}
+    service: notify.sms_oscar
