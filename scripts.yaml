@@ -75,7 +75,7 @@ lights_off:
   - service: group.set
     data_template:
       object_id: active_lights
-      add_entities: '{% for l in expand(''group.all_lights'') -%}{%- if not l.entity_id.endswith(''vent'')
+      add_entities: '{% for l in expand(''lights.all'') -%}{%- if not l.entity_id.endswith(''vent'')
         %}{{l.entity_id }},{% endif -%}{%- endfor %}light.eof'
   - service: light.turn_off
     data:
@@ -86,7 +86,7 @@ lights_off:
   - service: group.set
     data_template:
       object_id: active_covers
-      add_entities: '{% for l in expand(''group.all_covers'') -%}{%- if not l.entity_id.endswith(''vent'')
+      add_entities: '{% for l in expand(''covers.all'') -%}{%- if not l.entity_id.endswith(''vent'')
         %}{{l.entity_id }},{% endif -%}{%- endfor %}light.eof'
   - service: cover.close_cover
     data:

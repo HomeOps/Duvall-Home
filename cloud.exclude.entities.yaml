@@ -1,6 +1,7 @@
 - climate.thermostat_st
 - climate.thermostat_2
 - climate.thermostat_1
+- climate.thermostat_hk
 - climate.thermostat
 - binary_sensor.thermostat_bedroom_1_sensor_motion
 - binary_sensor.bedroom_1_sensor_occupancy

@@ -64,6 +64,7 @@ edgeos:
     - server
     - Oscar-Phone
     - Hazel-Phone
+    - Nexus-Phone
   #Optional - Allowed values:
   #  '' - represents bytes
   #  'K' - represents Kilobytes
@@ -79,10 +80,9 @@ edgeos:
 #  max_retries: 3
 #  default_measurement: state
 
-# Workaround https://github.com/home-assistant/home-assistant/issues/29837
-#recorder:
-#  db_url: !secret recorder_db_url
-#  purge_keep_days: 5
+recorder:
+  db_url: !secret recorder_db_url
+  purge_keep_days: 5
 
 history:
 
@@ -95,13 +95,9 @@ arlo:
   username: !secret arlo_username
   password: !secret arlo_password
 
-ring:
-  username: !secret ring_username
-  password: !secret ring_password
-
-tesla:
-  username: !secret tesla_username
-  password: !secret tesla_password
+#tesla:
+#  username: !secret tesla_username
+#  password: !secret tesla_password
 
 plex:
   host: !secret plex_host
