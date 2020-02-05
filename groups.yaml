@@ -88,3 +88,56 @@ all_vents_binary_sensors:
     - binary_sensor.master_bedroom_vent
     - binary_sensor.mud_room_vent
     - binary_sensor.tv_room_vent
+all_lights:
+  entities:
+    - light.backyard_light
+    - light.bathroom_hallway_dimmer
+    - light.bedroom_oscar_lights
+    - light.bedroom_vale_lights
+    - light.den_lights
+    - light.dinning_lights
+    - light.gazibo_gardenspot
+    - light.guest_bedroom_lights
+    - light.hallway_lights
+    - light.hallway_smoke_alarm
+    - light.kitchen_lights
+    - light.laundry_lights
+    - light.living_back_left
+    - light.living_back_right
+    - light.living_front_left
+    - light.living_front_right
+    - light.living_lights
+    - light.living_lights_switch
+    - light.master_bathroom_lights
+    - light.master_bathroom_toilet_lights
+    - light.master_bed
+    - light.master_bed_lamp_1
+    - light.master_bed_lamp_2
+    - light.master_bedroom_closet
+    - light.master_bedroom_lights
+    - light.mud_room_switch
+    - light.outside_garden_lights
+    - light.outside_left_lights
+    - light.pantry
+    - light.stairs_lights
+    - light.tv_room_lights
+all_light_switches:
+  entities:
+    - switch.den_bookshelve_lights
+    - switch.dinning_lamp_1
+    - switch.dinning_lamp_2
+    - switch.garage_lights
+    - switch.gazibo_lights
+    - switch.guest_bathroom_fan
+    - switch.guest_bathroom_lights
+    - switch.laundry_fan
+    - switch.living_left_lamp
+    - switch.living_right_lamp
+    - switch.master_bathroom_fan
+    - switch.master_bathroom_toilet_fan
+    - switch.master_bedroom_cooler
+    - switch.outside_lights
+    - switch.outside_switch
+    - switch.pantry_lights
+    - switch.patio_lights
+    - switch.server_room_lights_switch

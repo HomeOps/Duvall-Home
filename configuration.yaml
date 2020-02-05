@@ -42,6 +42,9 @@ zha:
   usb_path: !secret zha_usb_path
   database_path: !secret zha_database_path
 
+sms:
+  device: !secret sms_device
+
 mobile_app:
 
 speedtestdotnet:
@@ -94,10 +97,6 @@ ecobee:
 arlo:
   username: !secret arlo_username
   password: !secret arlo_password
-
-#tesla:
-#  username: !secret tesla_username
-#  password: !secret tesla_password
 
 plex:
   host: !secret plex_host

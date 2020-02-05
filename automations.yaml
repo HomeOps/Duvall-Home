@@ -482,4 +482,5 @@
   action:
   - data:
       message: Reboot
-    service: notify.pushover
+    service: notify.sms_oscar
+  - service: hassio.host_reboot
