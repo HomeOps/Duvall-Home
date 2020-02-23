@@ -29,3 +29,5 @@
     - type: last_boot
 - platform: template
   sensors: !include sensors.template.yaml
+- platform: dnsip
+  name: 'Public IP'
