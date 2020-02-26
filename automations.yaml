@@ -478,9 +478,41 @@
   condition:
   - condition: time
     weekday:
-      - sun
+    - sun
   action:
   - data:
       message: Reboot
     service: notify.sms_oscar
   - service: hassio.host_reboot
+- id: '1582498149789'
+  alias: Notify if Internet Connection changes
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.cable_modem
+    platform: state
+  - entity_id: binary_sensor.lte_modem
+    platform: state
+  condition: []
+  action:
+  - data_template:
+      message: Public IP has changed to {{ states("sensor.public_ip") }}
+    service: notify.sms_oscar
+- id: '1582741780213'
+  alias: Turn off cable modem switch if cable modem connection is off for more than
+    5 minutes
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.cable_modem
+    for: 00:05:00
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - data:
+      message: Restarting cable modem, it has been down for more than 5 minutes
+    service: notify.sms_oscar
+  - entity_id: switch.cable_modem
+    service: switch.turn_off
+  - delay: '10'
+  - entity_id: switch.cable_modem
+    service: switch.turn_on
