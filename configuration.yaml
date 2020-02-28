@@ -54,26 +54,6 @@ speedtestdotnet:
 apcupsd:
   host: 127.0.0.1
 
-edgeos:
-  host: !secret edge_os_host
-  ssl: !secret edge_os_ssl
-  username: !secret edge_os_username
-  password: !secret edge_os_password
-  #cert_file: !secret edge_os_ssl_certificate
-  monitored_interfaces:
-    - eth8
-    - eth9
-  monitored_devices:
-    - server
-    - Oscar-Phone
-    - Hazel-Phone
-    - Nexus-Phone
-  #Optional - Allowed values:
-  #  '' - represents bytes
-  #  'K' - represents Kilobytes
-  #  'M' - represents Megabytes
-  unit: 'M'
-
 #influxdb:
 #  host: !secret influxdb_host
 #  port: !secret influxdb_port
@@ -92,7 +72,7 @@ history:
 panel_iframe:
   router:
     title: 'Router'
-    url: 'http://192.168.1.1'
+    url: 'https://192.168.1.1'
 
 spotify:
   client_id: !secret spotify_client_id
