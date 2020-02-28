@@ -6,7 +6,6 @@
     - total_cameras
     - battery_level
     - signal_strength
-- platform: ring
 - platform: apcupsd
   resources:
     - bcharge
