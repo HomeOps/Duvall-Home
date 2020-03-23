@@ -53,7 +53,7 @@ sensor:
     device_class: power
 
   - platform: rest
-    name: PowerWall Battery now
+    name: PowerWall now
     resource: https://192.168.1.121/api/meters/aggregates
     method: GET
     verify_ssl: false
@@ -62,7 +62,7 @@ sensor:
     device_class: power
 
   - platform: rest
-    name: PowerWall Battery Capacity
+    name: PowerWall Capacity
     resource: https://192.168.1.121/api/system_status/soe
     method: GET
     verify_ssl: false
@@ -70,6 +70,11 @@ sensor:
     unit_of_measurement: '%'
     scan_interval: 300
     device_class: battery
+
+#homeassistant:
+#    customize:
+#        sensor.powerWall_battery_now:
+#            battery_sensor_creation_disabled: true
 
 automation:
   - alias: Notify if Grid is down
@@ -86,7 +91,6 @@ automation:
           value_template: "{{ states('sensor.grid_status') == 'False' }}"
 
     action:
-      - service: script.notify_engine
+      - service: notify.sms_oscar
         data_template:
-          value1: "The electrical grid is reporting to be {{ (trigger.to_state.state)|replace('True', 'up')|replace('False', 'down') }}.  Please verify with Tesla App."
-          who: 'parents'
+          message: "The electrical grid is reporting to be {{ (trigger.to_state.state)|replace('True', 'up')|replace('False', 'down') }}.  Please verify with Tesla App."

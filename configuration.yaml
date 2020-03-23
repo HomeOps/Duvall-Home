@@ -55,25 +55,11 @@ speedtestdotnet:
 apcupsd:
   host: 127.0.0.1
 
-#influxdb:
-#  host: !secret influxdb_host
-#  port: !secret influxdb_port
-#  database: !secret influxdb_database
-#  username: !secret influxdb_username
-#  password: !secret influxdb_password
-#  max_retries: 3
-#  default_measurement: state
-
 recorder:
   db_url: !secret recorder_db_url
   purge_keep_days: 5
 
 history:
-
-panel_iframe:
-  router:
-    title: 'Router'
-    url: 'https://192.168.1.1'
 
 spotify:
   client_id: !secret spotify_client_id

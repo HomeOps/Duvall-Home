@@ -48,3 +48,5 @@ light.mud_room_vent:
   hidden: true
 light.tv_room_vent:
   hidden: true
+binary_sensor.pantry_door_contact:
+  device_class: door

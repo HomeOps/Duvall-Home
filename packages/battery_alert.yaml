@@ -587,7 +587,7 @@ automation:
             text: *message
 
 - alias: battery_sensor_from_attributes
-  initial_state: 'on'
+  initial_state: 'off'
   trigger:
     - platform: event
       event_type: state_changed
@@ -769,7 +769,7 @@ automation:
           {%- endfor -%}
 
 - alias: delete_battery_sensor
-  initial_state: 'on'
+  initial_state: 'off'
   trigger:
     - platform: state
       entity_id:
