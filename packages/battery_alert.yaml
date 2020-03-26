@@ -738,8 +738,10 @@ automation:
 - alias: update_battery_status_group_members
   initial_state: 'on'
   trigger:
+    - platform: homeassistant
+      event: start
     - platform: time_pattern
-      minutes: '/1'
+      minutes: '/30'
       seconds: 00
   action:
     - service: group.set

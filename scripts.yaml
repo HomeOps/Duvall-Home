@@ -69,15 +69,21 @@ i_am_back:
 lights_off:
   alias: Lights Off
   sequence:
-  - service: light.turn_off
-    data:
+  - data:
       entity_id: group.all_lights
-  - service: switch.turn_off
-    data:
+    service: light.turn_off
+  - data:
       entity_id: group.all_light_switches
-  - service: cover.close_cover
-    data:
+    service: switch.turn_off
+  - data:
       entity_id: cover.all_blinds
+    service: cover.close_cover
+  - data:
+      entity_id:
+      - remote.family_room_tv
+      - remote.living_room_tv
+      - remote.master_bedroom_tv
+    service: remote.turn_off
 notify:
   alias: Notify
   sequence:
