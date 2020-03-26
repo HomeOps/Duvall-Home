@@ -141,3 +141,5 @@ all_light_switches:
     - switch.pantry_lights
     - switch.patio_lights
     - switch.server_room_lights_switch
+    - switch.den_pc_printer
+    - switch.den_network_switch

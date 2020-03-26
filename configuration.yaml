@@ -93,6 +93,12 @@ wemo:
     - 192.168.1.200
     - 192.168.1.201
 
+tplink:
+  discovery: false
+  strip:
+    - host: 192.168.1.140
+    - host: 192.168.1.141
+
 telegram_bot:
   - platform: polling
     api_key: !secret telegram_bot_api_key
