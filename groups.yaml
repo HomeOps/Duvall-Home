@@ -132,7 +132,7 @@ all_light_switches:
     - switch.guest_bathroom_lights
     - switch.laundry_fan
     - switch.living_left_lamp
-    - switch.living_right_lamp
+    - switch.living_electronics
     - switch.master_bathroom_fan
     - switch.master_bathroom_toilet_fan
     - switch.master_bedroom_cooler

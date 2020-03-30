@@ -8,6 +8,12 @@ good_morning:
   - data:
       entity_id: lock.mud_room_lock
     service: lock.unlock
+  - data: {}
+    entity_id:
+      - switch.living_electronics
+      - switch.den_pc_printer
+      - switch.den_network_switch
+    service: switch.turn_on
 good_night:
   alias: Good Night!
   sequence:
