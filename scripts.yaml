@@ -10,9 +10,12 @@ good_morning:
     service: lock.unlock
   - data: {}
     entity_id:
-      - switch.living_electronics
-      - switch.den_pc_printer
-      - switch.den_network_switch
+    - switch.living_electronics
+    - switch.den_pc_printer
+    - switch.den_network_switch
+    - switch.tv_room_plug_1
+    - switch.tv_room_plug_2
+    - switch.tv_room_plug_3
     service: switch.turn_on
 good_night:
   alias: Good Night!
@@ -69,6 +72,9 @@ i_am_back:
   - data:
       entity_id: climate.thermostat
     service: climate.ecobee_resume_program
+  - data:
+      entity_id: group.always_on_switches
+    service: switch.turn_on
   - data:
       sc_message: Welcome back
     service: script.notify

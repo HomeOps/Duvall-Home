@@ -143,3 +143,13 @@ all_light_switches:
     - switch.server_room_lights_switch
     - switch.den_pc_printer
     - switch.den_network_switch
+    - switch.tv_room_plug_1
+    - switch.tv_room_plug_2
+    - switch.tv_room_plug_3
+always_on_switches:
+  entities:
+    - switch.den_pc_printer
+    - switch.den_network_switch
+    - switch.tv_room_plug_1
+    - switch.tv_room_plug_2
+    - switch.tv_room_plug_3
