@@ -115,21 +115,21 @@ all_lights:
     - light.master_bed_lamp_2
     - light.master_bedroom_closet
     - light.master_bedroom_lights
-    - light.mud_room_switch
     - light.outside_garden_lights
     - light.outside_left_lights
     - light.pantry
     - light.stairs_lights
     - light.tv_room_lights
+    - light.garage
+    - light.mud_room
+    - light.den_bookshelve
+    - light.guest_bathroom_lights
+    - light.guest_bathroom_fan
 all_light_switches:
   entities:
-    - switch.den_bookshelve_lights
     - switch.dinning_lamp_1
     - switch.dinning_lamp_2
-    - switch.garage_lights
     - switch.gazibo_lights
-    - switch.guest_bathroom_fan
-    - switch.guest_bathroom_lights
     - switch.laundry_fan
     - switch.living_left_lamp
     - switch.living_electronics
@@ -153,3 +153,6 @@ always_on_switches:
     - switch.tv_room_plug_1
     - switch.tv_room_plug_2
     - switch.tv_room_plug_3
+    - switch.server_electronics
+    - switch.kitchen_electronics
+    - switch.den_shelve
