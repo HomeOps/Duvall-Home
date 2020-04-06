@@ -1,0 +1,18 @@
+title: Administrative
+views:
+    # View tab title.
+  - title: Example
+    cards:
+        # The markdown card will render markdown text.
+      - type: markdown
+        title: Lovelace
+        content: >
+          Welcome to your **Lovelace UI**.
+  - title: ZHA
+    panel: true
+    cards:
+      - type: 'custom:zha-network-visualization-card'
+        title: 'Map'
+resources:
+  - url: /config/www/community/zha-network-visualization-card/zha-network-visualization-card.js
+    type: module

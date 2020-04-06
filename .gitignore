@@ -33,6 +33,7 @@ zwscene.xml
 zigbee.db
 harmony*.conf
 html5_push_registrations.conf
+neighbours
 *.code-workspace
 
 # Note: ui-lovelace.yaml is generated automatically... see lovelace-gen.py and associated scripts

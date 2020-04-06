@@ -125,21 +125,23 @@ all_lights:
     - light.den_bookshelve
     - light.guest_bathroom_lights
     - light.guest_bathroom_fan
+    - light.patio_lights
+    - light.laundry_fan
+    - light.master_bathroom_fan
+    - light.master_bathroom_toilet_fan
+    - light.upstairs_bathroom_fan
+    - light.upstairs_bathroom_lights
 all_light_switches:
   entities:
     - switch.dinning_lamp_1
     - switch.dinning_lamp_2
     - switch.gazibo_lights
-    - switch.laundry_fan
     - switch.living_left_lamp
     - switch.living_electronics
-    - switch.master_bathroom_fan
-    - switch.master_bathroom_toilet_fan
     - switch.master_bedroom_cooler
     - switch.outside_lights
     - switch.outside_switch
     - switch.pantry_lights
-    - switch.patio_lights
     - switch.server_room_lights_switch
     - switch.den_pc_printer
     - switch.den_network_switch
