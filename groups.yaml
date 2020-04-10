@@ -8,9 +8,9 @@ perimeter_locks:
 perimeter_contacts:
   name: Perimeter Contacts
   entities:
-    - binary_sensor.main_door_sensor_contact
-    - binary_sensor.patio_door_sensor_contact
-    - binary_sensor.garage_door_sensor_contact
+    - binary_sensor.main_door_contact
+    - binary_sensor.patio_door_contact
+    - binary_sensor.garage_door_contact
     - binary_sensor.mud_room_door_contact
     - binary_sensor.den_window_1_contact
     - binary_sensor.den_window_2_contact
@@ -22,12 +22,14 @@ perimeter_covers:
 sleep_motion_sensors:
   name: Motion Sensors for Sleep
   entities:
-    - binary_sensor.living_motion_sensor_motion
-    - binary_sensor.den_motion_sensor_motion
-    - binary_sensor.hallway_motion_sensor_motion
-    - binary_sensor.tv_room_motion_sensor_motion
-    - binary_sensor.kitchen_motion_sensor_motion
-    - binary_sensor.stairs_motion_sensor_motion
+    - binary_sensor.living_motion
+    - binary_sensor.den_motion
+    - binary_sensor.hallway_motion
+    - binary_sensor.tv_room_motion
+    - binary_sensor.kitchen_motion
+    - binary_sensor.stairs_motion
+    - binary_sensor.mud_room_motion
+#    - binary_sensor.dinning_motion
 person_adults:
   name: Adult Persons
   entities:
@@ -101,7 +103,6 @@ all_lights:
     - light.hallway_lights
     - light.hallway_smoke_alarm
     - light.kitchen_lights
-    - light.laundry_lights
     - light.living_back_left
     - light.living_back_right
     - light.living_front_left
@@ -109,11 +110,11 @@ all_lights:
     - light.living_lights
     - light.living_lights_switch
     - light.master_bathroom_lights
-    - light.master_bathroom_toilet_lights
     - light.master_bed
     - light.master_bed_lamp_1
     - light.master_bed_lamp_2
     - light.master_bedroom_closet
+    - light.master_bathroom_closet
     - light.master_bedroom_lights
     - light.outside_garden_lights
     - light.outside_left_lights
@@ -133,16 +134,19 @@ all_lights:
     - light.upstairs_bathroom_lights
 all_light_switches:
   entities:
+    - switch.laundry_lights
     - switch.dinning_lamp_1
     - switch.dinning_lamp_2
     - switch.gazibo_lights
     - switch.living_left_lamp
     - switch.living_electronics
     - switch.master_bedroom_cooler
+    - switch.master_bathroom_toilet_lights
     - switch.outside_lights
     - switch.outside_switch
     - switch.pantry_lights
     - switch.server_room_lights_switch
+    - switch.server_electronics
     - switch.den_pc_printer
     - switch.den_network_switch
     - switch.tv_room_plug_1

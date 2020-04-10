@@ -53,7 +53,7 @@ zha:
   usb_path: !secret zha_usb_path
   database_path: !secret zha_database_path
 
-zha_map:
+#zha_map:
 
 sms:
   device: !secret sms_device
