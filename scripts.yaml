@@ -71,7 +71,7 @@ i_am_back:
     service: climate.set_preset_mode
   - data:
       entity_id: climate.thermostat
-    service: climate.ecobee_resume_program
+    service: ecobee.resume_program
   - data:
       entity_id: group.always_on_switches
     service: switch.turn_on
