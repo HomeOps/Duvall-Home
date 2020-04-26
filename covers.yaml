@@ -2,5 +2,3 @@
   username: !secret myq_username
   password: !secret myq_password
   type: liftmaster
-- platform: template
-  covers: !include covers.template.yaml

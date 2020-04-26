@@ -11,7 +11,7 @@ homeassistant:
   # Customization file
   customize: !include customize.yaml
   # customize_glob: !include customize_glob.yaml
-  packages: !include_dir_named packages
+  packages: !include packages/packages.yaml
   auth_providers:
    - type: homeassistant
 
@@ -44,6 +44,7 @@ lovelace:
       icon: mdi:script
       show_in_sidebar: true
       filename: administrative.yaml
+      require_admin: true
 
 zwave:
   usb_path: !secret zwave_usb_path

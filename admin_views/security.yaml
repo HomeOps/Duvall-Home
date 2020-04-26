@@ -1,0 +1,136 @@
+- title: Security
+  cards:
+    - entity: alarm_control_panel.ha_alarm
+      states:
+        - arm_home
+        - arm_away
+      type: alarm-panel
+    - entity: alarm_control_panel.duvall_home
+      name: Arlo
+      states:
+        - arm_home
+        - arm_away
+      type: alarm-panel
+    - entities:
+        - entity: cover.garage_door
+        - entity: cover.all_blinds
+      title: Garage Door
+      type: entities
+    - entities:
+        - entity: lock.den_door_locked
+        - entity: lock.main_door_lock
+        - entity: lock.mud_room_lock
+        - entity: lock.server_room_lock
+        - entity: group.perimeter_locks
+      show_header_toggle: false
+      title: Locks
+      type: entities
+    - entities:
+        - entity: binary_sensor.living_motion
+        - entity: binary_sensor.den_motion
+        - entity: binary_sensor.hallway_motion
+        - entity: binary_sensor.tv_room_motion
+        - entity: binary_sensor.kitchen_motion
+        - entity: binary_sensor.stairs_motion
+        - entity: group.sleep_motion_sensors
+      title: Sleep Motion Sensors
+      type: entities
+    - entities:
+        - entity: binary_sensor.internet
+        - entity: binary_sensor.cable_modem
+        - entity: binary_sensor.lte_modem
+        - entity: switch.cable_modem
+        - entity: switch.dual_4g_modem
+        - entity: sensor.public_ip
+        - entity: binary_sensor.netgear_lte_mobile_connected
+        - entity: sensor.ups_time_left
+        - entity: sensor.ups_battery
+        - entity: sensor.ups_input_voltage
+        - entity: sensor.ups_status
+        - entity: sensor.ups_load
+      title: Connectivity
+      type: entities
+    - entities:
+        - entity: camera.garage
+        - entity: camera.tv_room
+        - entity: camera.den
+        - entity: camera.front_door
+        - entity: camera.backyard
+        - entity: camera.outside
+        - entity: camera.leftside
+        - entity: camera.patio
+        - entity: camera.living
+      type: glance
+    - entity: climate.thermostat_hk
+      type: thermostat
+    - entities:
+        - entity: automation.good_morning
+        - entity: automation.good_night
+        - entity: automation.goodbye
+        - entity: automation.i_am_back
+        - entity: automation.lights_off
+      title: Automations
+      type: entities
+    - entities:
+        - entity: binary_sensor.main_door_contact
+        - entity: binary_sensor.mud_room_door_contact
+        - entity: binary_sensor.patio_door_contact
+        - entity: binary_sensor.garage_door_contact
+        - entity: binary_sensor.den_window_1_contact
+        - entity: binary_sensor.den_window_2_contact
+        - entity: group.perimeter_contacts
+      title: Perimeter Contacts
+      type: entities
+    - entities:
+        - entity: group.perimeter_covers
+        - entity: group.person_adults
+      title: Perimeter Contacts
+      type: entities
+    - entities:
+        - entity: binary_sensor.bedroom_1_door_sensor_contact
+        - entity: binary_sensor.bedroom_3_door_sensor_contact
+        - entity: group.kid_doors
+      title: Kids Doors
+      type: entities
+    - entities:
+        - sensor.cpu_temperature
+        - sensor.processor_use
+        - sensor.memory_use_percent
+        - sensor.speedtest_download
+        - sensor.speedtest_upload
+        - sensor.disk_use_percent
+        - sensor.ups_load
+      type: history-graph
+    - entities:
+        - entity: sensor.powerwall_charge_now
+          name: Powerwall
+        - entity: sensor.powerwall_solar_now
+          name: Solar
+        - entity: sensor.powerwall_site_now
+          name: Grid
+        - entity: sensor.powerwall_load_now
+          name: House
+        - entity: sensor.powerwall_charge
+      hours_to_show: 48
+      refresh_interval: 30
+      title: Power
+      type: history-graph
+    - entities:
+        - entity: group.battery_view
+        - entity: group.battery_status
+        - entity: group.battery_alert
+        - entity: input_number.battery_alert_threshold_min
+        - entity: input_number.battery_alert_threshold_max
+      title: Battery
+      type: entities
+    - entities:
+        - entity: lock.server_room_lock
+        - entity: switch.server_room_lights_switch
+        - entity: sensor.server_room_lights_switch_burglar
+        - entity: switch.kitchen_siren
+        - entity: switch.server_electronics
+        - entity: group.always_on_switches
+      show_header_toggle: false
+      title: Server
+      type: entities
+

@@ -1,0 +1,28 @@
+  - path: media
+    title: Media
+    cards:
+      - type: media-control
+        entity: media_player.bedroom_3
+      - type: media-control
+        entity: media_player.den
+      - type: media-control
+        entity: media_player.living_room
+      - type: media-control
+        entity: media_player.master_bedroom
+      - entities:
+          - entity: zwave.adapter
+          - entity: zwave.range_extender_kitchen
+          - entity: zwave.range_extender_tvroom
+          - entity: zwave.range_extender_hallway
+          - entity: zwave.server_room_lights_switch
+          - entity: zwave.den_door
+          - entity: zwave.hallway_lights
+          - entity: zwave.mud_room_lights
+          - entity: zwave.server_room_lock
+        title: Z-Wave
+        type: entities
+      - entity: weather.duvall
+        type: weather-forecast
+      - entities:
+          - entity: sensor.plex
+        type: entities

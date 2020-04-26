@@ -1,0 +1,27 @@
+- id: vent_house
+  alias: Vent House
+  description: Manages all vents
+  trigger:
+  - entity_id: binary_sensor.master_bedroom_vent
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data:
+      entity_id: cover.master_bedroom_vent
+      position: 100
+    service: cover.set_cover_position
+- id: vent_house_off
+  alias: Vent House Off
+  description: Manages all vents
+  trigger:
+  - entity_id: binary_sensor.master_bedroom_vent
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - data:
+      entity_id: cover.master_bedroom_vent
+      position: 10
+    service: cover.set_cover_position
+

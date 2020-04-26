@@ -1,0 +1,3 @@
+tesla_powerwall: !include powerwall/powerwall.yaml
+smart_vents: !include smartvents/smartvents.yaml
+battery_alert: !include battery/battery_alert.yaml

@@ -24,11 +24,6 @@
 - binary_sensor.ring_front_door_ding
 - binary_sensor.ring_front_door_motion
 - binary_sensor.tesla_model_3_presence
-- camera.backyard
-- camera.leftside
-- camera.outside
-- cover.garage_door_opener
-- cover.garage_door
 - media_player.kitchen
 - media_player.kitchen_echo
 - media_player.living_room
@@ -74,6 +69,5 @@
 - switch.cable_modem_2
 - switch.dual_4g_modem
 - switch.dual_4g_modem_2
-- switch.garage_door
 - binary_sensor.oscar_life360_presence
 - binary_sensor.hazel_life360_presence

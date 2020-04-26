@@ -1,0 +1,27 @@
+#
+# Smart Vents automations
+#
+#
+
+input_number:
+  vent_aperture_min:
+    name: "Vent Aperture Min"
+    icon: mdi:arrow-collapse-up
+    mode: slider
+    min: -1
+    max: 50
+    initial: 10
+  vent_aperture_max:
+    name: "Vent Aperture Min"
+    icon: mdi:arrow-collapse-up
+    mode: slider
+    min: 51
+    max: 100
+    initial: 100
+
+cover: !include covers.yaml
+binary_sensor: !include binary_sensors.yaml
+sensor: !include sensors.yaml
+group: !include groups.yaml
+automation: !include automations.yaml
+

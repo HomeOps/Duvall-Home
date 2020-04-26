@@ -26,7 +26,5 @@
     - type: memory_use_percent
     - type: processor_use
     - type: last_boot
-- platform: template
-  sensors: !include sensors.template.yaml
 - platform: dnsip
   name: 'Public IP'

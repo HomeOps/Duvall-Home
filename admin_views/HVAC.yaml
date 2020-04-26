@@ -1,0 +1,176 @@
+  - title: HVAC
+    path: hvac
+    badges: []
+    cards:
+      - entities:
+          - entity: sensor.bedroom_1_vent_temperature_measurement
+            name: Bed1Vent
+          - entity: sensor.bedroom_1_temperature_hk
+            name: Bed1
+          - entity: sensor.bedroom_3_vent_temperature_measurement
+            name: Bed3Vent
+          - entity: sensor.bedroom_3_temperature_hk
+            name: Bed3
+          - entity: sensor.master_bedroom_vent_temperature_measurement
+            name: MasterVent
+          - entity: sensor.master_bedroom_temperature_hk
+            name: Master
+          - entity: sensor.thermostat_target_temperature
+            name: Target
+        hours_to_show: 24
+        refresh_interval: 0
+        title: Bedrooms Temp
+        type: history-graph
+      - entities:
+          - entity: sensor.bedroom_1_vent
+            name: Bed1
+          - entity: sensor.bedroom_3_vent
+            name: Bed3
+          - entity: sensor.master_bedroom_vent
+            name: Master
+        hours_to_show: 24
+        refresh_interval: 0
+        title: Bedrooms Vent Aperture
+        type: history-graph
+      - entities:
+          - entity: sensor.thermostat_temperature
+            name: Thermostat
+          - entity: sensor.kitchen_vent_temperature_measurement
+            name: Kitchen
+          - entity: sensor.den_vent_temperature_measurement
+            name: Den
+          - entity: sensor.dinning_vent_temperature_measurement
+            name: Dinning
+          - entity: sensor.guest_bathroom_vent_temperature_measurement
+            name: Guest Bathroom
+          - entity: sensor.guest_bedroom_vent_temperature_measurement
+            name: Guest Bedroom
+          - entity: sensor.hallway_vent_temperature_measurement
+            name: Hallway
+          - entity: sensor.living_vent_temperature_measurement
+            name: Living
+          - entity: sensor.tv_room_vent_temperature_measurement
+            name: TV Room
+          - entity: sensor.mud_room_vent_temperature_measurement
+            name: Mud Room
+          - entity: sensor.master_bathroom_vent_temperature_measurement
+            name: MasterBath
+          - entity: sensor.master_bedroom_vent_temperature_measurement
+            name: Master
+          - entity: sensor.bedroom_1_vent_temperature_measurement
+            name: Bed1
+          - entity: sensor.bedroom_3_vent_temperature_measurement
+            name: Bed3
+        hours_to_show: 24
+        refresh_interval: 0
+        title: Vents Temp
+        type: history-graph
+      - entities:
+          - entity: cover.kitchen_vent
+            name: Kitchen
+          - entity: light.kitchen_vent
+            name: Kitchen
+          - entity: cover.den_vent
+            name: Den
+          - entity: light.den_vent
+            name: Den
+          - entity: cover.dinning_vent
+            name: Dinning
+          - entity: cover.guest_bathroom_vent
+            name: Guest Bathroom
+          - entity: light.guest_bathroom_vent
+            name: Guest Bathroom
+          - entity: cover.guest_bedroom_vent
+            name: Guest Bedroom
+          - entity: light.guest_bedroom_vent
+            name: Guest Bedroom
+          - entity: cover.hallway_vent
+            name: Hallway
+          - entity: light.hallway_vent
+            name: Hallway
+          - entity: cover.living_vent
+            name: Living
+          - entity: light.living_vent
+            name: Living
+          - entity: cover.tv_room_vent
+            name: TV Room
+          - entity: light.tv_room_vent
+            name: TV Room
+          - entity: cover.mud_room_vent
+            name: Mud Room
+          - entity: light.mud_room_vent
+            name: Mud Room
+          - entity: cover.master_bathroom_vent
+            name: MasterBath
+          - entity: light.master_bathroom_vent
+            name: MasterBath
+          - entity: cover.master_bedroom_vent
+            name: Master
+          - entity: light.master_bedroom_vent
+            name: Master
+          - entity: cover.bedroom_1_vent
+            name: Bed1
+          - entity: light.bedroom_1_vent
+            name: Bed1
+          - entity: cover.bedroom_3_vent
+            name: Bed3
+          - entity: light.bedroom_3_vent
+            name: Bed3
+          - entity: automation.vent_house
+          - entity: automation.vent_house_off
+          - entity: switch.whole_house_fan
+        title: Vents
+        type: entities
+      - entities:
+          - entity: sensor.kitchen_vent_battery
+            name: Kitchen
+          - entity: sensor.den_vent_battery
+            name: Den
+          - entity: sensor.dinning_vent_battery
+            name: Dinning
+          - entity: sensor.guest_bathroom_vent_battery
+            name: Guest Bathroom
+          - entity: sensor.guest_bedroom_vent_battery
+            name: Guest Bedroom
+          - entity: sensor.hallway_vent_battery
+            name: Hallway
+          - entity: sensor.living_vent_battery
+            name: Living
+          - entity: sensor.tv_room_vent_battery
+            name: TV Room
+          - entity: sensor.mud_room_vent_battery
+            name: Mud Room
+          - entity: sensor.master_bathroom_vent_battery
+            name: MasterBath
+          - entity: sensor.master_bedroom_vent_battery
+            name: Master
+          - entity: sensor.bedroom_1_vent_battery
+            name: Bed1
+          - entity: sensor.bedroom_3_vent_battery
+            name: Bed3
+        title: Vents Battery
+        type: entities
+      - entities:
+          - entity: sensor.living_vent
+          - entity: sensor.hallway_vent
+          - entity: sensor.den_vent
+          - entity: sensor.dinning_vent
+          - entity: sensor.kitchen_vent
+          - entity: sensor.tv_room_vent
+          - entity: sensor.guest_bathroom_vent
+        hours_to_show: 24
+        refresh_interval: 0
+        title: Vents Aperture
+        type: history-graph
+      - entities:
+          - entity: binary_sensor.bedroom_1_vent
+            name: Bed1
+          - entity: binary_sensor.bedroom_3_vent
+            name: Bed3
+          - entity: binary_sensor.master_bedroom_vent
+            name: Master
+        hours_to_show: 24
+        refresh_interval: 0
+        title: Vents Desired Aperture
+        type: history-graph
+
