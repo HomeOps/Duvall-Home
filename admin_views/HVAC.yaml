@@ -68,58 +68,63 @@
       - entities:
           - entity: cover.kitchen_vent
             name: Kitchen
-          - entity: light.kitchen_vent
-            name: Kitchen
           - entity: cover.den_vent
-            name: Den
-          - entity: light.den_vent
             name: Den
           - entity: cover.dinning_vent
             name: Dinning
           - entity: cover.guest_bathroom_vent
             name: Guest Bathroom
-          - entity: light.guest_bathroom_vent
-            name: Guest Bathroom
           - entity: cover.guest_bedroom_vent
-            name: Guest Bedroom
-          - entity: light.guest_bedroom_vent
             name: Guest Bedroom
           - entity: cover.hallway_vent
             name: Hallway
-          - entity: light.hallway_vent
-            name: Hallway
           - entity: cover.living_vent
-            name: Living
-          - entity: light.living_vent
             name: Living
           - entity: cover.tv_room_vent
             name: TV Room
-          - entity: light.tv_room_vent
-            name: TV Room
           - entity: cover.mud_room_vent
-            name: Mud Room
-          - entity: light.mud_room_vent
             name: Mud Room
           - entity: cover.master_bathroom_vent
             name: MasterBath
-          - entity: light.master_bathroom_vent
-            name: MasterBath
           - entity: cover.master_bedroom_vent
-            name: Master
-          - entity: light.master_bedroom_vent
             name: Master
           - entity: cover.bedroom_1_vent
             name: Bed1
-          - entity: light.bedroom_1_vent
-            name: Bed1
           - entity: cover.bedroom_3_vent
             name: Bed3
+        title: Vents
+        type: entities
+      - entities:
+          - entity: light.hallway_vent
+            name: Hallway
+          - entity: light.den_vent
+            name: Den
+          - entity: light.guest_bathroom_vent
+            name: Guest Bathroom
+          - entity: light.mud_room_vent
+            name: Mud Room
+          - entity: light.kitchen_vent
+            name: Kitchen
+          - entity: light.living_vent
+            name: Living
+          - entity: light.dinning_vent
+            name: Dinning
+        title: Downstairs Vents
+        type: entities
+      - entities:
+          - entity: light.tv_room_vent
+            name: TV Room
+          - entity: light.master_bedroom_vent
+            name: Master
+          - entity: light.master_bathroom_vent
+            name: Master Bathroom
+          - entity: light.bedroom_1_vent
+            name: Bed1
+          - entity: light.guest_bedroom_vent
+            name: Guest Bedroom
           - entity: light.bedroom_3_vent
             name: Bed3
-          - entity: automation.vent_house
-          - entity: automation.vent_house_off
-          - entity: switch.whole_house_fan
-        title: Vents
+        title: Upstairs Vents
         type: entities
       - entities:
           - entity: sensor.kitchen_vent_battery
