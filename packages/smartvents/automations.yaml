@@ -1,29 +1,3 @@
-- id: vent_house
-  alias: Vent House
-  description: Manages all vents
-  trigger:
-  - entity_id: binary_sensor.master_bedroom_vent
-    platform: state
-    to: 'on'
-  condition: []
-  action:
-  - data:
-      entity_id: cover.master_bedroom_vent
-      position: 100
-    service: cover.set_cover_position
-- id: vent_house_off
-  alias: Vent House Off
-  description: Manages all vents
-  trigger:
-  - entity_id: binary_sensor.master_bedroom_vent
-    platform: state
-    to: 'off'
-  condition: []
-  action:
-  - data:
-      entity_id: cover.master_bedroom_vent
-      position: 10
-    service: cover.set_cover_position
 - alias: update_vent_group_members
   initial_state: 'on'
   trigger:
@@ -49,30 +23,6 @@
   action:
     - service: group.set
       data_template:
-        object_id: "open_vents"
-        entities: >-
-            {% macro get_name(light) -%}
-            {{ light.entity_id.replace('_vent','').replace('light.','')}}
-            {%- endmacro -%}
-            {% macro get_vent_temp(light) -%}
-            sensor.{{get_name(light)}}_vent_temperature
-            {%- endmacro -%}
-            {% macro get_room_temp(light) -%}
-            sensor.{{get_name(light)}}_temperature
-            {%- endmacro -%}
-            {% macro get_open(light) -%}
-            {% set target = state_attr("climate.thermostat_hk", "temperature")|float -%}
-            {% set vent = states(get_vent_temp(light))|float -%}
-            {% set room = states(get_room_temp(light))|float -%}
-            {% set requestOpen = not (((room-target)>0.5 and (vent-room)>0.5) or ((target-room)>0.5 and (room-vent)>0.5)) -%}
-            {% set level = float(state_attr(light.entity_id, "brightness")/ 255 * 100) | round(0) | int -%}
-            {% if requestOpen and level<50 -%}{{light.entity_id}},{%- endif -%}
-            {%- endmacro -%}
-            {% for light in states['light'] if ( (light.entity_id | lower).endswith('_vent') ) %}
-                {{get_open(light)}}
-            {%- endfor -%}light.dummy
-    - service: group.set
-      data_template:
         object_id: "closed_vents"
         entities: >-
             {% macro get_name(light) -%}
@@ -95,4 +45,36 @@
             {% for light in states['light'] if ( (light.entity_id | lower).endswith('_vent') ) %}
                 {{get_close(light)}}
             {%- endfor -%}light.dummy
+    - service: light.turn_on
+      data:
+        brightness_pct: 10
+        entity_id: group.closed_vents
+    - service: group.set
+      data_template:
+        object_id: "open_vents"
+        entities: >-
+            {% macro get_name(light) -%}
+            {{ light.entity_id.replace('_vent','').replace('light.','')}}
+            {%- endmacro -%}
+            {% macro get_vent_temp(light) -%}
+            sensor.{{get_name(light)}}_vent_temperature
+            {%- endmacro -%}
+            {% macro get_room_temp(light) -%}
+            sensor.{{get_name(light)}}_temperature
+            {%- endmacro -%}
+            {% macro get_open(light) -%}
+            {% set target = state_attr("climate.thermostat_hk", "temperature")|float -%}
+            {% set vent = states(get_vent_temp(light))|float -%}
+            {% set room = states(get_room_temp(light))|float -%}
+            {% set requestOpen = not (((room-target)>0.5 and (vent-room)>0.5) or ((target-room)>0.5 and (room-vent)>0.5)) -%}
+            {% set level = float(state_attr(light.entity_id, "brightness")/ 255 * 100) | round(0) | int -%}
+            {% if requestOpen and level<50 -%}{{light.entity_id}},{%- endif -%}
+            {%- endmacro -%}
+            {% for light in states['light'] if ( (light.entity_id | lower).endswith('_vent') ) %}
+                {{get_open(light)}}
+            {%- endfor -%}light.dummy
+    - service: light.turn_on
+      data:
+        brightness_pct: 100
+        entity_id: group.open_vents
 
