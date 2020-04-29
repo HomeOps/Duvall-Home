@@ -39,6 +39,7 @@
         - entity: binary_sensor.internet
         - entity: binary_sensor.cable_modem
         - entity: binary_sensor.lte_modem
+        - entity: binary_sensor.server
         - entity: switch.cable_modem
         - entity: switch.dual_4g_modem
         - entity: sensor.public_ip
