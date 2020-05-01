@@ -1,0 +1,12 @@
+cable_modem:
+  friendly_name: "Cable Modem"
+  device_class: connectivity
+  entity_id: "sensor.public_ip"
+  value_template: >-
+    {{ (states("sensor.public_ip").split(".")|first) == "66" }}
+lte_modem:
+  friendly_name: "LTE Modem"
+  device_class: connectivity
+  entity_id: "sensor.public_ip"
+  value_template: >-
+    {{ (states("sensor.public_ip").split(".")|first) == "172" }}

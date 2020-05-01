@@ -5,15 +5,15 @@
       - entities:
           - entity: sensor.bedroom_1_vent_temperature
             name: Bed1Vent
-          - entity: sensor.bedroom_1_temperature_hk
+          - entity: sensor.bedroom_1_temperature
             name: Bed1
           - entity: sensor.bedroom_3_vent_temperature
             name: Bed3Vent
-          - entity: sensor.bedroom_3_temperature_hk
+          - entity: sensor.bedroom_3_temperature
             name: Bed3
           - entity: sensor.master_bedroom_vent_temperature
             name: MasterVent
-          - entity: sensor.master_bedroom_temperature_hk
+          - entity: sensor.master_bedroom_temperature
             name: Master
           - entity: sensor.thermostat_target_temperature
             name: Target
@@ -65,35 +65,6 @@
         refresh_interval: 0
         title: Vents Temp
         type: history-graph
-      - entities:
-          - entity: cover.kitchen_vent
-            name: Kitchen
-          - entity: cover.den_vent
-            name: Den
-          - entity: cover.dinning_vent
-            name: Dinning
-          - entity: cover.guest_bathroom_vent
-            name: Guest Bathroom
-          - entity: cover.guest_bedroom_vent
-            name: Guest Bedroom
-          - entity: cover.hallway_vent
-            name: Hallway
-          - entity: cover.living_vent
-            name: Living
-          - entity: cover.tv_room_vent
-            name: TV Room
-          - entity: cover.mud_room_vent
-            name: Mud Room
-          - entity: cover.master_bathroom_vent
-            name: MasterBath
-          - entity: cover.master_bedroom_vent
-            name: Master
-          - entity: cover.bedroom_1_vent
-            name: Bed1
-          - entity: cover.bedroom_3_vent
-            name: Bed3
-        title: Vents
-        type: entities
       - entities:
           - entity: light.hallway_vent
             name: Hallway
