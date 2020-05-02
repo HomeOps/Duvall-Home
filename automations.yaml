@@ -349,9 +349,6 @@
       minutes: 20
       seconds: 0
     state: 'off'
-  - condition: state
-    entity_id: light.master_bed
-    state: 'off'
   action:
   - service: script.lights_off
 - id: turn_on_living_lights

@@ -30,6 +30,8 @@ sleep_motion_sensors:
     - binary_sensor.stairs_motion
     - binary_sensor.mud_room_motion
 #    - binary_sensor.dinning_motion
+    - binary_sensor.living_tv_switch
+    - binary_sensor.master_bedroom_tv_switch
 person_adults:
   name: Adult Persons
   entities:
