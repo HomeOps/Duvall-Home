@@ -1,36 +1,39 @@
 bedroom_1_vent:
-  friendly_name: "Bedroom 1 Vent"
-  device_class: door
-  entity_id: "sensor.bedroom_1_temperature, sensor.bedroom_1_vent_temperature_measurement, climate.thermostat"
-  value_template: >-
-    {% macro get_openclose(name) -%}
-    {% set target = state_attr("climate.thermostat_hk", "temperature")|float -%}
-    {% set vent = states("sensor."+name+"_vent_temperature")|float -%}
-    {% set room = states("sensor."+name+"_temperature_hk")|float -%}
-    {{ not (((room-target)>0.5 and (vent-room)>0.5) or ((target-room)>0.5 and (room-vent)>0.5))}}
-    {%- endmacro -%}
-    {{ get_openclose("bedroom_1") }}
+  entity_id: light.bedroom_1_vent
+  value_template: '{{state_attr("light.bedroom_1_vent", "brightness")|int > 128}}'
 bedroom_3_vent:
-  friendly_name: "Bedroom 3 Vent"
-  device_class: door
-  entity_id: "sensor.bedroom_3_temperature, sensor.bedroom_3_vent_temperature_measurement, climate.thermostat"
-  value_template: >-
-    {% macro get_openclose(name) -%}
-    {% set target = state_attr("climate.thermostat", "target_temp_low") + ((state_attr("climate.thermostat", "target_temp_high") - state_attr("climate.thermostat", "target_temp_low"))/2.0) -%}
-    {% set vent = states("sensor."+name+"_vent_temperature")|float -%}
-    {% set room = states("sensor."+name+"_temperature")|float -%}
-    {{ not (((room-target)>0.5 and (vent-room)>0.5) or ((target-room)>0.5 and (room-vent)>0.5))}}
-    {%- endmacro -%}
-    {{ get_openclose("bedroom_3") }}
+  entity_id: light.bedroom_3_vent
+  value_template: '{{state_attr("light.bedroom_3_vent", "brightness")|int > 128}}'
+den_vent:
+  entity_id: light.den_vent
+  value_template: '{{state_attr("light.den_vent", "brightness")|int > 128}}'
+dinning_vent:
+  entity_id: light.dinning_vent
+  value_template: '{{state_attr("light.dinning_vent", "brightness")|int > 128}}'
+guest_bathroom_vent:
+  entity_id: light.guest_bathroom_vent
+  value_template: '{{state_attr("light.guest_bathroom_vent", "brightness")|int > 128}}'
+guest_bedroom_vent:
+  entity_id: light.guest_bedroom_vent
+  value_template: '{{state_attr("light.guest_bedroom_vent", "brightness")|int > 128}}'
+hallway_vent:
+  entity_id: light.hallway_vent
+  value_template: '{{state_attr("light.hallway_vent", "brightness")|int > 128}}'
+kitchen_vent:
+  entity_id: light.kitchen_vent
+  value_template: '{{state_attr("light.kitchen_vent", "brightness")|int > 128}}'
+living_vent:
+  entity_id: light.living_vent
+  value_template: '{{state_attr("light.living_vent", "brightness")|int > 128}}'
+master_bathroom_vent:
+  entity_id: light.master_bathroom_vent
+  value_template: '{{state_attr("light.master_bathroom_vent", "brightness")|int > 128}}'
 master_bedroom_vent:
-  friendly_name: "Master Bedroom Vent"
-  device_class: door
-  entity_id: "sensor.master_bedroom_temperature, sensor.master_bedroom_vent_temperature_measurement, climate.thermostat"
-  value_template: >-
-    {% macro get_openclose(name) -%}
-    {% set target = state_attr("climate.thermostat", "target_temp_low") + ((state_attr("climate.thermostat", "target_temp_high") - state_attr("climate.thermostat", "target_temp_low"))/2.0) -%}
-    {% set vent = states("sensor."+name+"_vent_temperature")|float -%}
-    {% set room = states("sensor."+name+"_temperature")|float -%}
-    {{ not (((room-target)>0.5 and (vent-room)>0.5) or ((target-room)>0.5 and (room-vent)>0.5))}}
-    {%- endmacro -%}
-    {{ get_openclose("master_bedroom") }}
+  entity_id: light.master_bedroom_vent
+  value_template: '{{state_attr("light.master_bedroom_vent", "brightness")|int > 128}}'
+mud_room_vent:
+  entity_id: light.mud_room_vent
+  value_template: '{{state_attr("light.mud_room_vent", "brightness")|int > 128}}'
+tv_room_vent:
+  entity_id: light.tv_room_vent
+  value_template: '{{state_attr("light.tv_room_vent", "brightness")|int > 128}}'

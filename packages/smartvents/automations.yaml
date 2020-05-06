@@ -36,6 +36,9 @@
             {%- endmacro -%}
             {% macro get_close(light) -%}
             {% set target = state_attr("climate.thermostat_hk", "temperature")|float -%}
+            {% set hvacMode = state_attr("climate.thermostat_hk", "hvac_action")|lower -%}
+            {% if hvacMode == 'cooling' -%}{% set target = target + 0.5 -%}{% endif -%}
+            {% if hvacMode == 'heating' -%}{% set target = target - 0.5 -%}{% endif -%}
             {% set vent = states(get_vent_temp(light))|float -%}
             {% set room = states(get_room_temp(light))|float -%}
             {% set requestClose = (((room-target)>0.5 and (vent-room)>0.5) or ((target-room)>0.5 and (room-vent)>0.5)) -%}
@@ -48,8 +51,8 @@
                 {{get_close(light)}}
             {%- endfor -%}light.dummy
     - service: light.turn_on
-      data:
-        brightness_pct: 10
+      data_template:
+        brightness_pct: "{{ states('input_number.vent_aperture_min') | int }}"
         entity_id: group.closed_vents
     - service: group.set
       data_template:
@@ -66,6 +69,9 @@
             {%- endmacro -%}
             {% macro get_open(light) -%}
             {% set target = state_attr("climate.thermostat_hk", "temperature")|float -%}
+            {% set hvacMode = state_attr("climate.thermostat_hk", "hvac_action")|lower -%}
+            {% if hvacMode == 'cooling' -%}{% set target = target + 0.5 -%}{% endif -%}
+            {% if hvacMode == 'heating' -%}{% set target = target - 0.5 -%}{% endif -%}
             {% set vent = states(get_vent_temp(light))|float -%}
             {% set room = states(get_room_temp(light))|float -%}
             {% set requestOpen = not (((room-target)>0.5 and (vent-room)>0.5) or ((target-room)>0.5 and (room-vent)>0.5)) -%}
@@ -78,7 +84,7 @@
                 {{get_open(light)}}
             {%- endfor -%}light.dummy
     - service: light.turn_on
-      data:
-        brightness_pct: 100
+      data_template:
+        brightness_pct: "{{ states('input_number.vent_aperture_max') | int }}"
         entity_id: group.open_vents
 

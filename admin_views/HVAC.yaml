@@ -3,67 +3,89 @@
     badges: []
     cards:
       - entities:
+          - entity: sensor.thermostat_target_temperature
+            name: Target
           - entity: sensor.bedroom_1_vent_temperature
             name: Bed1Vent
           - entity: sensor.bedroom_1_temperature
-            name: Bed1
+            name: Bed1Temp
+          - entity: binary_sensor.bedroom_1_vent
+            name: Bed1Open
+          - entity: sensor.guest_bedroom_vent_temperature
+            name: GuestBedVent
+          - entity: sensor.guest_bedroom_temperature
+            name: GuestBedVent
+          - entity: binary_sensor.guest_bedroom_vent
+            name: GuestBedOpen
           - entity: sensor.bedroom_3_vent_temperature
             name: Bed3Vent
           - entity: sensor.bedroom_3_temperature
-            name: Bed3
+            name: Bed3Temp
+          - entity: binary_sensor.bedroom_3_vent
+            name: Bed3Open
           - entity: sensor.master_bedroom_vent_temperature
             name: MasterVent
           - entity: sensor.master_bedroom_temperature
-            name: Master
-          - entity: sensor.thermostat_target_temperature
-            name: Target
-        hours_to_show: 24
-        refresh_interval: 0
-        title: Bedrooms Temp
-        type: history-graph
-      - entities:
-          - entity: sensor.bedroom_1_vent
-            name: Bed1
-          - entity: sensor.bedroom_3_vent
-            name: Bed3
-          - entity: sensor.master_bedroom_vent
-            name: Master
-        hours_to_show: 24
-        refresh_interval: 0
-        title: Bedrooms Vent Aperture
-        type: history-graph
-      - entities:
-          - entity: sensor.thermostat_temperature
-            name: Thermostat
-          - entity: sensor.kitchen_vent_temperature
-            name: Kitchen
-          - entity: sensor.den_vent_temperature
-            name: Den
-          - entity: sensor.dinning_vent_temperature
-            name: Dinning
-          - entity: sensor.guest_bathroom_vent_temperature
-            name: Guest Bathroom
-          - entity: sensor.guest_bedroom_vent_temperature
-            name: Guest Bedroom
-          - entity: sensor.hallway_vent_temperature
-            name: Hallway
-          - entity: sensor.living_vent_temperature
-            name: Living
-          - entity: sensor.tv_room_vent_temperature
-            name: TV Room
-          - entity: sensor.mud_room_vent_temperature
-            name: Mud Room
+            name: MasterTemp
+          - entity: binary_sensor.master_bedroom_vent
+            name: MasterOpen
           - entity: sensor.master_bathroom_vent_temperature
-            name: MasterBath
-          - entity: sensor.master_bedroom_vent_temperature
-            name: Master
-          - entity: sensor.bedroom_1_vent_temperature
-            name: Bed1
-          - entity: sensor.bedroom_3_vent_temperature
-            name: Bed3
+            name: MasterBathVent
+          - entity: sensor.master_bathroom_temperature
+            name: MasterBathTemp
+          - entity: binary_sensor.master_bathroom_vent
+            name: MasterBathOpen
+          - entity: sensor.kitchen_vent_temperature
+            name: KitchenVent
+          - entity: sensor.kitchen_temperature
+            name: KitchenTemp
+          - entity: binary_sensor.kitchen_vent
+            name: KitchenOpen
+          - entity: sensor.den_vent_temperature
+            name: DenVent
+          - entity: sensor.den_temperature
+            name: DenTemp
+          - entity: binary_sensor.den_vent
+            name: DenOpen
+          - entity: sensor.dinning_vent_temperature
+            name: DinningVent
+          - entity: sensor.dinning_temperature
+            name: DinningTemp
+          - entity: binary_sensor.dinning_vent
+            name: DinningOpen
+          - entity: sensor.guest_bathroom_vent_temperature
+            name: GuestBathVent
+          - entity: sensor.guest_bathroom_temperature
+            name: GuestBathTemp
+          - entity: binary_sensor.guest_bathroom_vent
+            name: GuestBathOpen
+          - entity: sensor.hallway_vent_temperature
+            name: HallwayVent
+          - entity: sensor.hallway_temperature
+            name: HallwayTemp
+          - entity: binary_sensor.hallway_vent
+            name: HallwayOpen
+          - entity: sensor.living_vent_temperature
+            name: LivingVent
+          - entity: sensor.living_temperature
+            name: LivingTemp
+          - entity: binary_sensor.living_vent
+            name: LivingOpen
+          - entity: sensor.tv_room_vent_temperature
+            name: TVRoomVent
+          - entity: sensor.tv_room_temperature
+            name: TVRoomTemp
+          - entity: binary_sensor.living_vent
+            name: TVRoomOpen
+          - entity: sensor.mud_room_vent_temperature
+            name: MudRoomVent
+          - entity: sensor.mud_room_temperature
+            name: MudRoomTemp
+          - entity: binary_sensor.mud_room_vent
+            name: MudRoomOpen
         hours_to_show: 24
         refresh_interval: 0
-        title: Vents Temp
+        title: Temperature
         type: history-graph
       - entities:
           - entity: light.hallway_vent
@@ -126,27 +148,4 @@
             name: Bed3
         title: Vents Battery
         type: entities
-      - entities:
-          - entity: sensor.living_vent
-          - entity: sensor.hallway_vent
-          - entity: sensor.den_vent
-          - entity: sensor.dinning_vent
-          - entity: sensor.kitchen_vent
-          - entity: sensor.tv_room_vent
-          - entity: sensor.guest_bathroom_vent
-        hours_to_show: 24
-        refresh_interval: 0
-        title: Vents Aperture
-        type: history-graph
-      - entities:
-          - entity: binary_sensor.bedroom_1_vent
-            name: Bed1
-          - entity: binary_sensor.bedroom_3_vent
-            name: Bed3
-          - entity: binary_sensor.master_bedroom_vent
-            name: Master
-        hours_to_show: 24
-        refresh_interval: 0
-        title: Vents Desired Aperture
-        type: history-graph
 
