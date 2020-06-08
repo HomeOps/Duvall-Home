@@ -19,6 +19,19 @@ perimeter_covers:
   entities:
     - cover.garage_door
     - cover.all_blinds
+night_motion_sensors:
+  name: Motion Sensors for Good Night
+  entities:
+    - binary_sensor.living_motion
+    - binary_sensor.den_motion
+    - binary_sensor.hallway_motion
+    - binary_sensor.tv_room_motion
+    - binary_sensor.kitchen_motion
+    - binary_sensor.stairs_motion
+    - binary_sensor.mud_room_motion
+#    - binary_sensor.dinning_motion
+    - binary_sensor.front_door_motion
+    - binary_sensor.backyard_motion
 sleep_motion_sensors:
   name: Motion Sensors for Sleep
   entities:
@@ -29,9 +42,9 @@ sleep_motion_sensors:
     - binary_sensor.kitchen_motion
     - binary_sensor.stairs_motion
     - binary_sensor.mud_room_motion
-#    - binary_sensor.dinning_motion
     - binary_sensor.living_tv_switch
     - binary_sensor.master_bedroom_tv_switch
+    - media_player.family_room_tv
 person_adults:
   name: Adult Persons
   entities:
@@ -43,10 +56,23 @@ cars_presence:
     - binary_sensor.highlander_presence
     - binary_sensor.tesla_model_3_presence
 kid_doors:
-  name: Kids Doors
+  name: Kid doors
   entities:
     - binary_sensor.bedroom_1_door_sensor_contact
     - binary_sensor.bedroom_3_door_sensor_contact
+sleep_contacts:
+  name: Internal Contacts for Sleep
+  entities:
+    - binary_sensor.bedroom_1_door_sensor_contact
+    - binary_sensor.bedroom_3_door_sensor_contact
+    - binary_sensor.master_bedroom_door_contact
+sleep_lights:
+  name: Lights for Sleep
+  entities:
+    - light.master_bedroom_lights
+    - light.master_bed_lamp_1
+    - light.master_bed_lamp_2
+    - light.master_bathroom_lights
 all_lights:
   entities:
     - light.backyard_light

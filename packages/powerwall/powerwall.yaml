@@ -23,6 +23,12 @@ group:
 #        sensor.powerWall_battery_now:
 #            battery_sensor_creation_disabled: true
 
+sensor:
+  - platform: integration
+    source: sensor.powerwall_solar_now
+    name: solar_produced
+    round: 2
+
 automation:
   - alias: Notify if Grid is down
     trigger:
