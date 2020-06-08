@@ -3,6 +3,7 @@ This component provides support for Home Automation Manager (HAM).
 For more details about this component, please refer to the documentation at
 https://home-assistant.io/components/edgeos/
 """
+from asyncio import sleep
 import logging
 import sys
 from typing import Optional
@@ -14,6 +15,7 @@ from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from . import LoginException
 from ..helpers.const import *
 from ..managers.configuration_manager import ConfigManager
+from .web_socket import EdgeOSWebSocket
 
 REQUIREMENTS = ["aiohttp"]
 
@@ -21,7 +23,13 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class EdgeOSWebAPI:
-    def __init__(self, hass, config_manager: ConfigManager, disconnection_handler=None):
+    def __init__(
+        self,
+        hass,
+        config_manager: ConfigManager,
+        disconnection_handler=None,
+        ws: Optional[EdgeOSWebSocket] = None,
+    ):
         self._config_manager = config_manager
         self._last_update = datetime.now()
         self._session: Optional[ClientSession] = None
@@ -35,6 +43,8 @@ class EdgeOSWebAPI:
         self._disconnection_handler = disconnection_handler
 
         self._disconnections = 0
+
+        self._ws = ws
 
     async def initialize(self):
         cookie_jar = CookieJar(unsafe=True)
@@ -142,37 +152,49 @@ class EdgeOSWebAPI:
 
     async def async_get(self, url):
         result = None
+        message = None
 
-        try:
-            async with self._session.get(url, ssl=False) as response:
-                _LOGGER.debug(f"Status of {url}: {response.status}")
+        retry_attempt = 0
+        while retry_attempt < MAXIMUM_RECONNECT:
+            if retry_attempt > 0:
+                await sleep(1)
 
-                self._is_connected = response.status < 400
+            retry_attempt = retry_attempt + 1
 
-                if response.status == 403:
-                    if self._disconnections + 1 < MAXIMUM_RECONNECT:
-                        self._disconnections = self._disconnections + 1
+            try:
+                async with self._session.get(url, ssl=False) as response:
+                    status = response.status
+                    message = (
+                        f"URL: {url}, Status: {response.reason} ({response.status})"
+                    )
 
-                        if self._disconnection_handler is not None:
-                            await self._disconnection_handler()
-                    else:
-                        _LOGGER.error(
-                            f"Failed to make authenticated request to {url} {self._disconnections} times"
-                        )
-                else:
-                    response.raise_for_status()
+                    if status < 400:
+                        result = await response.json()
+                        break
+                    elif status == 403:
+                        break
 
-                    result = await response.json()
+            except Exception as ex:
+                exc_type, exc_obj, tb = sys.exc_info()
+                line_number = tb.tb_lineno
+                message = f"URL: {url}, Error: {ex}, Line: {line_number}"
 
-                    self._last_update = datetime.now()
+        valid_response = status < 400
 
-        except Exception as ex:
-            self._is_connected = False
+        self._is_connected = valid_response
 
-            exc_type, exc_obj, tb = sys.exc_info()
-            line_number = tb.tb_lineno
+        if retry_attempt > 1:
+            message = f"{message}, Retry attempt #{retry_attempt}"
 
-            _LOGGER.error(f"Failed to connect {url}, Error: {ex}, Line: {line_number}")
+        if valid_response:
+            self._last_update = datetime.now()
+            _LOGGER.debug(message)
+
+        else:
+            _LOGGER.warning(f"Request failed, {message}")
+
+            if self._ws is not None:
+                self._ws.disconnect()
 
         return result
 
@@ -182,7 +204,9 @@ class EdgeOSWebAPI:
 
         return result
 
-    async def heartbeat(self, max_age=HEARTBEAT_MAX_AGE):
+    async def async_send_heartbeat(self, max_age=HEARTBEAT_MAX_AGE):
+        ts = None
+
         try:
             if self.is_initialized:
                 ts = datetime.now()
@@ -199,9 +223,10 @@ class EdgeOSWebAPI:
 
                     response = await self.async_get(heartbeat_req_full_url)
 
-                    _LOGGER.debug(f"Heartbeat response: {response}")
+                    if response is not None:
+                        _LOGGER.debug(f"Heartbeat response: {response}")
 
-                    self._last_valid = ts
+                        self._last_valid = ts
             else:
                 _LOGGER.warning(f"Heartbeat not ran due to closed session")
         except Exception as ex:
@@ -212,6 +237,10 @@ class EdgeOSWebAPI:
                 f"Failed to perform heartbeat, Error: {ex}, Line: {line_number}"
             )
 
+        is_valid = ts is not None and self._last_valid == ts
+
+        return is_valid
+
     async def get_devices_data(self):
         result = None
 
@@ -221,17 +250,20 @@ class EdgeOSWebAPI:
 
                 result_json = await self.async_get(get_req_url)
 
-                if result_json is not None and RESPONSE_SUCCESS_KEY in result_json:
-                    success_key = str(result_json.get(RESPONSE_SUCCESS_KEY, "")).lower()
+                if result_json is not None:
+                    if RESPONSE_SUCCESS_KEY in result_json:
+                        success_key = str(
+                            result_json.get(RESPONSE_SUCCESS_KEY, "")
+                        ).lower()
 
-                    if success_key == TRUE_STR:
-                        if EDGEOS_API_GET.upper() in result_json:
-                            result = result_json.get(EDGEOS_API_GET.upper(), {})
+                        if success_key == TRUE_STR:
+                            if EDGEOS_API_GET.upper() in result_json:
+                                result = result_json.get(EDGEOS_API_GET.upper(), {})
+                        else:
+                            error_message = result_json[RESPONSE_ERROR_KEY]
+                            _LOGGER.error(f"Failed, Error: {error_message}")
                     else:
-                        error_message = result_json[RESPONSE_ERROR_KEY]
-                        _LOGGER.error(f"Failed, Error: {error_message}")
-                else:
-                    _LOGGER.error("Invalid response, not contain success status")
+                        _LOGGER.error("Invalid response, not contain success status")
             else:
                 _LOGGER.warning(f"Get devices data not ran due to closed session")
         except Exception as ex:
@@ -257,14 +289,15 @@ class EdgeOSWebAPI:
 
                 data = await self.async_get(data_req_full_url)
 
-                if data is not None and RESPONSE_SUCCESS_KEY in data:
-                    if str(data.get(RESPONSE_SUCCESS_KEY)) == RESPONSE_FAILURE_CODE:
-                        error = data.get(RESPONSE_ERROR_KEY, EMPTY_STRING)
+                if data is not None:
+                    if RESPONSE_SUCCESS_KEY in data:
+                        if str(data.get(RESPONSE_SUCCESS_KEY)) == RESPONSE_FAILURE_CODE:
+                            error = data.get(RESPONSE_ERROR_KEY, EMPTY_STRING)
 
-                        _LOGGER.error(f"Failed to load {item}, Reason: {error}")
-                        result = None
-                    else:
-                        result = data.get(RESPONSE_OUTPUT)
+                            _LOGGER.error(f"Failed to load {item}, Reason: {error}")
+                            result = None
+                        else:
+                            result = data.get(RESPONSE_OUTPUT)
             else:
                 _LOGGER.warning(f"Get data of {item} not ran due to closed session")
 

@@ -1,5 +1,3 @@
-from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PASSWORD, CONF_USERNAME
-
 from ..helpers.const import *
 
 
@@ -11,12 +9,14 @@ class ConfigData:
     password: str
     password_clear_text: str
     unit: int
-    update_interval: int
+    update_entities_interval: int
+    update_api_interval: int
     monitored_devices: list
     monitored_interfaces: list
     device_trackers: list
     log_level: str
     log_incoming_messages: bool
+    consider_away_interval: int
 
     def __init__(self):
         self.name = DEFAULT_NAME
@@ -26,13 +26,15 @@ class ConfigData:
         self.password = ""
         self.password_clear_text = ""
         self.unit = ATTR_BYTE
-        self.update_interval = 1
+        self.update_entities_interval = DEFAULT_UPDATE_ENTITIES_INTERVAL
+        self.update_api_interval = DEFAULT_UPDATE_API_INTERVAL
         self.monitored_devices = []
         self.monitored_interfaces = []
         self.device_trackers = []
         self.log_level = ""
         self.log_incoming_messages = False
         self.store_debug_files = False
+        self.consider_away_interval = DEFAULT_CONSIDER_AWAY_INTERVAL
 
     @property
     def unit_size(self):
@@ -60,12 +62,14 @@ class ConfigData:
             CONF_USERNAME: self.username,
             CONF_PASSWORD: self.password,
             CONF_UNIT: self.unit,
-            CONF_UPDATE_INTERVAL: self.update_interval,
+            CONF_UPDATE_API_INTERVAL: self.update_api_interval,
+            CONF_UPDATE_ENTITIES_INTERVAL: self.update_entities_interval,
             CONF_MONITORED_DEVICES: self.monitored_devices,
             CONF_MONITORED_INTERFACES: self.monitored_interfaces,
             CONF_TRACK_DEVICES: self.device_trackers,
             CONF_LOG_LEVEL: self.log_level,
             CONF_LOG_INCOMING_MESSAGES: self.log_incoming_messages,
+            CONF_CONSIDER_AWAY_INTERVAL: self.consider_away_interval,
         }
 
         to_string = f"{obj}"

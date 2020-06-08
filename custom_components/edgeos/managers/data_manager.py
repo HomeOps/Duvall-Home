@@ -3,6 +3,7 @@ This component provides support for Home Automation Manager (HAM).
 For more details about this component, please refer to the documentation at
 https://home-assistant.io/components/edgeos/
 """
+from asyncio import sleep
 import logging
 import sys
 from typing import Optional
@@ -42,11 +43,13 @@ class EdgeOSData:
         self.hostname = config_data.host
         self.version = "N/A"
 
+        self._ws = EdgeOSWebSocket(self._hass, config_manager, topics, self.ws_handler)
+
         self._api = EdgeOSWebAPI(
-            self._hass, config_manager, self.edgeos_disconnection_handler
+            self._hass, config_manager, self.edgeos_disconnection_handler, self._ws
         )
 
-        self._ws = EdgeOSWebSocket(self._hass, config_manager, topics, self.ws_handler)
+        self._is_active = True
 
     @property
     def product(self):
@@ -59,7 +62,47 @@ class EdgeOSData:
 
         return None
 
+    def disconnect(self):
+        self._ws.disconnect()
+
     async def initialize(self, post_login_action=None):
+        try:
+            is_first_time = True
+
+            while self._is_active:
+                if is_first_time:
+                    is_first_time = False
+
+                else:
+                    slept = False
+
+                    try:
+                        _LOGGER.debug(
+                            f"Sleeping {RECONNECT_INTERVAL} seconds until next reconnect attempt"
+                        )
+
+                        await sleep(RECONNECT_INTERVAL)
+                        slept = True
+
+                    finally:
+                        if not slept:
+                            return
+
+                if self._is_active:
+                    await self._initialize(post_login_action)
+
+                post_login_action = None
+
+        except Exception as ex:
+            exc_type, exc_obj, tb = sys.exc_info()
+            line_number = tb.tb_lineno
+
+            if ex is not None or self._is_active:
+                _LOGGER.error(
+                    f"Failed to initialize EdgeOS Manager, Error: {ex}, Line: {line_number}"
+                )
+
+    async def _initialize(self, post_login_action=None):
         try:
             _LOGGER.debug(f"Initializing API")
             await self._api.initialize()
@@ -99,6 +142,8 @@ class EdgeOSData:
         try:
             _LOGGER.debug(f"Terminating WS")
 
+            self._is_active = False
+
             await self._ws.close()
 
             _LOGGER.debug(f"WS terminated")
@@ -110,12 +155,54 @@ class EdgeOSData:
                 f"Failed to terminate connection to WS, Error: {ex}, Line: {line_number}"
             )
 
-    async def refresh(self):
-        await self._api.heartbeat()
-        await self.load_devices_data()
-        await self.load_unknown_devices()
+    async def async_send_heartbeat(self):
+        if not self._api.is_initialized:
+            self.disconnect()
 
-        self.update()
+        result = await self._api.async_send_heartbeat()
+
+        if result:
+            await self._ws.async_send_heartbeat()
+
+    async def refresh(self):
+        try:
+            if not self._api.is_initialized:
+                self.disconnect()
+
+                return
+
+            _LOGGER.debug("Getting devices by API")
+
+            should_update = False
+
+            devices_data = await self._api.get_devices_data()
+
+            if devices_data is not None:
+                should_update = True
+
+                system_info_data = await self._api.get_general_data(SYS_INFO_KEY)
+
+                if system_info_data is not None:
+                    self.load_system_data(devices_data, system_info_data)
+
+                self.load_devices(devices_data)
+                self.load_interfaces(devices_data)
+
+                unknown_devices_data = await self._api.get_general_data(DHCP_LEASES_KEY)
+
+                if unknown_devices_data is not None:
+                    self.load_unknown_devices(unknown_devices_data)
+
+            if should_update:
+                self.update()
+
+        except Exception as ex:
+            exc_type, exc_obj, tb = sys.exc_info()
+            line_number = tb.tb_lineno
+
+            _LOGGER.error(
+                f"Failed to load devices data, Error: {ex}, Line: {line_number}"
+            )
 
     def update(self, force=False):
         try:
@@ -132,8 +219,10 @@ class EdgeOSData:
             api_last_update = self._api.last_update
             web_socket_last_update = self._ws.last_update
 
-            if system_state is not None:
-                system_state[IS_ALIVE] = self._api.is_connected
+            if system_state is None:
+                system_state = {}
+
+            system_state[IS_ALIVE] = self._api.is_connected
 
             self.system_data = {
                 INTERFACES_KEY: interfaces,
@@ -184,12 +273,8 @@ class EdgeOSData:
 
         return ws_handlers
 
-    async def load_unknown_devices(self):
+    def load_unknown_devices(self, unknown_devices_data):
         try:
-            _LOGGER.debug("Getting unknown devices by API")
-
-            unknown_devices_data = await self._api.get_general_data(DHCP_LEASES_KEY)
-
             if unknown_devices_data is not None:
                 result = []
 
@@ -214,8 +299,7 @@ class EdgeOSData:
                         result.append(device)
 
                 self.set_unknown_devices(result)
-            else:
-                _LOGGER.warning(f"Invalid data: {unknown_devices_data}")
+
         except Exception as ex:
             exc_type, exc_obj, tb = sys.exc_info()
             line_number = tb.tb_lineno
@@ -226,7 +310,7 @@ class EdgeOSData:
 
     def load_devices(self, device_data):
         if device_data is None:
-            device_data = {}
+            return
 
         service_data = device_data.get(SERVICE, {})
         dhcp_server_data = service_data.get(DHCP_SERVER, {})
@@ -254,9 +338,14 @@ class EdgeOSData:
                     device[MAC] = mac
                     device[ATTR_NAME] = name
 
+                    self.check_last_activity(device)
+
                     self.set_device(hostname, device)
 
     def load_interfaces(self, device_data):
+        if device_data is None:
+            return
+
         interfaces_data = device_data.get(INTERFACES_KEY, {})
         ethernet_data = interfaces_data.get("ethernet", {})
 
@@ -274,30 +363,12 @@ class EdgeOSData:
             self.set_interface(ethernet_key, interface)
 
     def load_system_data(self, devices_data, system_info_data):
+        if devices_data is None or system_info_data is None:
+            return
+
         system_data = devices_data.get("system", {})
         self.hostname = system_data.get("host-name", self.hostname)
         self.version = system_info_data.get("sw_ver", "N/A")
-
-    async def load_devices_data(self):
-        try:
-            _LOGGER.debug("Getting devices by API")
-
-            devices_data = await self._api.get_devices_data()
-            system_info_data = await self._api.get_general_data(SYS_INFO_KEY)
-
-            self.load_system_data(devices_data, system_info_data)
-            self.load_devices(devices_data)
-            self.load_interfaces(devices_data)
-
-            self.update()
-
-        except Exception as ex:
-            exc_type, exc_obj, tb = sys.exc_info()
-            line_number = tb.tb_lineno
-
-            _LOGGER.error(
-                f"Failed to load devices data, Error: {ex}, Line: {line_number}"
-            )
 
     def handle_interfaces(self, data):
         try:
@@ -392,8 +463,7 @@ class EdgeOSData:
                 f"Failed to load {DISCOVER_KEY}, Original Message: {data}, Error: {ex}, Line: {line_number}"
             )
 
-    @staticmethod
-    def check_last_activity(device):
+    def check_last_activity(self, device):
         date_minimum = datetime.fromtimestamp(0)
         device_ip = device.get(IP)
         device_connected = device.get(CONNECTED, False)
@@ -403,7 +473,7 @@ class EdgeOSData:
 
         time_since_last_action = (datetime.now() - device_last_activity).total_seconds()
 
-        if time_since_last_action < DISCONNECTED_INTERVAL:
+        if time_since_last_action < self.config_data.consider_away_interval:
             is_connected = True
         else:
             if (
@@ -413,7 +483,7 @@ class EdgeOSData:
                 msg = [
                     f"Device {device_ip} disconnected",
                     f"due to inactivity since {device_last_activity}",
-                    f"({time_since_last_action} seconds",
+                    f"({time_since_last_action} seconds)",
                 ]
 
                 _LOGGER.info(" ".join(msg))

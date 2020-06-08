@@ -141,7 +141,9 @@ class ConfigFlowManager:
         fields[
             vol.Optional(CONF_PASSWORD, default=config_data.password_clear_text)
         ] = str
-        fields[vol.Optional(CONF_UNIT, default=False)] = vol.In(ALLOWED_UNITS_LIST)
+        fields[vol.Optional(CONF_UNIT, default=config_data.unit)] = vol.In(
+            ALLOWED_UNITS_LIST
+        )
 
         return fields
 
@@ -172,6 +174,11 @@ class ConfigFlowManager:
         fields = self._get_default_fields(CONFIG_FLOW_OPTIONS)
 
         fields[vol.Optional(CONF_CLEAR_CREDENTIALS, default=False)] = bool
+        fields[
+            vol.Optional(
+                CONF_CONSIDER_AWAY_INTERVAL, default=config_data.consider_away_interval
+            )
+        ] = int
         fields[vol.Optional(CONF_UNIT, default=config_data.unit)] = vol.In(
             ALLOWED_UNITS_LIST
         )
@@ -185,8 +192,18 @@ class ConfigFlowManager:
             vol.Optional(CONF_TRACK_DEVICES, default=device_trackers)
         ] = cv.multi_select(all_devices)
         fields[
-            vol.Optional(CONF_UPDATE_INTERVAL, default=config_data.update_interval)
+            vol.Optional(
+                CONF_UPDATE_ENTITIES_INTERVAL,
+                default=config_data.update_entities_interval,
+            )
         ] = cv.positive_int
+
+        fields[
+            vol.Optional(
+                CONF_UPDATE_API_INTERVAL, default=config_data.update_api_interval
+            )
+        ] = cv.positive_int
+
         fields[vol.Optional(CONF_STORE_DEBUG_FILE, default=False)] = bool
         fields[vol.Optional(CONF_LOG_LEVEL, default=config_data.log_level)] = vol.In(
             LOG_LEVELS
@@ -335,7 +352,7 @@ class ConfigFlowManager:
 
     @staticmethod
     def _get_available_options(system_data, key):
-        all_items = system_data.get(key)
+        all_items = system_data.get(key, {})
 
         available_items = {OPTION_EMPTY: OPTION_EMPTY}
 
@@ -358,7 +375,7 @@ class ConfigFlowManager:
             await api.initialize()
 
             if await api.login(throw_exception=True):
-                await api.heartbeat()
+                await api.async_send_heartbeat()
 
                 if not api.is_connected:
                     _LOGGER.warning(

@@ -13,7 +13,6 @@ from urllib.parse import urlparse
 import aiohttp
 
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
-from homeassistant.helpers.event import async_track_time_interval
 
 from ..helpers.const import *
 from ..models.config_data import ConfigData
@@ -34,16 +33,8 @@ class EdgeOSWebSocket:
         self._session = None
         self._ws = None
         self._pending_payloads = []
-        self._shutting_down = False
+        self.shutting_down = False
         self._is_connected = False
-
-        def send_keep_alive(internal_now):
-            data = self.get_keep_alive_data()
-            self._hass.async_create_task(self._ws.send_str(data))
-
-            _LOGGER.debug(f"Keep alive message sent @{internal_now}")
-
-        self._send_keep_alive = send_keep_alive
 
     @property
     def config_data(self) -> Optional[ConfigData]:
@@ -64,7 +55,8 @@ class EdgeOSWebSocket:
         _LOGGER.debug("Initializing WS connection")
 
         try:
-            self._shutting_down = False
+            self._is_connected = False
+            self.shutting_down = False
 
             self._session_id = session_id
             if self._hass is None:
@@ -77,53 +69,34 @@ class EdgeOSWebSocket:
         except Exception as ex:
             _LOGGER.warning(f"Failed to create session of EdgeOS WS, Error: {str(ex)}")
 
-        connection_attempt = 1
+        try:
+            async with self._session.ws_connect(
+                self.ws_url,
+                origin=self.config_data.url,
+                ssl=False,
+                autoclose=True,
+                max_msg_size=MAX_MSG_SIZE,
+                timeout=SCAN_INTERVAL_WS_TIMEOUT,
+            ) as ws:
 
-        while self.is_initialized and not self._shutting_down:
-            try:
-                if connection_attempt > 1:
-                    await asyncio.sleep(10)
+                self._is_connected = True
 
-                if connection_attempt < MAXIMUM_RECONNECT:
-                    _LOGGER.info(f"Connection attempt #{connection_attempt}")
+                self._ws = ws
+                await self.listen()
 
-                    async with self._session.ws_connect(
-                        self.ws_url,
-                        origin=self.config_data.url,
-                        ssl=False,
-                        max_msg_size=MAX_MSG_SIZE,
-                        timeout=SCAN_INTERVAL_WS_TIMEOUT,
-                    ) as ws:
+        except Exception as ex:
+            if ex is not None:
+                _LOGGER.warning(f"Failed to connect EdgeOS WS, Error: {ex}")
 
-                        self._is_connected = True
-
-                        self._ws = ws
-                        await self.listen()
-
-                    connection_attempt = connection_attempt + 1
-                else:
-                    _LOGGER.error(f"Failed to connect on retry #{connection_attempt}")
-                    await self.close()
-
-                self._is_connected = False
-
-            except Exception as ex:
-                self._is_connected = False
-
-                error_message = str(ex)
-
-                if error_message == ERROR_SHUTDOWN:
-                    _LOGGER.warning(f"{error_message}")
-                    break
-
-                elif error_message != "":
-                    _LOGGER.warning(f"Failed to listen EdgeOS, Error: {error_message}")
+        self._is_connected = False
 
         _LOGGER.info("WS Connection terminated")
 
     @property
     def is_initialized(self):
-        return self._session is not None and not self._session.closed
+        is_initialized = self._session is not None and not self._session.closed
+
+        return is_initialized
 
     @property
     def last_update(self):
@@ -159,6 +132,14 @@ class EdgeOSWebSocket:
             else:
                 self._pending_payloads.append(message)
 
+    async def async_send_heartbeat(self):
+        _LOGGER.debug(f"Keep alive message sent")
+
+        data = self.get_keep_alive_data()
+
+        if self._is_connected:
+            await self._ws.send_str(data)
+
     async def listen(self):
         _LOGGER.info(f"Starting to listen connected")
 
@@ -167,17 +148,15 @@ class EdgeOSWebSocket:
 
         _LOGGER.info("Subscribed to WS payloads")
 
-        remove_time_tracker = async_track_time_interval(
-            self._hass, self._send_keep_alive, WS_KEEP_ALIVE_INTERVAL
-        )
-
         async for msg in self._ws:
             continue_to_next = self.handle_next_message(msg)
 
-            if not continue_to_next or not self.is_initialized:
+            if (
+                not continue_to_next
+                or not self.is_initialized
+                or not self._is_connected
+            ):
                 break
-
-        remove_time_tracker()
 
         _LOGGER.info(f"Stop listening")
 
@@ -210,14 +189,19 @@ class EdgeOSWebSocket:
 
         return result
 
+    def disconnect(self):
+        self._is_connected = False
+
     async def close(self):
         _LOGGER.info("Closing connection to WS")
 
-        self._shutting_down = True
         self._session_id = None
+        self._is_connected = False
 
         if self._ws is not None:
             await self._ws.close()
+
+            await asyncio.sleep(DISCONNECT_INTERVAL)
 
         self._ws = None
 
