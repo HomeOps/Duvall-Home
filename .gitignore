@@ -35,6 +35,7 @@ harmony*.conf
 html5_push_registrations.conf
 neighbours
 *.code-workspace
+emulated_hue_ids.json
 
 # Note: ui-lovelace.yaml is generated automatically... see lovelace-gen.py and associated scripts
 ui-lovelace.yaml

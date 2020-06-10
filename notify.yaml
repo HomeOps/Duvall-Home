@@ -9,9 +9,6 @@
   user_key: !secret pushover_user_key
 - platform: alexa_media
   name: alexa_media
-- platform: telegram
-  name: telegram.oscar
-  chat_id: !secret telegram_bot_chat_oscar
 - platform: sms
   name: sms_oscar
   recipient: !secret sms_oscar
@@ -40,7 +37,3 @@
         data:
           method: announce
           type: tts
-    - service: telegram_oscar
-      data_template:
-        message: '{{ message }}'
-        title: "Broadcast Notification"

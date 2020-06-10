@@ -97,6 +97,52 @@ arlo:
 plex:
   host: !secret plex_host
 
+emulated_hue:
+  expose_by_default: false
+  entities:
+    light.master_bed_lamp_1:
+      hidden: false
+    light.master_bed_lamp_2:
+      hidden: false
+    light.master_bed:
+      hidden: false
+    light.tv_room_lights:
+      hidden: false
+    cover.tv_room_blinds:
+      hidden: false
+    switch.tv_room_plug_1:
+      hidden: false
+    switch.tv_room_plug_2:
+      hidden: false
+    switch.tv_room_plug_3:
+      hidden: false
+    light.stairs_lights:
+      hidden: false
+    cover.stairs_blinds:
+      hidden: false
+    light.bathroom_hallway_dimmer:
+      hidden: false
+    light.living_ligths:
+      hidden: false
+    switch.living_electronics:
+      hidden: false
+    light.kitchen_lights:
+      hidden: false
+    switch.kitchen_electronics:
+      hidden: false
+    light.dinning_lights:
+      hidden: false
+    switch.dinning_lamp_1:
+      hidden: false
+    switch.dinning_lamp_2:
+      hidden: false
+    light.hallway_lights:
+      hidden: false
+    light.den_lights:
+      hidden: false
+    light.mud_room:
+      hidden: false
+
 remote:
   - platform: harmony
     name: Living Room TV
@@ -126,12 +172,6 @@ tplink:
     - host: 192.168.1.143
     - host: 192.168.1.144
     - host: 192.168.1.145
-
-#telegram_bot:
-#  - platform: polling
-#    api_key: !secret telegram_bot_api_key
-#    allowed_chat_ids:
-#      - !secret telegram_bot_chat_oscar
 
 alexa_media:
   accounts:
