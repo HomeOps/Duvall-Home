@@ -94,9 +94,6 @@ arlo:
   username: !secret arlo_username
   password: !secret arlo_password
 
-plex:
-  host: !secret plex_host
-
 emulated_hue:
   expose_by_default: false
   entities:

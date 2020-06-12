@@ -50,9 +50,9 @@
             {% for light in states['light'] if ( (light.entity_id | lower).endswith('_vent') ) %}
                 {{get_close(light)}}
             {%- endfor -%}light.dummy
-    - service: light.turn_on
+    - service: cover.set_cover_position
       data_template:
-        brightness_pct: "{{ states('input_number.vent_aperture_min') | int }}"
+        position: "{{ states('input_number.vent_aperture_min') | int }}"
         entity_id: group.closed_vents
     - service: group.set
       data_template:
@@ -75,16 +75,15 @@
             {% set vent = states(get_vent_temp(light))|float -%}
             {% set room = states(get_room_temp(light))|float -%}
             {% set requestOpen = not (((room-target)>0.5 and (vent-room)>0.5) or ((target-room)>0.5 and (room-vent)>0.5)) -%}
-            {% set levelInt = state_attr(light.entity_id, "brightness") -%}
-            {% if levelInt == None -%}{% set levelInt = 128 -%}{% endif -%}
-            {% set level = float(levelInt / 255 * 100) | round(0) | int -%}
+            {% set level = state_attr(light.entity_id, "current_position") -%}
+            {% if level == None -%}{% set level = 50 -%}{% endif -%}
             {% if requestOpen and level<50 -%}{{light.entity_id}},{%- endif -%}
             {%- endmacro -%}
-            {% for light in states['light'] if ( (light.entity_id | lower).endswith('_vent') ) %}
+            {% for light in states['cover'] if ( (light.entity_id | lower).endswith('_vent') ) %}
                 {{get_open(light)}}
             {%- endfor -%}light.dummy
-    - service: light.turn_on
+    - service: cover.set_cover_position
       data_template:
-        brightness_pct: "{{ states('input_number.vent_aperture_max') | int }}"
+        position: "{{ states('input_number.vent_aperture_max') | int }}"
         entity_id: group.open_vents
 
