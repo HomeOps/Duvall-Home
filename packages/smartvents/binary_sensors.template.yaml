@@ -1,39 +1,39 @@
 bedroom_1_vent:
-  entity_id: light.bedroom_1_vent
-  value_template: '{{state_attr("light.bedroom_1_vent", "brightness")|int > 128}}'
+  entity_id: cover.bedroom_1_vent
+  value_template: '{{state_attr("cover.bedroom_1_vent", "current_position")|int > 50}}'
 bedroom_3_vent:
-  entity_id: light.bedroom_3_vent
-  value_template: '{{state_attr("light.bedroom_3_vent", "brightness")|int > 128}}'
+  entity_id: cover.bedroom_3_vent
+  value_template: '{{state_attr("cover.bedroom_3_vent", "current_position")|int > 50}}'
 den_vent:
-  entity_id: light.den_vent
-  value_template: '{{state_attr("light.den_vent", "brightness")|int > 128}}'
+  entity_id: cover.den_vent
+  value_template: '{{state_attr("cover.den_vent", "current_position")|int > 50}}'
 dinning_vent:
-  entity_id: light.dinning_vent
-  value_template: '{{state_attr("light.dinning_vent", "brightness")|int > 128}}'
+  entity_id: cover.dinning_vent
+  value_template: '{{state_attr("cover.dinning_vent", "current_position")|int > 50}}'
 guest_bathroom_vent:
-  entity_id: light.guest_bathroom_vent
-  value_template: '{{state_attr("light.guest_bathroom_vent", "brightness")|int > 128}}'
+  entity_id: cover.guest_bathroom_vent
+  value_template: '{{state_attr("cover.guest_bathroom_vent", "current_position")|int > 50}}'
 guest_bedroom_vent:
-  entity_id: light.guest_bedroom_vent
-  value_template: '{{state_attr("light.guest_bedroom_vent", "brightness")|int > 128}}'
+  entity_id: cover.guest_bedroom_vent
+  value_template: '{{state_attr("cover.guest_bedroom_vent", "current_position")|int > 50}}'
 hallway_vent:
-  entity_id: light.hallway_vent
-  value_template: '{{state_attr("light.hallway_vent", "brightness")|int > 128}}'
+  entity_id: cover.hallway_vent
+  value_template: '{{state_attr("cover.hallway_vent", "current_position")|int > 50}}'
 kitchen_vent:
-  entity_id: light.kitchen_vent
-  value_template: '{{state_attr("light.kitchen_vent", "brightness")|int > 128}}'
+  entity_id: cover.kitchen_vent
+  value_template: '{{state_attr("cover.kitchen_vent", "current_position")|int > 50}}'
 living_vent:
-  entity_id: light.living_vent
-  value_template: '{{state_attr("light.living_vent", "brightness")|int > 128}}'
+  entity_id: cover.living_vent
+  value_template: '{{state_attr("cover.living_vent", "current_position")|int > 50}}'
 master_bathroom_vent:
-  entity_id: light.master_bathroom_vent
-  value_template: '{{state_attr("light.master_bathroom_vent", "brightness")|int > 128}}'
+  entity_id: cover.master_bathroom_vent
+  value_template: '{{state_attr("cover.master_bathroom_vent", "current_position")|int > 50}}'
 master_bedroom_vent:
-  entity_id: light.master_bedroom_vent
-  value_template: '{{state_attr("light.master_bedroom_vent", "brightness")|int > 128}}'
+  entity_id: cover.master_bedroom_vent
+  value_template: '{{state_attr("cover.master_bedroom_vent", "current_position")|int > 50}}'
 mud_room_vent:
-  entity_id: light.mud_room_vent
-  value_template: '{{state_attr("light.mud_room_vent", "brightness")|int > 128}}'
+  entity_id: cover.mud_room_vent
+  value_template: '{{state_attr("cover.mud_room_vent", "current_position")|int > 50}}'
 tv_room_vent:
-  entity_id: light.tv_room_vent
-  value_template: '{{state_attr("light.tv_room_vent", "brightness")|int > 128}}'
+  entity_id: cover.tv_room_vent
+  value_template: '{{state_attr("cover.tv_room_vent", "current_position")|int > 50}}'

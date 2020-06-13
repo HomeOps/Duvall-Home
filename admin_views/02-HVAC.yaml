@@ -88,34 +88,34 @@
         title: Temperature
         type: history-graph
       - entities:
-          - entity: light.hallway_vent
+          - entity: cover.hallway_vent
             name: Hallway
-          - entity: light.den_vent
+          - entity: cover.den_vent
             name: Den
-          - entity: light.guest_bathroom_vent
+          - entity: cover.guest_bathroom_vent
             name: Guest Bathroom
-          - entity: light.mud_room_vent
+          - entity: cover.mud_room_vent
             name: Mud Room
-          - entity: light.kitchen_vent
+          - entity: cover.kitchen_vent
             name: Kitchen
-          - entity: light.living_vent
+          - entity: cover.living_vent
             name: Living
-          - entity: light.dinning_vent
+          - entity: cover.dinning_vent
             name: Dinning
         title: Downstairs Vents
         type: entities
       - entities:
-          - entity: light.tv_room_vent
+          - entity: cover.tv_room_vent
             name: TV Room
-          - entity: light.master_bedroom_vent
+          - entity: cover.master_bedroom_vent
             name: Master
-          - entity: light.master_bathroom_vent
+          - entity: cover.master_bathroom_vent
             name: Master Bathroom
-          - entity: light.bedroom_1_vent
+          - entity: cover.bedroom_1_vent
             name: Bed1
-          - entity: light.guest_bedroom_vent
+          - entity: cover.guest_bedroom_vent
             name: Guest Bedroom
-          - entity: light.bedroom_3_vent
+          - entity: cover.bedroom_3_vent
             name: Bed3
         title: Upstairs Vents
         type: entities
