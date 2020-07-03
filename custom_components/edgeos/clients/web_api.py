@@ -12,7 +12,7 @@ from aiohttp import ClientSession, CookieJar
 
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
-from . import LoginException
+from . import LoginException, SessionTerminatedException
 from ..helpers.const import *
 from ..managers.configuration_manager import ConfigManager
 from .web_socket import EdgeOSWebSocket
@@ -50,9 +50,6 @@ class EdgeOSWebAPI:
         cookie_jar = CookieJar(unsafe=True)
 
         if self._hass is None:
-            if self._session is not None:
-                await self._session.close()
-
             self._session = ClientSession(cookie_jar=cookie_jar)
         else:
             self._session = async_create_clientsession(
@@ -106,6 +103,9 @@ class EdgeOSWebAPI:
 
             url = self._config_manager.data.url
 
+            if self._session.closed:
+                raise SessionTerminatedException()
+
             async with self._session.post(url, data=credentials, ssl=False) as response:
                 all_cookies = self._session.cookie_jar.filter_cookies(response.url)
 
@@ -136,6 +136,8 @@ class EdgeOSWebAPI:
                         status_code = 500
                     else:
                         status_code = 403
+        except SessionTerminatedException:
+            raise SessionTerminatedException()
 
         except Exception as ex:
             exc_type, exc_obj, tb = sys.exc_info()
@@ -153,6 +155,7 @@ class EdgeOSWebAPI:
     async def async_get(self, url):
         result = None
         message = None
+        status = 404
 
         retry_attempt = 0
         while retry_attempt < MAXIMUM_RECONNECT:
@@ -164,6 +167,7 @@ class EdgeOSWebAPI:
             try:
                 async with self._session.get(url, ssl=False) as response:
                     status = response.status
+
                     message = (
                         f"URL: {url}, Status: {response.reason} ({response.status})"
                     )
@@ -172,6 +176,9 @@ class EdgeOSWebAPI:
                         result = await response.json()
                         break
                     elif status == 403:
+                        self._session = None
+                        self._cookies = {}
+
                         break
 
             except Exception as ex:
