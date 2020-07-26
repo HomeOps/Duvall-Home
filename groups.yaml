@@ -132,16 +132,20 @@ all_light_switches:
     - switch.server_electronics
     - switch.den_pc_printer
     - switch.den_network_switch
+    - switch.den_shelve
     - switch.tv_room_plug_1
     - switch.tv_room_plug_2
     - switch.tv_room_plug_3
+    - switch.kitchen_electronics
+    - switch.server_electronics
+    - switch.treadmill
 always_on_switches:
   entities:
     - switch.den_pc_printer
     - switch.den_network_switch
+    - switch.den_shelve
     - switch.tv_room_plug_1
     - switch.tv_room_plug_2
     - switch.tv_room_plug_3
     - switch.server_electronics
     - switch.kitchen_electronics
-    - switch.den_shelve

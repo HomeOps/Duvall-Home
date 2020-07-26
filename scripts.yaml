@@ -128,3 +128,13 @@ notify_external:
     data_template:
       message: Interface {{ sc_intf }} going into {{ sc_status }}
     service: notify.sms_oscar
+irrigate_home:
+  alias: Irrigate home
+  sequence:
+  - data: {}
+    entity_id: switch.irrigation_controller_zone_3
+    service: switch.turn_on
+  - delay: 00:15:00
+  - data: {}
+    entity_id: switch.irrigation_controller_zone_2
+    service: switch.turn_on

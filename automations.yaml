@@ -485,3 +485,15 @@
   - delay: '10'
   - entity_id: switch.cable_modem
     service: switch.turn_on
+- id: irrigate_home
+  alias: Irrigate Home
+  description: ''
+  trigger:
+  - entity_id: sun.sun
+    platform: state
+    to: above_horizon
+  condition: []
+  action:
+  - data: {}
+    entity_id: switch.irrigation_controller_zone_3
+    service: script.irrigate_home
