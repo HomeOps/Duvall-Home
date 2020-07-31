@@ -1,6 +1,8 @@
 import logging
 from typing import Optional
 
+from cryptography.fernet import InvalidToken
+
 from homeassistant.config_entries import ConfigEntry
 
 from .. import get_ha
@@ -61,10 +63,12 @@ class ConfigFlowManager:
         return self._data.get(ENTRY_PRIMARY_KEY)
 
     async def update_options(self, options: dict, flow: str):
+        _LOGGER.debug("Update options")
+
         validate_login = False
         actions = []
 
-        new_options = self._clone_items(options, flow)
+        new_options = await self._clone_items(options, flow)
 
         if flow == CONFIG_FLOW_OPTIONS:
             self._validate_unique_name(new_options)
@@ -77,7 +81,7 @@ class ConfigFlowManager:
 
         self._options = new_options
 
-        self._update_entry()
+        await self._update_entry()
 
         if validate_login:
             await self._handle_data(flow)
@@ -88,12 +92,14 @@ class ConfigFlowManager:
         return new_options
 
     async def update_data(self, data: dict, flow: str):
+        _LOGGER.debug("Update data")
+
         if flow == CONFIG_FLOW_DATA:
             self._validate_unique_name(data)
 
-        self._data = self._clone_items(data, flow)
+        self._data = await self._clone_items(data, flow)
 
-        self._update_entry()
+        await self._update_entry()
 
         await self._handle_data(flow)
 
@@ -147,8 +153,8 @@ class ConfigFlowManager:
 
         return fields
 
-    def get_default_data(self, user_input):
-        config_data = self._config_manager.get_basic_data(user_input)
+    async def get_default_data(self, user_input):
+        config_data = await self._config_manager.get_basic_data(user_input)
 
         fields = self._get_default_fields(CONFIG_FLOW_DATA, config_data)
 
@@ -218,21 +224,25 @@ class ConfigFlowManager:
 
         return data_schema
 
-    def _update_entry(self):
-        entry = ConfigEntry(0, "", "", self._data, "", "", {}, options=self._options)
+    async def _update_entry(self):
+        try:
+            entry = ConfigEntry(
+                0, "", "", self._data, "", "", {}, options=self._options
+            )
 
-        self._config_manager.update(entry)
+            await self._config_manager.update(entry)
+        except InvalidToken:
+            _LOGGER.info("Reset password")
 
-    @staticmethod
-    def _get_user_input_option(options, key):
-        result = options.get(key, [OPTION_EMPTY])
+            del self._data[CONF_PASSWORD]
 
-        if OPTION_EMPTY in result:
-            result.clear()
+            entry = ConfigEntry(
+                0, "", "", self._data, "", "", {}, options=self._options
+            )
 
-        return result
+            await self._config_manager.update(entry)
 
-    def _handle_password(self, user_input):
+    async def _handle_password(self, user_input):
         if CONF_CLEAR_CREDENTIALS in user_input:
             clear_credentials = user_input.get(CONF_CLEAR_CREDENTIALS)
 
@@ -243,24 +253,27 @@ class ConfigFlowManager:
 
         if CONF_PASSWORD in user_input:
             password_clear_text = user_input[CONF_PASSWORD]
-            password = self._password_manager.encrypt(password_clear_text)
+            password = await self._password_manager.encrypt(password_clear_text)
 
             user_input[CONF_PASSWORD] = password
 
-    def _clone_items(self, user_input, flow: str):
+    @staticmethod
+    def _get_user_input_option(options, key):
+        result = options.get(key, [])
+
+        return result
+
+    async def _clone_items(self, user_input, flow: str):
         new_user_input = {}
 
         if user_input is not None:
             for key in user_input:
                 user_input_data = user_input[key]
 
-                if key in DROP_DOWNS_CONF and OPTION_EMPTY in user_input_data:
-                    user_input_data = []
-
                 new_user_input[key] = user_input_data
 
             if flow != CONFIG_FLOW_INIT:
-                self._handle_password(new_user_input)
+                await self._handle_password(new_user_input)
 
         return new_user_input
 
@@ -271,9 +284,6 @@ class ConfigFlowManager:
         if user_input is not None:
             for key in user_input:
                 user_input_data = user_input[key]
-
-                if key in DROP_DOWNS_CONF and OPTION_EMPTY in user_input_data:
-                    user_input_data = []
 
                 new_user_input[key] = user_input_data
 
@@ -345,16 +355,13 @@ class ConfigFlowManager:
                 clean_data = data.replace(" ", "")
                 result = clean_data.split(",")
 
-        if len(result) == 0:
-            result = [OPTION_EMPTY]
-
         return result
 
     @staticmethod
     def _get_available_options(system_data, key):
         all_items = system_data.get(key, {})
 
-        available_items = {OPTION_EMPTY: OPTION_EMPTY}
+        available_items = {}
 
         for item_key in all_items:
             item = all_items[item_key]

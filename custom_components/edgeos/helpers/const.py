@@ -197,6 +197,7 @@ DEVICE_SERVICES_STATS_MAP = {
     "tx_rate": {ATTR_NAME: "{}/ps (Sent)", ATTR_UNIT_OF_MEASUREMENT: "Bps"},
 }
 
+HEARTBEAT_INTERVAL_SECONDS = 30
 HEARTBEAT_INTERVAL = timedelta(seconds=30)
 SCAN_INTERVAL_WS_TIMEOUT = timedelta(seconds=60)
 SCAN_INTERVAL_API = timedelta(seconds=60)
@@ -242,7 +243,7 @@ ENTITY_STATUS_MODIFIED = f"{ENTITY_STATUS}-modified"
 ENTITY_STATUS_IGNORE = f"{ENTITY_STATUS}-ignore"
 ENTITY_STATUS_CANCELLED = f"{ENTITY_STATUS}-cancelled"
 
-ICONS = {SENSOR_TYPE_INTERFACE: "mdi:network-router", SENSOR_TYPE_DEVICE: "mdi:devices"}
+ICONS = {SENSOR_TYPE_INTERFACE: "mdi:router-network", SENSOR_TYPE_DEVICE: "mdi:devices"}
 
 CONNECTED_ICONS = {True: "mdi:lan-connect", False: "mdi:lan-disconnect"}
 
@@ -256,8 +257,6 @@ HTTP_ERRORS = {
 
 DOMAIN_LOAD = "load"
 DOMAIN_UNLOAD = "unload"
-
-OPTION_EMPTY = " NONE "
 
 DOMAIN_KEY_FILE = f"{DOMAIN}.key"
 

@@ -7,11 +7,13 @@ import logging
 import sys
 from typing import Optional
 
+from cryptography.fernet import InvalidToken
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity_registry import EntityRegistry, async_get_registry
-from homeassistant.helpers.event import async_call_later, async_track_time_interval
+from homeassistant.helpers.event import async_track_time_interval
 
 from ..helpers.const import *
 from ..models.config_data import ConfigData
@@ -20,6 +22,7 @@ from .data_manager import EdgeOSData
 from .device_manager import DeviceManager
 from .entity_manager import EntityManager
 from .password_manager import PasswordManager
+from .storage_manager import StorageManager
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,9 +31,7 @@ class EdgeOSHomeAssistant:
     def __init__(self, hass: HomeAssistant, password_manager: PasswordManager):
         self._hass = hass
 
-        self._remove_async_track_time_api = None
-        self._remove_async_track_time_heartbeat = None
-        self._remove_async_track_time_entities = None
+        self._remove_async_track_timers = {}
 
         self._is_first_time_online = True
         self._is_initialized = False
@@ -40,6 +41,7 @@ class EdgeOSHomeAssistant:
         self._data_manager = None
         self._device_manager = None
         self._entity_manager = None
+        self._storage_manager = None
 
         self._config_manager = ConfigManager(password_manager)
 
@@ -83,74 +85,105 @@ class EdgeOSHomeAssistant:
     def entity_registry(self) -> EntityRegistry:
         return self._entity_registry
 
+    def set_async_track_timer(self, key, interval, callback):
+        timer = self._remove_async_track_timers.get(key)
+
+        if timer is not None:
+            previous_interval = timer.get("interval")
+
+            if previous_interval != interval:
+                _LOGGER.info(
+                    f"Updating {key} timer interval from {previous_interval}s to {interval}s"
+                )
+
+                self.remove_async_track_timer(key, False)
+            else:
+                return
+        else:
+            _LOGGER.info(f"Adding {key} timer, interval: {interval}s")
+
+        new_handler = async_track_time_interval(
+            self._hass, callback, timedelta(seconds=interval)
+        )
+
+        self._remove_async_track_timers[key] = {
+            "interval": interval,
+            "handler": new_handler,
+        }
+
+    def remove_async_track_timer(self, key, log=True):
+        timer = self._remove_async_track_timers.get(key)
+
+        if timer is not None:
+            if log:
+                _LOGGER.info(f"Removing {key} timer")
+
+            handler = timer.get("handler")
+
+            if handler is not None:
+                handler()
+
+                self._remove_async_track_timers[key]["handler"] = None
+
+            self._remove_async_track_timers[key] = None
+        else:
+            _LOGGER.warning(f"{key} timer was not found, cannot remove")
+
     async def async_init(self, entry: ConfigEntry):
-        self._config_manager.update(entry)
+        try:
+            self._storage_manager = StorageManager(self._hass)
 
-        self._data_manager = EdgeOSData(self._hass, self._config_manager, self.update)
-        self._device_manager = DeviceManager(self._hass, self)
-        self._entity_manager = EntityManager(self._hass, self)
+            await self._config_manager.update(entry)
 
-        def internal_async_init(now):
-            self._hass.async_create_task(self._async_init(now))
+            self._data_manager = EdgeOSData(
+                self._hass, self._config_manager, self.update
+            )
+            self._device_manager = DeviceManager(self._hass, self)
+            self._entity_manager = EntityManager(self._hass, self)
 
+            self._hass.loop.create_task(self.initialize())
+        except InvalidToken:
+            error_message = "Encryption key got corrupted, please remove the integration and re-add it"
+
+            _LOGGER.error(error_message)
+
+            data = await self._storage_manager.async_load_from_store()
+            data.key = None
+            await self._storage_manager.async_save_to_store(data)
+
+            await self._hass.services.async_call(
+                "persistent_notification",
+                "create",
+                {"title": DEFAULT_NAME, "message": error_message},
+            )
+
+    async def initialize(self):
         self._entity_registry = await async_get_registry(self._hass)
-
-        async_call_later(self._hass, 2, internal_async_init)
-
-    async def _async_init(self, now):
-        _LOGGER.debug(f"Initializing EdgeOS @{now}")
 
         load = self._hass.config_entries.async_forward_entry_setup
 
         for domain in SIGNALS:
-            self._hass.async_create_task(
-                load(self._config_manager.config_entry, domain)
-            )
-
-        self._hass.async_create_task(
-            self._data_manager.initialize(self.async_post_initial_login)
-        )
+            await load(self._config_manager.config_entry, domain)
 
         self._is_initialized = True
 
-    async def async_post_initial_login(self):
-        _LOGGER.debug("Post initial login action")
+        await self._data_manager.initialize(self.async_update_entry)
 
-        self._hass.async_create_task(self.async_update_api(datetime.now()))
-
-        self._remove_async_track_time_heartbeat = async_track_time_interval(
-            self._hass, self._send_heartbeat, HEARTBEAT_INTERVAL
-        )
-
-        await self.async_update_entry()
-
-    async def async_remove(self):
-        _LOGGER.debug(f"async_remove called")
+    async def async_remove(self, entry: ConfigEntry):
+        _LOGGER.info(f"Removing {entry.title}")
 
         await self._data_manager.terminate()
 
-        if self._remove_async_track_time_api is not None:
-            self._remove_async_track_time_api()
-            self._remove_async_track_time_api = None
-
-        if self._remove_async_track_time_entities is not None:
-            self._remove_async_track_time_entities()
-            self._remove_async_track_time_entities = None
-
-        if self._remove_async_track_time_heartbeat is not None:
-            self._remove_async_track_time_heartbeat()
-            self._remove_async_track_time_heartbeat = None
+        for timer_key in self._remove_async_track_timers:
+            self.remove_async_track_timer(timer_key)
 
         unload = self._hass.config_entries.async_forward_entry_unload
-
         for domain in SIGNALS:
-            self._hass.async_create_task(
-                unload(self._config_manager.config_entry, domain)
-            )
+            await unload(entry, domain)
 
-        await self._device_manager.async_remove_entry(
-            self._config_manager.config_entry.entry_id
-        )
+        await self._device_manager.async_remove_entry(entry.entry_id)
+
+        _LOGGER.info(f"{entry.title} removed")
 
     async def async_update_entry(self, entry: ConfigEntry = None):
         is_update = entry is not None
@@ -160,58 +193,23 @@ class EdgeOSHomeAssistant:
 
         _LOGGER.info(f"Handling ConfigEntry change: {entry.as_dict()}")
 
-        if is_update:
-            previous_entities_interval = self.config_data.update_entities_interval
-            previous_api_interval = self.config_data.update_api_interval
+        await self._config_manager.update(entry)
 
-            self._config_manager.update(entry)
-
-            is_update_entities_interval_changed = (
-                previous_entities_interval != self.config_data.update_entities_interval
-            )
-            is_update_api_interval_changed = (
-                previous_api_interval != self.config_data.update_api_interval
-            )
-
-            if (
-                is_update_api_interval_changed
-                and self._remove_async_track_time_api is not None
-            ):
-                msg = f"ConfigEntry API interval changed from {previous_api_interval} to {self.config_data.update_api_interval}"
-                _LOGGER.info(msg)
-
-                self._remove_async_track_time_api()
-                self._remove_async_track_time_api = None
-
-            if (
-                is_update_entities_interval_changed
-                and self._remove_async_track_time_entities is not None
-            ):
-                msg = f"ConfigEntry Entities interval changed from {previous_entities_interval} to {self.config_data.update_entities_interval}"
-                _LOGGER.info(msg)
-
-                self._remove_async_track_time_entities()
-                self._remove_async_track_time_entities = None
-
-        if self._remove_async_track_time_api is None:
-            interval = timedelta(seconds=self.config_data.update_api_interval)
-
-            self._remove_async_track_time_api = async_track_time_interval(
-                self._hass, self._update_api, interval
-            )
-
-        if self._remove_async_track_time_entities is None:
-            interval = timedelta(seconds=self.config_data.update_entities_interval)
-
-            self._remove_async_track_time_entities = async_track_time_interval(
-                self._hass, self._update_entities, interval
-            )
-
-        self._is_ready = False
-
-        self._data_manager.update(True)
+        await self.async_update_api(datetime.now())
 
         await self.discover_all()
+
+        config = self.config_data
+
+        self.set_async_track_timer(
+            "Entities", config.update_entities_interval, self._update_entities
+        )
+        self.set_async_track_timer("API", config.update_api_interval, self._update_api)
+        self.set_async_track_timer(
+            "Heartbeat", HEARTBEAT_INTERVAL_SECONDS, self._send_heartbeat
+        )
+
+        self._is_ready = False
 
     async def async_send_heartbeat(self, event_time):
         if not self._is_initialized:
@@ -236,11 +234,6 @@ class EdgeOSHomeAssistant:
             _LOGGER.info(f"NOT INITIALIZED, cannot update entities: {event_time}")
 
             return
-
-        if self._is_first_time_online:
-            self._is_first_time_online = False
-
-            await self.async_update_api(datetime.now())
 
         await self.discover_all()
 

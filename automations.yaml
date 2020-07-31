@@ -497,3 +497,25 @@
   - data: {}
     entity_id: switch.irrigation_controller_zone_3
     service: script.irrigate_home
+- id: '1596227431193'
+  alias: Turn on Kitchen Speaker
+  description: ''
+  trigger:
+  - entity_id: media_player.downstairs
+    platform: state
+    to: playing
+  condition: []
+  action:
+  - device_id: 6da61b80b0fe410f8e4a531786673386
+    domain: switch
+    entity_id: switch.kitchen_electronics
+    type: turn_on
+  - data:
+      source: hdmi
+    entity_id: media_player.samsung_kitchen_soundbar
+    service: media_player.select_source
+  - data:
+      volume_level: 0.8
+    entity_id: media_player.samsung_kitchen_soundbar
+    service: media_player.volume_set
+  mode: single
