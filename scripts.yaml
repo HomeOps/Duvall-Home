@@ -138,3 +138,22 @@ irrigate_home:
   - data: {}
     entity_id: switch.irrigation_controller_zone_2
     service: switch.turn_on
+turn_on_samsung_kitchen_speaker:
+  alias: Turn on Kitchen Speaker
+  mode: single
+  sequence:
+  - data: {}
+    entity_id: switch.kitchen_electronics
+    service: switch.turn_on
+  - delay: 00:00:10
+  - data: {}
+    entity_id: media_player.samsung_kitchen_soundbar
+    service: media_player.turn_on
+  - data:
+      source: hdmi
+    entity_id: media_player.samsung_kitchen_soundbar
+    service: media_player.select_source
+  - data:
+      volume_level: 0.8
+    entity_id: media_player.samsung_kitchen_soundbar
+    service: media_player.volume_set

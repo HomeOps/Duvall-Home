@@ -504,18 +504,11 @@
   - entity_id: media_player.downstairs
     platform: state
     to: playing
+  - entity_id: light.kitchen_lights
+    platform: state
+    to: 'on'
   condition: []
   action:
-  - device_id: 6da61b80b0fe410f8e4a531786673386
-    domain: switch
-    entity_id: switch.kitchen_electronics
-    type: turn_on
-  - data:
-      source: hdmi
-    entity_id: media_player.samsung_kitchen_soundbar
-    service: media_player.select_source
-  - data:
-      volume_level: 0.8
-    entity_id: media_player.samsung_kitchen_soundbar
-    service: media_player.volume_set
+  - data: {}
+    service: script.turn_on_samsung_kitchen_speaker
   mode: single

@@ -50,6 +50,7 @@ person_adults:
   entities:
     - person.oscar_calvo
     - person.hazel_rojas
+    - person.valentina
 cars_presence:
   name: Cars Presence
   entities:

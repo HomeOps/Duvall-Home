@@ -40,6 +40,7 @@
             {% if hvacMode == 'cooling' -%}{% set target = target + 0.5 -%}{% endif -%}
             {% if hvacMode == 'heating' -%}{% set target = target - 0.5 -%}{% endif -%}
             {% set vent = states(get_vent_temp(light))|float -%}
+            {% set vent = target -%} # Ignore vent, override with target
             {% set room = states(get_room_temp(light))|float -%}
             {% set requestClose = (((room-target)>0.5 and (vent-room)>0.5) or ((target-room)>0.5 and (room-vent)>0.5)) -%}
             {% set level = state_attr(light.entity_id, "current_position") -%}
@@ -72,6 +73,7 @@
             {% if hvacMode == 'cooling' -%}{% set target = target + 0.5 -%}{% endif -%}
             {% if hvacMode == 'heating' -%}{% set target = target - 0.5 -%}{% endif -%}
             {% set vent = states(get_vent_temp(light))|float -%}
+            {% set vent = target -%} # Ignore vent, override with target
             {% set room = states(get_room_temp(light))|float -%}
             {% set requestOpen = not (((room-target)>0.5 and (vent-room)>0.5) or ((target-room)>0.5 and (room-vent)>0.5)) -%}
             {% set level = state_attr(light.entity_id, "current_position") -%}
