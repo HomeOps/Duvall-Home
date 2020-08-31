@@ -168,7 +168,7 @@
 - id: i_am_back
   alias: I am Back
   trigger:
-  - entity_id: ' group.person_adults'
+  - entity_id: group.person_adults
     platform: state
     to: home
   condition: []

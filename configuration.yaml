@@ -94,6 +94,11 @@ arlo:
   username: !secret arlo_username
   password: !secret arlo_password
 
+roomba:
+  - host: !secret roomba_host
+    blid: !secret roomba_blid
+    password: !secret roomba_password
+
 emulated_hue:
   expose_by_default: false
   entities:
