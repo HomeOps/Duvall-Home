@@ -27,3 +27,13 @@
     - type: last_boot
 - platform: dnsip
   name: 'Public IP'
+- platform: qnap
+  host: !secret qnap_host
+  username: !secret qnap_username
+  password: !secret qnap_password
+  monitored_conditions:
+    - status
+    - cpu_usage
+    - memory_percent_used
+    - network_tx
+    - volume_percentage_used

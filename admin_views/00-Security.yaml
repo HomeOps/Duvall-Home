@@ -68,6 +68,7 @@
         - sensor.cpu_temperature
         - sensor.processor_use
         - sensor.memory_use_percent
+        - sensor.nas_memory_usage
         - sensor.speedtest_download
         - sensor.speedtest_upload
         - sensor.disk_use_percent
