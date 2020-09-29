@@ -1,4 +1,3 @@
-- platform: yr
 - platform: arlo
   monitored_conditions:
     - captured_today

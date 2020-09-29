@@ -512,3 +512,21 @@
   - data: {}
     service: script.turn_on_samsung_kitchen_speaker
   mode: single
+- id: '1599102038214'
+  alias: Condensation Detected
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.ac_condensation
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - device_id: 41ccd3674f474fdb8d0214427a47b5cb
+    domain: climate
+    entity_id: climate.thermostat_hk
+    hvac_mode: 'off'
+    type: set_hvac_mode
+  - data:
+      message: AC condensation detected
+    service: notify.sms_oscar
+  mode: single
