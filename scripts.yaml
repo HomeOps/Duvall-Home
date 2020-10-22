@@ -24,6 +24,10 @@ good_night:
       entity_id: group.perimeter_locks
     service: lock.lock
   - data:
+      entity_id: climate.thermostat_hk
+      temperature: 19.5
+    service: climate.set_temperature
+  - data:
       entity_id: climate.thermostat
       preset_mode: sleep
     service: climate.set_preset_mode

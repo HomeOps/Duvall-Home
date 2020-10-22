@@ -37,14 +37,14 @@
             {% macro get_close(light) -%}
             {% set target = state_attr("climate.thermostat_hk", "temperature")|float -%}
             {% set hvacMode = state_attr("climate.thermostat_hk", "hvac_action")|lower -%}
-            {% if hvacMode == 'cooling' -%}{% set target = target + 0.5 -%}{% endif -%}
-            {% if hvacMode == 'heating' -%}{% set target = target - 0.5 -%}{% endif -%}
-            {% set vent = states(get_vent_temp(light))|float -%}
-            {% set vent = target -%}
             {% set room = states(get_room_temp(light))|float -%}
-            {% set requestClose = (((room-target)>0.5 and (vent-room)>0.5) or ((target-room)>0.5 and (room-vent)>0.5)) -%}
             {% set level = state_attr(light.entity_id, "current_position") -%}
             {% if level == None -%}{% set level = 50 -%}{% endif -%}
+            {% set delta = 0.25 -%}
+            {% set roomIsHot = (room - target)>delta -%}
+            {% set roomIsCold = (target - room)>delta -%}
+            {% set requestOpen = (roomIsHot and (hvacMode == 'cooling')) or (roomIsCold and hvacMode == 'heating') -%}
+            {% set requestClose = (roomIsCold and hvacMode == 'cooling') or (roomIsHot and hvacMode == 'heating') -%}
             {% if requestClose and level>50 -%}{{light.entity_id}},{%- endif -%}
             {%- endmacro -%}
             {% for light in states['cover'] if ( (light.entity_id | lower).endswith('_vent') ) %}
@@ -70,14 +70,14 @@
             {% macro get_open(light) -%}
             {% set target = state_attr("climate.thermostat_hk", "temperature")|float -%}
             {% set hvacMode = state_attr("climate.thermostat_hk", "hvac_action")|lower -%}
-            {% if hvacMode == 'cooling' -%}{% set target = target + 0.5 -%}{% endif -%}
-            {% if hvacMode == 'heating' -%}{% set target = target - 0.5 -%}{% endif -%}
-            {% set vent = states(get_vent_temp(light))|float -%}
-            {% set vent = target -%}
             {% set room = states(get_room_temp(light))|float -%}
-            {% set requestOpen = not (((room-target)>0.5 and (vent-room)>0.5) or ((target-room)>0.5 and (room-vent)>0.5)) -%}
             {% set level = state_attr(light.entity_id, "current_position") -%}
             {% if level == None -%}{% set level = 50 -%}{% endif -%}
+            {% set delta = 0.25 -%}
+            {% set roomIsHot = (room - target)>delta and (room!=0) -%}
+            {% set roomIsCold = (target - room)>delta and (room!=0) -%}
+            {% set requestOpen = (roomIsHot and (hvacMode == 'cooling')) or (roomIsCold and hvacMode == 'heating') -%}
+            {% set requestClose = (roomIsCold and hvacMode == 'cooling') or (roomIsHot and hvacMode == 'heating') -%}
             {% if requestOpen and level<50 -%}{{light.entity_id}},{%- endif -%}
             {%- endmacro -%}
             {% for light in states['cover'] if ( (light.entity_id | lower).endswith('_vent') ) %}
