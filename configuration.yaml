@@ -71,8 +71,8 @@ apcupsd:
 recorder:
   db_url: !secret recorder_db_url
   auto_purge: true
-  purge_keep_days: 1
-  commit_interval: 3
+  purge_keep_days: 10
+  commit_interval: 1
   exclude:
     domains:
       - automation
@@ -93,9 +93,9 @@ spotify:
 ecobee:
   api_key: !secret ecobee_api_key
 
-arlo:
-  username: !secret arlo_username
-  password: !secret arlo_password
+#arlo:
+#  username: !secret arlo_username
+#  password: !secret arlo_password
 
 roomba:
   - host: !secret roomba_host
@@ -228,7 +228,7 @@ tts:
   - platform: google_translate
 
 alarm_control_panel:
-  - platform: arlo
+#  - platform: arlo
   - platform: manual
 
 cover: !include covers.yaml
