@@ -1,21 +1,26 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#  SPDX-License-Identifier: Apache-2.0
 """
 Alexa Devices Sensors.
+
+SPDX-License-Identifier: Apache-2.0
 
 For more details about this platform, please refer to the documentation at
 https://community.home-assistant.io/t/echo-devices-alexa-as-media-player-testers-needed/58639
 """
 import datetime
 import logging
-from typing import List, Text  # noqa pylint: disable=unused-import
+from typing import Callable, List, Optional, Text  # noqa pylint: disable=unused-import
 
-from homeassistant.const import DEVICE_CLASS_TIMESTAMP, STATE_UNAVAILABLE
+from homeassistant.const import (
+    DEVICE_CLASS_TIMESTAMP,
+    STATE_UNAVAILABLE,
+    __version__ as HA_VERSION,
+)
 from homeassistant.exceptions import ConfigEntryNotReady, NoEntitySpecifiedError
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.event import async_track_point_in_utc_time
 from homeassistant.util import dt
+from packaging import version
 import pytz
 
 from . import (
@@ -43,7 +48,7 @@ async def async_setup_platform(hass, config, add_devices_callback, discovery_inf
         "Timer": TimerSensor,
         "Reminder": ReminderSensor,
     }
-    account = config[CONF_EMAIL]
+    account = config[CONF_EMAIL] if config else discovery_info["config"][CONF_EMAIL]
     include_filter = config.get(CONF_INCLUDE_DEVICES, [])
     exclude_filter = config.get(CONF_EXCLUDE_DEVICES, [])
     account_dict = hass.data[DATA_ALEXAMEDIA]["accounts"][account]
@@ -121,8 +126,10 @@ async def async_unload_entry(hass, entry) -> bool:
     """Unload a config entry."""
     account = entry.data[CONF_EMAIL]
     account_dict = hass.data[DATA_ALEXAMEDIA]["accounts"][account]
+    _LOGGER.debug("Attempting to unload sensors")
     for key, sensors in account_dict["entities"]["sensor"].items():
         for device in sensors[key].values():
+            _LOGGER.debug("Removing %s", device)
             await device.async_remove()
     return True
 
@@ -154,8 +161,9 @@ class AlexaMediaNotificationSensor(Entity):
         self._active = []
         self._next = None
         self._prior_value = None
-        self._timestamp: datetime.datetime = None
-        self._process_raw_notifications()
+        self._timestamp: Optional[datetime.datetime] = None
+        self._tracker: Optional[Callable] = None
+        self._state: Optional[datetime.datetime] = None
 
     def _process_raw_notifications(self):
         self._all = (
@@ -172,6 +180,42 @@ class AlexaMediaNotificationSensor(Entity):
             else []
         )
         self._next = self._active[0][1] if self._active else None
+        self._state = self._process_state(self._next)
+        if self._state == STATE_UNAVAILABLE or self._next != self._prior_value:
+            # cancel any event triggers
+            if self._tracker:
+                _LOGGER.debug(
+                    "%s: Cancelling old event",
+                    self,
+                )
+                self._tracker()
+            if self._state != STATE_UNAVAILABLE:
+                _LOGGER.debug(
+                    "%s: Scheduling event in %s",
+                    self,
+                    dt.as_utc(dt.parse_datetime(self._state)) - dt.utcnow(),
+                )
+                self._tracker = async_track_point_in_utc_time(
+                    self.hass,
+                    self._trigger_event,
+                    dt.as_utc(dt.parse_datetime(self._state)),
+                )
+
+    def _trigger_event(self, time_date) -> None:
+        _LOGGER.debug(
+            "%s:Firing %s at %s",
+            self,
+            "alexa_media_notification_event",
+            dt.as_local(time_date),
+        )
+        self.hass.bus.async_fire(
+            "alexa_media_notification_event",
+            event_data={
+                "email": hide_email(self._account),
+                "device": {"name": self.name, "entity_id": self.entity_id},
+                "event": self._active[0],
+            },
+        )
 
     def _fix_alarm_date_time(self, value):
         if (
@@ -213,7 +257,7 @@ class AlexaMediaNotificationSensor(Entity):
         _LOGGER.debug("Sensor value %s", value)
         alarm = value[1][self._sensor_property]
         reminder = None
-        if isinstance(value[1][self._sensor_property], int):
+        if isinstance(value[1][self._sensor_property], (int, float)):
             reminder = True
             alarm = dt.as_local(
                 self._round_time(
@@ -256,6 +300,7 @@ class AlexaMediaNotificationSensor(Entity):
                 return
         except AttributeError:
             pass
+        self._process_raw_notifications()
         # Register event handler on bus
         self._listener = async_dispatcher_connect(
             self.hass,
@@ -268,6 +313,8 @@ class AlexaMediaNotificationSensor(Entity):
         """Prepare to remove entity."""
         # Register event handler on bus
         self._listener()
+        if self._tracker:
+            self._tracker()
 
     def _handle_event(self, event):
         """Handle events.
@@ -283,14 +330,14 @@ class AlexaMediaNotificationSensor(Entity):
         if "notification_update" in event:
             if (
                 event["notification_update"]["dopplerId"]["deviceSerialNumber"]
-                == self._client.unique_id
+                == self._client.device_serial_number
             ):
-                _LOGGER.debug("Updating sensor %s", self.name)
+                _LOGGER.debug("Updating sensor %s", self)
                 self.async_schedule_update_ha_state(True)
 
     @property
     def available(self):
-        """Return the availabilty of the sensor."""
+        """Return the availability of the sensor."""
         return self._client.available
 
     @property
@@ -321,9 +368,9 @@ class AlexaMediaNotificationSensor(Entity):
         )
 
     @property
-    def state(self):
+    def state(self) -> datetime.datetime:
         """Return the state of the sensor."""
-        return self._process_state(self._next)
+        return self._state
 
     def _process_state(self, value):
         return (
@@ -357,7 +404,7 @@ class AlexaMediaNotificationSensor(Entity):
             self._n_dict = None
         self._process_raw_notifications()
         try:
-            self.async_schedule_update_ha_state()
+            self.async_write_ha_state()
         except NoEntitySpecifiedError:
             pass  # we ignore this due to a harmless startup race condition
 
@@ -390,6 +437,9 @@ class AlexaMediaNotificationSensor(Entity):
 
         attr = {
             "recurrence": self.recurrence,
+            "process_timestamp": dt.as_local(
+                datetime.datetime.fromtimestamp(self._timestamp.timestamp())
+            ).isoformat(),
             "prior_value": self._process_state(self._prior_value),
             "total_active": len(self._active),
             "total_all": len(self._all),
@@ -419,13 +469,15 @@ class TimerSensor(AlexaMediaNotificationSensor):
         # Class info
         self._type = "Timer"
         super().__init__(
-            client, n_json, "remainingTime", account, f"next {self._type}", "mdi:timer"
+            client,
+            n_json,
+            "remainingTime",
+            account,
+            f"next {self._type}",
+            "mdi:timer-outline"
+            if (version.parse(HA_VERSION) >= version.parse("0.113.0"))
+            else "mdi:timer",
         )
-
-    @property
-    def state(self) -> datetime.datetime:
-        """Return the state of the sensor."""
-        return self._process_state(self._next)
 
     def _process_state(self, value):
         return (
@@ -442,14 +494,19 @@ class TimerSensor(AlexaMediaNotificationSensor):
         )
 
     @property
-    def paused(self) -> bool:
+    def paused(self) -> Optional[bool]:
         """Return the paused state of the sensor."""
         return self._next["status"] == "PAUSED" if self._next else None
 
     @property
     def icon(self):
         """Return the icon of the sensor."""
-        return self._icon if not self.paused else "mdi:timer-off"
+        off_icon = (
+            "mdi:timer-off-outline"
+            if (version.parse(HA_VERSION) >= version.parse("0.113.0"))
+            else "mdi:timer-off"
+        )
+        return self._icon if not self.paused else off_icon
 
 
 class ReminderSensor(AlexaMediaNotificationSensor):
@@ -462,11 +519,6 @@ class ReminderSensor(AlexaMediaNotificationSensor):
         super().__init__(
             client, n_json, "alarmTime", account, f"next {self._type}", "mdi:reminder"
         )
-
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-        return self._process_state(self._next)
 
     def _process_state(self, value):
         return (

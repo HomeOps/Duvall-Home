@@ -1,8 +1,7 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#  SPDX-License-Identifier: Apache-2.0
 """
 Alexa Devices Alarm Control Panel using Guard Mode.
+
+SPDX-License-Identifier: Apache-2.0
 
 For more details about this platform, please refer to the documentation at
 https://community.home-assistant.io/t/echo-devices-alexa-as-media-player-testers-needed/58639
@@ -11,8 +10,10 @@ from asyncio import sleep
 import logging
 from typing import Dict, List, Text  # noqa pylint: disable=unused-import
 
+from alexapy import AlexaAPI, hide_email, hide_serial
 from homeassistant import util
 from homeassistant.const import (
+    CONF_EMAIL,
     STATE_ALARM_ARMED_AWAY,
     STATE_ALARM_DISARMED,
     STATE_UNAVAILABLE,
@@ -20,9 +21,10 @@ from homeassistant.const import (
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.event import async_call_later
+from simplejson import JSONDecodeError
 
-from . import (
-    CONF_EMAIL,
+from .alexa_media import AlexaMedia
+from .const import (
     CONF_EXCLUDE_DEVICES,
     CONF_INCLUDE_DEVICES,
     CONF_QUEUE_DELAY,
@@ -31,10 +33,8 @@ from . import (
     DOMAIN as ALEXA_DOMAIN,
     MIN_TIME_BETWEEN_FORCED_SCANS,
     MIN_TIME_BETWEEN_SCANS,
-    hide_email,
-    hide_serial,
 )
-from .helpers import _catch_login_errors, add_devices, retry_async
+from .helpers import _catch_login_errors, add_devices
 
 try:
     from homeassistant.components.alarm_control_panel import (
@@ -54,7 +54,7 @@ async def async_setup_platform(
 ) -> bool:
     """Set up the Alexa alarm control panel platform."""
     devices = []  # type: List[AlexaAlarmControlPanel]
-    account = config[CONF_EMAIL]
+    account = config[CONF_EMAIL] if config else discovery_info["config"][CONF_EMAIL]
     include_filter = config.get(CONF_INCLUDE_DEVICES, [])
     exclude_filter = config.get(CONF_EXCLUDE_DEVICES, [])
     account_dict = hass.data[DATA_ALEXAMEDIA]["accounts"][account]
@@ -117,25 +117,23 @@ async def async_setup_entry(hass, config_entry, async_add_devices):
 async def async_unload_entry(hass, entry) -> bool:
     """Unload a config entry."""
     account = entry.data[CONF_EMAIL]
+    _LOGGER.debug("Attempting to unload alarm control panel")
     account_dict = hass.data[DATA_ALEXAMEDIA]["accounts"][account]
     for device in account_dict["entities"]["alarm_control_panel"].values():
+        _LOGGER.debug("Removing %s", device)
         await device.async_remove()
     return True
 
 
-class AlexaAlarmControlPanel(AlarmControlPanel):
+class AlexaAlarmControlPanel(AlarmControlPanel, AlexaMedia):
     """Implementation of Alexa Media Player alarm control panel."""
 
     def __init__(self, login, media_players=None) -> None:
         # pylint: disable=unexpected-keyword-arg
         """Initialize the Alexa device."""
-        from alexapy import AlexaAPI
-
-        # Class info
-        self._login = login
-        self.alexa_api = AlexaAPI(self, login)
-        self.email = login.email
-        self.account = hide_email(login.email)
+        super().__init__(None, login)
+        _LOGGER.debug("%s: Initiating alarm control panel", hide_email(login.email))
+        # AlexaAPI requires a AlexaClient object, need to clean this up
         self._available = None
         self._assumed_state = None
 
@@ -148,25 +146,10 @@ class AlexaAlarmControlPanel(AlarmControlPanel):
         self._attrs: Dict[Text, Text] = {}
         self._media_players = {} or media_players
 
-    def check_login_changes(self):
-        """Update Login object if it has changed."""
-        try:
-            login = self.hass.data[DATA_ALEXAMEDIA]["accounts"][self.email]["login_obj"]
-        except (AttributeError, KeyError):
-            return
-        if self._login != login or self._login.session != login.session:
-            from alexapy import AlexaAPI
-
-            _LOGGER.debug("Login object has changed; updating")
-            self._login = login
-            self.alexa_api = AlexaAPI(self, login)
-            self.email = login.email
-            self.account = hide_email(login.email)
-
+    @_catch_login_errors
     async def init(self):
         """Initialize."""
         try:
-            from simplejson import JSONDecodeError
 
             data = await self.alexa_api.get_guard_details(self._login)
             guard_dict = data["locationDetails"]["locationDetails"]["Default_Location"][
@@ -282,7 +265,7 @@ class AlexaAlarmControlPanel(AlarmControlPanel):
         self._available = True
         self._assumed_state = False
         _LOGGER.debug("%s: Alarm State: %s", self.account, self.state)
-        self.async_schedule_update_ha_state()
+        self.async_write_ha_state()
 
     @_catch_login_errors
     async def _async_alarm_set(self, command: Text = "", code=None) -> None:
@@ -302,6 +285,7 @@ class AlexaAlarmControlPanel(AlarmControlPanel):
         )
         if available_media_players:
             _LOGGER.debug("Sending guard command to: %s", available_media_players[0])
+            available_media_players[0].check_login_changes()
             await available_media_players[0].alexa_api.set_guard_state(
                 self._appliance_id.split("_")[2],
                 command_map[command],
@@ -316,7 +300,7 @@ class AlexaAlarmControlPanel(AlarmControlPanel):
                 self._login, self._guard_entity_id, command
             )
         await self.async_update(no_throttle=True)
-        self.async_schedule_update_ha_state()
+        self.async_write_ha_state()
 
     async def async_alarm_disarm(self, code=None) -> None:
         # pylint: disable=unexpected-keyword-arg
