@@ -530,3 +530,35 @@
       message: AC condensation detected
     service: notify.sms_oscar
   mode: single
+- id: '1615152063976'
+  alias: Turn hallway lights when motion
+  description: ''
+  use_blueprint:
+    path: homeassistant/motion_light.yaml
+    input:
+      motion_entity: binary_sensor.hallway_motion
+      light_target:
+        entity_id: light.hallway_lights
+- id: '1615152262826'
+  alias: Turn Den Lights when motion
+  description: ''
+  use_blueprint:
+    path: homeassistant/motion_light.yaml
+    input:
+      motion_entity: binary_sensor.den_motion
+      light_target:
+        entity_id: light.den_lights
+      no_motion_wait: 3600
+- id: '1615157508017'
+  alias: Turn on garage lights
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: sensor.garage_door_1_status
+  condition: []
+  action:
+  - type: turn_on
+    device_id: 9570fa1c6a5946399476b9a4604a9024
+    entity_id: light.garage
+    domain: light
+  mode: single

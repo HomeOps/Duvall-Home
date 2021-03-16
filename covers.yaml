@@ -2,3 +2,9 @@
   username: !secret myq_username
   password: !secret myq_password
   type: liftmaster
+- platform: opengarage
+  covers:
+    garage:
+      host: 192.168.1.233
+      device_key: opendoor
+      name: 'Garage Door 1'

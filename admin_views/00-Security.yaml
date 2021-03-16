@@ -24,6 +24,13 @@
       title: Security Sensors
       type: entities
     - entities:
+        - entity: group.sleep_motion_sensors
+        - entity: group.sleep_contacts
+        - entity: group.sleep_lights
+      show_header_toggle: false
+      title: Sleep Sensors
+      type: entities
+    - entities:
         - entity: binary_sensor.internet
         - entity: binary_sensor.cable_modem
         - entity: binary_sensor.lte_modem

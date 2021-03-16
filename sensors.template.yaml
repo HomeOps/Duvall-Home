@@ -1,71 +1,17 @@
-thermostat_target_temperature:
-  unit_of_measurement: '°C'
-  friendly_name: 'Thermostat Target Temperature'
-  device_class: temperature
-  entity_id: climate.thermostat_hk
-  value_template: '{{ state_attr("climate.thermostat_hk", "temperature")|float }}'
-bedroom_1_vent:
-  entity_id: light.bedroom_1_vent
-  value_template: '{{ float(state_attr("light.bedroom_1_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
-  friendly_name: 'Bedroom 1 Vent'
-  unit_of_measurement: '%'
-bedroom_3_vent:
-  entity_id: light.bedroom_3_vent
-  value_template: '{{ float(state_attr("light.bedroom_3_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
-  friendly_name: 'Bedroom 3 Vent'
-  unit_of_measurement: '%'
-den_vent:
-  entity_id: light.den_vent
-  value_template: '{{ float(state_attr("light.den_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
-  friendly_name: 'Den Vent'
-  unit_of_measurement: '%'
-dinning_vent:
-  entity_id: light.dinning_vent
-  value_template: '{{ float(state_attr("light.dinning_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
-  friendly_name: 'Dinning Vent'
-  unit_of_measurement: '%'
-guest_bathroom_vent:
-  entity_id: light.guest_bathroom_vent
-  value_template: '{{ float(state_attr("light.guest_bathroom_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
-  friendly_name: 'Guest Bathroom Vent'
-  unit_of_measurement: '%'
-guest_bedroom_vent:
-  entity_id: light.guest_bedroom_vent
-  value_template: '{{ float(state_attr("light.guest_bedroom_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
-  friendly_name: 'Guest Bedroom Vent'
-  unit_of_measurement: '%'
-hallway_vent:
-  entity_id: light.hallway_vent
-  value_template: '{{ float(state_attr("light.hallway_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
-  friendly_name: 'Hallway Vent'
-  unit_of_measurement: '%'
-kitchen_vent:
-  entity_id: light.kitchen_vent
-  value_template: '{{ float(state_attr("light.kitchen_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
-  friendly_name: 'Kitchen Vent'
-  unit_of_measurement: '%'
-living_vent:
-  entity_id: light.living_vent
-  value_template: '{{ float(state_attr("light.living_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
-  friendly_name: 'Living Vent'
-  unit_of_measurement: '%'
-master_bathroom_vent:
-  entity_id: light.master_bathroom_vent
-  value_template: '{{ float(state_attr("light.master_bathroom_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
-  friendly_name: 'Master Bathroom Vent'
-  unit_of_measurement: '%'
-master_bedroom_vent:
-  entity_id: light.master_bedroom_vent
-  value_template: '{{ float(state_attr("light.master_bedroom_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
-  friendly_name: 'Master Bedroom Vent'
-  unit_of_measurement: '%'
-mud_room_vent:
-  entity_id: light.mud_room_vent
-  value_template: '{{ float(state_attr("light.mud_room_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
-  friendly_name: 'Mud Room Vent'
-  unit_of_measurement: '%'
-tv_room_vent:
-  entity_id: light.tv_room_vent
-  value_template: '{{ float(state_attr("light.tv_room_vent", "brightness")/ 255 * 100) | round(0) | int | round(0) | int }}'
-  friendly_name: 'TV Room Vent'
-  unit_of_measurement: '%'
+garage_door_1_status:
+  friendly_name: "Garage Door 1 status"
+  value_template: '{% if states.cover.garage_door_1 %}
+      {% if states.cover.garage_door_1.attributes["door_state"] == "open" %}
+        Open
+      {% elif states.cover.garage_door_1.attributes["door_state"] == "closed" %}
+        Closed
+      {% elif states.cover.garage_door_1.attributes["door_state"] == "opening" %}
+        Opening
+      {% elif states.cover.garage_door_1.attributes["door_state"] == "closing" %}
+        Closing
+      {% else %}
+        Unknown
+      {% endif %}
+      {% else %}
+      n/a
+      {% endif %}'

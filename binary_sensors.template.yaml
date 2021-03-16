@@ -21,3 +21,21 @@ house_sleep:
   icon_template: mdi:sleep
   value_template: >-
     {{ states('group.sleep_motion_sensors') == 'off' and states('group.sleep_contacts') == 'off' and states('group.sleep_lights') == 'off' and states('alarm_control_panel.ha_alarm')=='armed_night' and states('sun.sun')=='below_horizon' }}
+garage_car_1_present:
+  friendly_name: "Car 1 In Garage"
+  value_template: "{{ state_attr('cover.garage_door_1', 'distance_sensor') < 150 }}"
+  availability_template: >-
+    {% if is_state('cover.garage_door_1','closed') %}
+      true
+    {% else %}
+      unavailable
+    {% endif %}
+  icon_template: >-
+    {% if is_state('binary_sensor.garage_car_1_present','on') %}
+      mdi:car
+    {% else %}
+      mdi:car-arrow-right
+    {% endif %}
+  unique_id: binary_sensor.garage_car_1_present
+  delay_on: 5
+  delay_off: 5

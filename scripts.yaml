@@ -20,24 +20,29 @@ good_morning:
 good_night:
   alias: Good Night!
   sequence:
-  - data:
-      entity_id: group.perimeter_locks
+  - data: {}
     service: lock.lock
+    target:
+      entity_id: group.perimeter_locks
   - data:
-      entity_id: climate.thermostat_hk
-      temperature: 19.5
+      target_temp_high: 19.5
+      target_temp_low: 18.5
+      hvac_mode: auto
     service: climate.set_temperature
+    target:
+      entity_id: climate.thermostat_hk
   - data:
       entity_id: climate.thermostat
       preset_mode: sleep
     service: climate.set_preset_mode
-  - alias: ''
-    data:
-      entity_id: alarm_control_panel.ha_alarm
+  - data: {}
     service: alarm_control_panel.alarm_arm_night
+    target:
+      entity_id: alarm_control_panel.ha_alarm
   - data:
       sc_message: Good night!
     service: script.notify
+  mode: single
 goodbye:
   alias: Goodbye!
   sequence:
