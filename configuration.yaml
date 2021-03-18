@@ -65,9 +65,6 @@ speedtestdotnet:
   manual: true
   server_id: !secret speedtestdotnet_server_id
 
-apcupsd:
-  host: 127.0.0.1
-
 recorder:
   db_url: !secret recorder_db_url
   auto_purge: true
