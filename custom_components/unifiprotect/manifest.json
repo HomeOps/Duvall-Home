@@ -1,0 +1,15 @@
+{
+  "domain": "unifiprotect",
+  "name": "Unifi Protect",
+  "documentation": "https://github.com/briis/unifiprotect",
+  "issue_tracker": "https://github.com/briis/unifiprotect/issues",
+  "config_flow": true,
+  "requirements": [
+    "pyunifiprotect==0.30.1"
+  ],
+  "dependencies": [],
+  "version": "0.8.4",
+  "codeowners": [
+    "@briis"
+  ]
+}
