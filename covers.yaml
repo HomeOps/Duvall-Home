@@ -5,6 +5,6 @@
 - platform: opengarage
   covers:
     garage:
-      host: 192.168.1.233
+      host: 192.168.1.181
       device_key: !secret opengarage_device_key1
       name: 'Garage Door 1'
