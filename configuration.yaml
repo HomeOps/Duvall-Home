@@ -1,16 +1,13 @@
 homeassistant:
-  # Name of the location where Home Assistant is running
   name: Duvall
   latitude: !secret loc_latitude_home
   longitude: !secret loc_longitude_home
   elevation: !secret loc_elevation_home
-  # metric for Metric, imperial for Imperial
   unit_system: metric
-  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: America/Los_Angeles
-  # Customization file
+  external_url: !secret http_external_url
+  internal_url: !secret http_internal_url
   customize: !include customize.yaml
-  # customize_glob: !include customize_glob.yaml
   packages: !include packages/packages.yaml
   auth_providers:
    - type: homeassistant
@@ -28,7 +25,6 @@ frontend:
 http:
   ssl_certificate: !secret http_ssl_certificate
   ssl_key: !secret http_ssl_key
-  base_url: !secret http_base_url
 
 cloud: !include cloud.yaml
 
@@ -68,11 +64,10 @@ speedtestdotnet:
 recorder:
   db_url: !secret recorder_db_url
   auto_purge: true
-  purge_keep_days: 10
+  purge_keep_days: 30
   commit_interval: 1
   exclude:
     domains:
-      - automation
       - weblink
       - updater
 

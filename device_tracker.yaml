@@ -1,6 +1,4 @@
-- platform: ping
-  scan_interval: 30
-  hosts:
-    oscar_phone: 192.168.1.56
-    hazel_phone: 192.168.1.54
-    nexus_phone: 192.168.1.80
+#- platform: ping
+#  scan_interval: 30
+#  hosts:
+

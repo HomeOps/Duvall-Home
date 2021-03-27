@@ -5,12 +5,6 @@
         - arm_home
         - arm_away
       type: alarm-panel
-    - entity: alarm_control_panel.duvall_home
-      name: Arlo
-      states:
-        - arm_home
-        - arm_away
-      type: alarm-panel
     - entities:
         - entity: lock.server_room_lock
         - entity: group.perimeter_locks
