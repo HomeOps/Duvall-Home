@@ -4,7 +4,12 @@
 #  type: liftmaster
 - platform: opengarage
   covers:
-    garage:
-      host: 192.168.1.181
+    garage1:
+      host: !secret opengarage_host1
       device_key: !secret opengarage_device_key1
       name: 'Garage Door 1'
+    garage2:
+      host: !secret opengarage_host2
+      device_key: !secret opengarage_device_key2
+      name: 'Garage Door 2'
+
