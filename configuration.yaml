@@ -6,7 +6,11 @@ homeassistant:
   unit_system: metric
   time_zone: America/Los_Angeles
   external_url: !secret http_external_url
-  internal_url: !secret http_internal_url
+
+  # Use external url for internal url to fix casting to google devices
+  #internal_url: !secret http_internal_url
+  internal_url: !secret http_external_url
+
   customize: !include customize.yaml
   packages: !include packages/packages.yaml
   auth_providers:
