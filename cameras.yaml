@@ -1,8 +1,8 @@
 #- platform: arlo
 #  ffmpeg_arguments: '-pred 1 -q:v 2'
-- platform: ffmpeg
-  name: 'Den'
-  input: !secret camera_den_url
+#- platform: ffmpeg
+#  name: 'Den'
+#  input: !secret camera_den_url
 #- platform: ffmpeg
 #  name: 'Garage'
 #  input: !secret camera_garage_url
