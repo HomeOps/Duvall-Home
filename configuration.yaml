@@ -220,7 +220,6 @@ tts:
   - platform: google_translate
 
 alarm_control_panel:
-#  - platform: arlo
   - platform: manual
 
 cover: !include covers.yaml
@@ -235,6 +234,7 @@ device_tracker: !include device_tracker.yaml
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
+alert: !include alerts.yaml
 
 #logger:
 #  default: info
