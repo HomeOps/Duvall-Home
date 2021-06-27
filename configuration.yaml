@@ -144,20 +144,6 @@ emulated_hue:
     light.mud_room:
       hidden: false
 
-remote:
-  - platform: harmony
-    name: Living Room TV
-    activity: Living Room TV
-    host: 192.168.1.124
-  - platform: harmony
-    name: Family Room TV
-    activity: Family TV
-    host: 192.168.1.125
-  - platform: harmony
-    name: Master Bedroom TV
-    activity: Master Bedroom TV
-    host: 192.168.1.126
-
 wemo:
   discovery: false
   static:
