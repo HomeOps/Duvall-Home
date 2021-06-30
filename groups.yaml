@@ -150,3 +150,16 @@ always_on_switches:
     - switch.tv_room_plug_3
     - switch.server_electronics
     - switch.kitchen_electronics
+water_leak_sensors:
+  entities:
+    - binary_sensor.bathroom_water_leak_sensor_water
+    - binary_sensor.ac_condensation
+    - binary_sensor.garage_water_leak
+    - binary_sensor.guest_bathroom_water_leak
+    - binary_sensor.kitchen_fridge_water_leak
+    - binary_sensor.kitchen_sink_water_leak
+    - binary_sensor.laundry_room_water_leak
+    - binary_sensor.master_bathroom_water_leak
+    - binary_sensor.master_tub_water_leak
+
+
