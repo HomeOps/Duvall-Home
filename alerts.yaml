@@ -10,3 +10,15 @@ garage_door:
   notifiers:
     - sms_oscar
     - sms_hazel
+water_leak:
+  name: Water leak detected
+  message: "Water leak has been detected"
+  done_message: Water leak no longer detected
+  entity_id: group.water_leak_sensors
+  state: "on"
+  repeat: 5
+  can_acknowledge: true
+  skip_first: false
+  notifiers:
+    - sms_oscar
+    - sms_hazel

@@ -599,3 +599,12 @@
       no_motion_wait: 240
       light_target:
         entity_id: light.mud_room
+- id: '1625020669242'
+  alias: Turn on Stair lights on motion
+  description: ''
+  use_blueprint:
+    path: homeassistant/motion_light.yaml
+    input:
+      motion_entity: binary_sensor.stairs_motion
+      light_target:
+        entity_id: light.stairs_lights
