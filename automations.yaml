@@ -562,19 +562,6 @@
     entity_id: light.garage
     domain: light
   mode: single
-- id: '1616194157931'
-  alias: Turn outside when motion outside
-  description: ''
-  use_blueprint:
-    path: homeassistant/motion_light.yaml
-    input:
-      motion_entity: binary_sensor.motion_doorbell
-      light_target:
-        device_id:
-        - 9570fa1c6a5946399476b9a4604a9024
-        - 41c492901cdf40b0ae07e31b9490ce4b
-        - 01ef5f3b750c49ed8eb0c8bf9f26119d
-        entity_id: light.hallway_lights
 - id: '1616374692206'
   alias: Turn Laundry fan when Dryer is drying
   description: ''
@@ -608,3 +595,21 @@
       motion_entity: binary_sensor.stairs_motion
       light_target:
         entity_id: light.stairs_lights
+- id: '1625022374750'
+  alias: Turn garage lights when Mud room opens
+  description: ''
+  use_blueprint:
+    path: homeassistant/motion_light.yaml
+    input:
+      motion_entity: binary_sensor.mud_room_door_contact
+      light_target:
+        entity_id: light.garage
+- id: '1625022595254'
+  alias: Turn outside lights when motion outside
+  description: ''
+  use_blueprint:
+    path: homeassistant/motion_light.yaml
+    input:
+      motion_entity: binary_sensor.motion_doorbell
+      light_target:
+        entity_id: light.outside_left_lights
