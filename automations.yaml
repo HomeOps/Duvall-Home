@@ -589,3 +589,13 @@
     target:
       entity_id: light.laundry_fan
   mode: single
+- id: '1625018365149'
+  alias: Turn mud room lights on motion
+  description: ''
+  use_blueprint:
+    path: homeassistant/motion_light.yaml
+    input:
+      motion_entity: binary_sensor.mud_room_motion
+      no_motion_wait: 240
+      light_target:
+        entity_id: light.mud_room
