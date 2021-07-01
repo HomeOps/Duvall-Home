@@ -6,9 +6,9 @@
 #- platform: ffmpeg
 #  name: 'Garage'
 #  input: !secret camera_garage_url
-- platform: ffmpeg
-  name: 'TV Room'
-  input: !secret camera_tvroom_url
+#- platform: ffmpeg
+#  name: 'TV Room'
+#  input: !secret camera_tvroom_url
 - platform: ffmpeg
   name: 'Living'
   input: !secret camera_living_url

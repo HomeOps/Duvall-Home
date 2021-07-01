@@ -44,12 +44,9 @@
         - entity: camera.garage
         - entity: camera.tv_room
         - entity: camera.den
-        - entity: camera.front_door
-        - entity: camera.backyard
-        - entity: camera.outside
-        - entity: camera.leftside
-        - entity: camera.patio
+        - entity: camera.doorbell
         - entity: camera.living
+        - entity: camera.garage
       type: glance
     - entities:
         - entity: automation.good_morning
@@ -85,6 +82,8 @@
         - entity: sensor.powerwall_load_now
           name: House
         - entity: sensor.powerwall_charge
+        - entity: sensor.frosty_battery_sensor
+        - entity: sensor.lola_battery_sensor
       hours_to_show: 48
       refresh_interval: 30
       title: Power
