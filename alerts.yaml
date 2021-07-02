@@ -16,7 +16,7 @@ water_leak:
   done_message: Water leak no longer detected
   entity_id: group.water_leak_sensors
   state: "on"
-  repeat: 5
+  repeat: 15
   can_acknowledge: true
   skip_first: false
   notifiers:
