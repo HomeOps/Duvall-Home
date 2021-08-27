@@ -21,6 +21,10 @@ good_night:
   alias: Good Night!
   sequence:
   - data: {}
+    service: alarm_control_panel.alarm_arm_night
+    target:
+      entity_id: alarm_control_panel.ha_alarm
+  - data: {}
     service: lock.lock
     target:
       entity_id: group.perimeter_locks
@@ -35,10 +39,6 @@ good_night:
       entity_id: climate.thermostat
       preset_mode: sleep
     service: climate.set_preset_mode
-  - data: {}
-    service: alarm_control_panel.alarm_arm_night
-    target:
-      entity_id: alarm_control_panel.ha_alarm
   - data:
       sc_message: Good night!
     service: script.notify
