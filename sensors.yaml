@@ -28,7 +28,7 @@
     - status
     - cpu_usage
     - memory_percent_used
-    - network_tx
     - volume_percentage_used
+    - drive_temp
 - platform: template
   sensors: !include sensors.template.yaml
