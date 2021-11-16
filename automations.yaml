@@ -657,3 +657,22 @@
     target:
       entity_id: switch.outside_lights
   mode: single
+- id: '1637095306601'
+  alias: Notify doorbell
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.doorbell_doorbell
+    from: 'on'
+  condition: []
+  action:
+  - service: tts.google_translate_say
+    data:
+      entity_id: media_player.announce_group
+      message: Someone is ringing the door
+      cache: true
+  - service: notify.sms_oscar
+    data:
+      message: Some is ringing the door. https://duvall.calvonet.com:8123/api/camera_proxy_stream/camera.doorbell?token={{
+        state_attr('camera.doorbell', 'access_token') }}
+  mode: single
