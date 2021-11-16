@@ -629,3 +629,31 @@
 
         '
   mode: single
+- id: '1635904904000'
+  alias: Living Left Lamp Switch mirrors Living Lights
+  description: ''
+  trigger:
+  - platform: device
+    type: turned_on
+    device_id: 1f5c753cd4c14582ae2b4daba6b4ae6f
+    entity_id: light.living_lights_switch
+    domain: light
+  condition: []
+  action:
+  - type: turn_on
+    device_id: b313ed8cf20c4c4a91fe9453b208c76e
+    entity_id: switch.living_left_lamp
+    domain: switch
+  mode: single
+- id: '1635905517974'
+  alias: Turn garage lights at Sunset
+  description: ''
+  trigger:
+  - platform: sun
+    event: sunset
+  condition: []
+  action:
+  - service: switch.turn_on
+    target:
+      entity_id: switch.outside_lights
+  mode: single
