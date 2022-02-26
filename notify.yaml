@@ -7,8 +7,6 @@
   name: PushOver
   api_key: !secret pushover_api_key
   user_key: !secret pushover_user_key
-- platform: alexa_media
-  name: alexa_media
 - platform: sms
   name: sms_oscar
   recipient: !secret sms_oscar
@@ -27,13 +25,8 @@
           sound: pianobar
           priority: 0
           #attachment: "http://example.com/image.png"
-    - service: alexa_media
+    - service: tts_google_translate_say
       data_template:
+        entity_id: media_player.kitchen_display
         message: '{{ message }}'
-        target:
-          - media_player.kitchen_echo
-          - media_player.master_bedroom_echo
-          - media_player.master_bathroom_echo
-        data:
-          method: announce
-          type: tts
+        cache: true

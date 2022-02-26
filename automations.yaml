@@ -65,14 +65,11 @@
     to: 'on'
   condition: []
   action:
-  - data:
-      data:
-        method: announce
-        type: tts
-      message: Please close the mud room door.
-      target:
-      - Kitchen
-    service: notify.alexa_media_kitchen
+  - service: tts.google_translate_say
+    data:
+      entity_id: media_player.kitchen_display
+      message: Please close the mud room door
+      cache: true
   - delay: 00:00:30
 - id: vent_guest_bathroom
   alias: Vent Guest Bathroom
@@ -254,16 +251,11 @@
       message: Kid is awake
       title: Kid is awake
     service: notify.pushover
-  - data:
-      data:
-        method: announce
-        type: tts
+  - service: tts.google_translate_say
+    data:
+      entity_id: media_player.kitchen_display
       message: Kid is awake
-      target:
-      - media_player.kitchen_echo
-      - media_player.master_bedroom_echo
-      - media_player.master_bathroom_echo
-    service: notify.alexa_media
+      cache: true
 - id: open_upstairs_blinds
   alias: Open Upstairs Blinds
   trigger:

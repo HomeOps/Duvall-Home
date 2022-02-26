@@ -109,18 +109,11 @@ lights_off:
 notify:
   alias: Notify
   sequence:
-  - service: notify.alexa_media
-    data_template:
-      data:
-        method: announce
-        type: tts
-      message: '{{ sc_message }}
-
-        '
-      target:
-      - media_player.kitchen_echo
-      - media_player.master_bedroom_echo
-      - media_player.master_bathroom_echo
+  - service: tts.google_translate_say
+    data:
+      entity_id: media_player.kitchen_display
+      message: '{{ sc_message }}'
+      cache: true
 workout:
   alias: Workout
   sequence:

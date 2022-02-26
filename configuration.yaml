@@ -160,27 +160,6 @@ tplink:
     - host: 192.168.1.144
     - host: 192.168.1.145
 
-alexa_media:
-  accounts:
-    - email: !secret alexa_amazon_user
-      password: !secret alexa_amazon_password
-      url: amazon.com
-      include_devices:
-        - "Kitchen Echo"
-        - "Living Room Cube"
-        - "Living Room Fire TV"
-        - "Kids Bathroom Echo"
-        - "Master Bathroom Echo"
-        - "Master Bedroom Look"
-        - "Master Bedroom Echo"
-        - "Den Echo"
-        - "Outside Echo"
-        - "TV Room Echo"
-        - "Master and Kitchen"
-        - "Everywhere"
-        - "Upstairs"
-        - "Downstairs"
-
 netgear_lte:
   - host: !secret netgear_lte_ip
     password: !secret netgear_lte_password
