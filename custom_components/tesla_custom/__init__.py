@@ -2,56 +2,44 @@
 import asyncio
 from collections import defaultdict
 from datetime import timedelta
+from http import HTTPStatus
 import logging
 
 import async_timeout
 from homeassistant.config_entries import SOURCE_IMPORT
 from homeassistant.const import (
     CONF_ACCESS_TOKEN,
+    CONF_DOMAIN,
     CONF_SCAN_INTERVAL,
     CONF_TOKEN,
     CONF_USERNAME,
     EVENT_HOMEASSISTANT_CLOSE,
-    HTTP_UNAUTHORIZED,
 )
 from homeassistant.core import callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
-from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.httpx_client import SERVER_SOFTWARE, USER_AGENT
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 import httpx
 from teslajsonpy import Controller as TeslaAPI
+from teslajsonpy.const import AUTH_DOMAIN
 from teslajsonpy.exceptions import IncompleteCredentials, TeslaException
-import voluptuous as vol
 
 from .config_flow import CannotConnect, InvalidAuth, validate_input
 from .const import (
     CONF_EXPIRATION,
+    CONF_POLLING_POLICY,
     CONF_WAKE_ON_START,
     DATA_LISTENER,
+    DEFAULT_POLLING_POLICY,
     DEFAULT_SCAN_INTERVAL,
     DEFAULT_WAKE_ON_START,
     DOMAIN,
     MIN_SCAN_INTERVAL,
     PLATFORMS,
 )
+from .services import async_setup_services, async_unload_services
 
 _LOGGER = logging.getLogger(__name__)
-
-CONFIG_SCHEMA = vol.Schema(
-    {
-        DOMAIN: vol.Schema(
-            {
-                vol.Required(CONF_USERNAME): cv.string,
-                vol.Required(CONF_TOKEN): cv.string,
-                vol.Optional(
-                    CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL
-                ): vol.All(cv.positive_int, vol.Clamp(min=MIN_SCAN_INTERVAL)),
-            }
-        )
-    },
-    extra=vol.ALLOW_EXTRA,
-)
 
 
 @callback
@@ -85,6 +73,7 @@ async def async_setup(hass, base_config):
         options = options or {
             CONF_SCAN_INTERVAL: DEFAULT_SCAN_INTERVAL,
             CONF_WAKE_ON_START: DEFAULT_WAKE_ON_START,
+            CONF_POLLING_POLICY: DEFAULT_POLLING_POLICY,
         }
         for entry in hass.config_entries.async_entries(DOMAIN):
             if email != entry.title:
@@ -133,6 +122,8 @@ async def async_setup_entry(hass, config_entry):
     # Because users can have multiple accounts, we always create a new session so they have separate cookies
     async_client = httpx.AsyncClient(headers={USER_AGENT: SERVER_SOFTWARE}, timeout=60)
     email = config_entry.title
+    if not hass.data[DOMAIN]:
+        async_setup_services(hass)
     if email in hass.data[DOMAIN] and CONF_SCAN_INTERVAL in hass.data[DOMAIN][email]:
         scan_interval = hass.data[DOMAIN][email][CONF_SCAN_INTERVAL]
         hass.config_entries.async_update_entry(
@@ -146,8 +137,12 @@ async def async_setup_entry(hass, config_entry):
             refresh_token=config[CONF_TOKEN],
             access_token=config[CONF_ACCESS_TOKEN],
             expiration=config.get(CONF_EXPIRATION, 0),
+            auth_domain=config.get(CONF_DOMAIN, AUTH_DOMAIN),
             update_interval=config_entry.options.get(
                 CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
+            ),
+            polling_policy=config_entry.options.get(
+                CONF_POLLING_POLICY, DEFAULT_POLLING_POLICY
             ),
         )
         result = await controller.connect(
@@ -166,7 +161,7 @@ async def async_setup_entry(hass, config_entry):
         raise ConfigEntryNotReady from ex
     except TeslaException as ex:
         await async_client.aclose()
-        if ex.code == HTTP_UNAUTHORIZED:
+        if ex.code == HTTPStatus.UNAUTHORIZED:
             raise ConfigEntryAuthFailed from ex
         if ex.message in [
             "VEHICLE_UNAVAILABLE",
@@ -233,6 +228,8 @@ async def async_unload_entry(hass, config_entry) -> bool:
     if unload_ok:
         hass.data[DOMAIN].pop(config_entry.entry_id)
         _LOGGER.debug("Unloaded entry for %s", username)
+        if not hass.data[DOMAIN]:
+            async_unload_services(hass)
         return True
     return False
 
@@ -283,6 +280,7 @@ class TeslaDataUpdateCoordinator(DataUpdateCoordinator):
             # Note: asyncio.TimeoutError and aiohttp.ClientError are already
             # handled by the data update coordinator.
             async with async_timeout.timeout(30):
+                _LOGGER.debug("Running controller.update()")
                 return await self.controller.update()
         except IncompleteCredentials:
             await self.hass.config_entries.async_reload(self.config_entry.entry_id)
