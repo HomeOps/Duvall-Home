@@ -1,17 +1,1 @@
-garage_door_1_status:
-  friendly_name: "Garage Door 1 status"
-  value_template: '{% if states.cover.garage_door_1 %}
-      {% if states.cover.garage_door_1.attributes["door_state"] == "open" %}
-        Open
-      {% elif states.cover.garage_door_1.attributes["door_state"] == "closed" %}
-        Closed
-      {% elif states.cover.garage_door_1.attributes["door_state"] == "opening" %}
-        Opening
-      {% elif states.cover.garage_door_1.attributes["door_state"] == "closing" %}
-        Closing
-      {% else %}
-        Unknown
-      {% endif %}
-      {% else %}
-      n/a
-      {% endif %}'
+

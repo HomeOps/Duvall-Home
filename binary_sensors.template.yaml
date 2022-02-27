@@ -1,59 +1,15 @@
 cable_modem:
   friendly_name: "Cable Modem"
   device_class: connectivity
-  unique_id: "sensor.public_ip"
   value_template: >-
     {{ (states("sensor.public_ip").split(".")|first) == "66" }}
 lte_modem:
   friendly_name: "LTE Modem"
   device_class: connectivity
-  entity_id: "sensor.public_ip"
   value_template: >-
     {{ (states("sensor.public_ip").split(".")|first) == "172" }}
 house_sleep:
   friendly_name: "House Sleep"
-  entity_id:
-    - group.sleep_motion_sensors
-    - group.sleep_contacts
-    - group.sleep_lights
-    - alarm_control_panel.ha_alarm
-    - sun.sun
   icon_template: mdi:sleep
   value_template: >-
     {{ states('group.sleep_motion_sensors') == 'off' and states('group.sleep_contacts') == 'off' and states('group.sleep_lights') == 'off' and states('alarm_control_panel.ha_alarm')=='armed_night' and states('sun.sun')=='below_horizon' }}
-garage_car_1_present:
-  friendly_name: "Car 1 In Garage"
-  value_template: "{{ state_attr('cover.garage_door_1', 'distance_sensor') < 150 }}"
-  availability_template: >-
-    {% if is_state('cover.garage_door_1','closed') %}
-      true
-    {% else %}
-      unavailable
-    {% endif %}
-  icon_template: >-
-    {% if is_state('binary_sensor.garage_car_1_present','on') %}
-      mdi:car
-    {% else %}
-      mdi:car-arrow-right
-    {% endif %}
-  unique_id: binary_sensor.garage_car_1_present
-  delay_on: 5
-  delay_off: 5
-garage_car_2_present:
-  friendly_name: "Car 2 In Garage"
-  value_template: "{{ state_attr('cover.garage_door_2', 'distance_sensor') < 150 }}"
-  availability_template: >-
-    {% if is_state('cover.garage_door_2','closed') %}
-      true
-    {% else %}
-      unavailable
-    {% endif %}
-  icon_template: >-
-    {% if is_state('binary_sensor.garage_car_2_present','on') %}
-      mdi:car
-    {% else %}
-      mdi:car-arrow-right
-    {% endif %}
-  unique_id: binary_sensor.garage_car_2_present
-  delay_on: 5
-  delay_off: 5
