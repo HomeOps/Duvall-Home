@@ -20,15 +20,15 @@
     - type: last_boot
 - platform: dnsip
   name: 'Public IP'
-- platform: qnap
-  host: !secret qnap_host
-  username: !secret qnap_username
-  password: !secret qnap_password
-  monitored_conditions:
-    - status
-    - cpu_usage
-    - memory_percent_used
-    - volume_percentage_used
-    - drive_temp
+#- platform: qnap
+#  host: !secret qnap_host
+#  username: !secret qnap_username
+#  password: !secret qnap_password
+#  monitored_conditions:
+#    - status
+#    - cpu_usage
+#    - memory_percent_used
+#    - volume_percentage_used
+#    - drive_temp
 - platform: template
   sensors: !include sensors.template.yaml

@@ -35,9 +35,9 @@
             sensor.{{get_name(light)}}_temperature
             {%- endmacro -%}
             {% macro get_close(light) -%}
-            {% set target = state_attr("climate.thermostat_hk", "temperature")|float -%}
+            {% set target = state_attr("climate.thermostat_hk", "temperature")|float(20) -%}
             {% set hvacMode = state_attr("climate.thermostat_hk", "hvac_action")|lower -%}
-            {% set room = states(get_room_temp(light))|float -%}
+            {% set room = states(get_room_temp(light))|float(20) -%}
             {% set level = state_attr(light.entity_id, "current_position") -%}
             {% if level == None -%}{% set level = 50 -%}{% endif -%}
             {% set delta = 0.25 -%}
@@ -52,7 +52,7 @@
             {%- endfor -%}cover.dummy
     - service: cover.set_cover_position
       data_template:
-        position: "{{ states('input_number.vent_aperture_min') | int }}"
+        position: "{{ states('input_number.vent_aperture_min') | int(0) }}"
         entity_id: group.closed_vents
     - service: group.set
       data_template:
@@ -68,9 +68,9 @@
             sensor.{{get_name(light)}}_temperature
             {%- endmacro -%}
             {% macro get_open(light) -%}
-            {% set target = state_attr("climate.thermostat_hk", "temperature")|float -%}
+            {% set target = state_attr("climate.thermostat_hk", "temperature")|float(20) -%}
             {% set hvacMode = state_attr("climate.thermostat_hk", "hvac_action")|lower -%}
-            {% set room = states(get_room_temp(light))|float -%}
+            {% set room = states(get_room_temp(light))|float(20) -%}
             {% set level = state_attr(light.entity_id, "current_position") -%}
             {% if level == None -%}{% set level = 50 -%}{% endif -%}
             {% set delta = 0.25 -%}
@@ -85,6 +85,6 @@
             {%- endfor -%}cover.dummy
     - service: cover.set_cover_position
       data_template:
-        position: "{{ states('input_number.vent_aperture_max') | int }}"
+        position: "{{ states('input_number.vent_aperture_max') | int(100) }}"
         entity_id: group.open_vents
 

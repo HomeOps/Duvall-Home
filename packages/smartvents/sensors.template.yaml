@@ -2,70 +2,56 @@ thermostat_target_temperature:
   unit_of_measurement: '°C'
   friendly_name: 'Thermostat Target Temperature'
   device_class: temperature
-  entity_id: climate.thermostat_hk
-  value_template: '{{ state_attr("climate.thermostat_hk", "temperature")|float }}'
+  value_template: '{{ state_attr("climate.thermostat_hk", "temperature")|float(20) }}'
 bedroom_1_vent:
-  entity_id: cover.bedroom_1_vent
-  value_template: '{{ float(state_attr("cover.bedroom_1_vent", "current_position")) | round(0) | int | round(0) | int }}'
+  value_template: '{{ float(state_attr("cover.bedroom_1_vent", "current_position"),default=0) | round(0) | int(0) }}'
   friendly_name: 'Bedroom 1 Vent'
   unit_of_measurement: '%'
 bedroom_3_vent:
-  entity_id: cover.bedroom_3_vent
-  value_template: '{{ float(state_attr("cover.bedroom_3_vent", "current_position")) | round(0) | int | round(0) | int }}'
+  value_template: '{{ float(state_attr("cover.bedroom_3_vent", "current_position"),default=0) | round(0) | int(0) }}'
   friendly_name: 'Bedroom 3 Vent'
   unit_of_measurement: '%'
 den_vent:
-  entity_id: cover.den_vent
-  value_template: '{{ float(state_attr("cover.den_vent", "current_position")) | round(0) | int | round(0) | int }}'
+  value_template: '{{ float(state_attr("cover.den_vent", "current_position"),default=0) | round(0) | int(0) }}'
   friendly_name: 'Den Vent'
   unit_of_measurement: '%'
 dinning_vent:
-  entity_id: cover.dinning_vent
-  value_template: '{{ float(state_attr("cover.dinning_vent", "current_position")) | round(0) | int | round(0) | int }}'
+  value_template: '{{ float(state_attr("cover.dinning_vent", "current_position"),default=0) | round(0) | int(0) }}'
   friendly_name: 'Dinning Vent'
   unit_of_measurement: '%'
 guest_bathroom_vent:
-  entity_id: cover.guest_bathroom_vent
-  value_template: '{{ float(state_attr("cover.guest_bathroom_vent", "current_position")) | round(0) | int | round(0) | int }}'
+  value_template: '{{ float(state_attr("cover.guest_bathroom_vent", "current_position"),default=0) | round(0) | int(0) }}'
   friendly_name: 'Guest Bathroom Vent'
   unit_of_measurement: '%'
 guest_bedroom_vent:
-  entity_id: cover.guest_bedroom_vent
-  value_template: '{{ float(state_attr("cover.guest_bedroom_vent", "current_position")) | round(0) | int | round(0) | int }}'
+  value_template: '{{ float(state_attr("cover.guest_bedroom_vent", "current_position"),default=0) | round(0) | int(0) }}'
   friendly_name: 'Guest Bedroom Vent'
   unit_of_measurement: '%'
 hallway_vent:
-  entity_id: cover.hallway_vent
-  value_template: '{{ float(state_attr("cover.hallway_vent", "current_position")) | round(0) | int | round(0) | int }}'
+  value_template: '{{ float(state_attr("cover.hallway_vent", "current_position"),default=0) | round(0) | int(0) }}'
   friendly_name: 'Hallway Vent'
   unit_of_measurement: '%'
 kitchen_vent:
-  entity_id: cover.kitchen_vent
-  value_template: '{{ float(state_attr("cover.kitchen_vent", "current_position")) | round(0) | int | round(0) | int }}'
+  value_template: '{{ float(state_attr("cover.kitchen_vent", "current_position"),default=0) | round(0) | int(0) }}'
   friendly_name: 'Kitchen Vent'
   unit_of_measurement: '%'
 living_vent:
-  entity_id: cover.living_vent
-  value_template: '{{ float(state_attr("cover.living_vent", "current_position")) | round(0) | int | round(0) | int }}'
+  value_template: '{{ float(state_attr("cover.living_vent", "current_position"),default=0) | round(0) | int(0) }}'
   friendly_name: 'Living Vent'
   unit_of_measurement: '%'
 master_bathroom_vent:
-  entity_id: cover.master_bathroom_vent
-  value_template: '{{ float(state_attr("cover.master_bathroom_vent", "current_position")) | round(0) | int | round(0) | int }}'
+  value_template: '{{ float(state_attr("cover.master_bathroom_vent", "current_position"),default=0) | round(0) | int(0) }}'
   friendly_name: 'Master Bathroom Vent'
   unit_of_measurement: '%'
 master_bedroom_vent:
-  entity_id: cover.master_bedroom_vent
-  value_template: '{{ float(state_attr("cover.master_bedroom_vent", "current_position")) | round(0) | int | round(0) | int }}'
+  value_template: '{{ float(state_attr("cover.master_bedroom_vent", "current_position"),default=0) | round(0) | int(0) }}'
   friendly_name: 'Master Bedroom Vent'
   unit_of_measurement: '%'
 mud_room_vent:
-  entity_id: cover.mud_room_vent
-  value_template: '{{ float(state_attr("cover.mud_room_vent", "current_position")) | round(0) | int | round(0) | int }}'
+  value_template: '{{ float(state_attr("cover.mud_room_vent", "current_position"),default=0) | round(0) | int(0) }}'
   friendly_name: 'Mud Room Vent'
   unit_of_measurement: '%'
 tv_room_vent:
-  entity_id: cover.tv_room_vent
-  value_template: '{{ float(state_attr("cover.tv_room_vent", "current_position")) | round(0) | int | round(0) | int }}'
+  value_template: '{{ float(state_attr("cover.tv_room_vent", "current_position"),default=0) | round(0) | int(0) }}'
   friendly_name: 'TV Room Vent'
   unit_of_measurement: '%'
