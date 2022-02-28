@@ -45,9 +45,9 @@ lovelace:
       filename: administrative.yaml
       require_admin: true
 
-zwave:
-  usb_path: !secret zwave_usb_path
-  network_key: !secret zwave_network_key
+#zwave:
+#  usb_path: !secret zwave_usb_path
+#  network_key: !secret zwave_network_key
 
 zha:
   usb_path: !secret zha_usb_path
