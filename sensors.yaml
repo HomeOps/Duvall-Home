@@ -18,8 +18,8 @@
     - type: memory_use_percent
     - type: processor_use
     - type: last_boot
-- platform: dnsip
-  name: 'Public IP'
+#- platform: dnsip
+#  name: 'Public IP'
 #- platform: qnap
 #  host: !secret qnap_host
 #  username: !secret qnap_username

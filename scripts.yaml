@@ -29,13 +29,6 @@ good_night:
     target:
       entity_id: group.perimeter_locks
   - data:
-      target_temp_high: 19.5
-      target_temp_low: 18.5
-      hvac_mode: auto
-    service: climate.set_temperature
-    target:
-      entity_id: climate.thermostat_hk
-  - data:
       entity_id: climate.thermostat
       preset_mode: sleep
     service: climate.set_preset_mode

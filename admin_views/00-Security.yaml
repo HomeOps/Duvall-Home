@@ -99,7 +99,7 @@
     - entities:
         - entity: lock.server_room_lock
         - entity: switch.server_room_lights_switch
-        - entity: sensor.server_room_lights_switch_burglar
+        - entity: binary_sensor.server_room_lights_motion
         - entity: switch.kitchen_siren
         - entity: switch.server_electronics
         - entity: group.always_on_switches
