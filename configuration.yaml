@@ -53,7 +53,10 @@ zha:
   usb_path: !secret zha_usb_path
   database_path: !secret zha_database_path
 
-#zha_map:
+nest:
+  client_id: !secret nest_client_id
+  client_secret: !secret nest_client_secret
+  project_id: !secret nest_project_id
 
 sms:
   device: !secret sms_device
