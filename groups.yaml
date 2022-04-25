@@ -161,5 +161,9 @@ water_leak_sensors:
     - binary_sensor.laundry_room_water_leak
     - binary_sensor.master_bathroom_water_leak
     - binary_sensor.master_tub_water_leak
-
-
+adults_media_players:
+  entities:
+    - media_player.master_bedroom_display
+    - media_player.master_bathroom_display
+    - media_player.den_display
+    - media_player.kitchen_display

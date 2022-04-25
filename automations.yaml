@@ -246,16 +246,24 @@
   - after: '20:30:00'
     before: 03:00:00
     condition: time
+  - condition: time
+    after: 03:00:00
+    before: '10:00:00'
+    weekday:
+    - sat
+    - sun
   action:
-  - data:
-      message: Kid is awake
-      title: Kid is awake
-    service: notify.pushover
   - service: tts.google_translate_say
     data:
-      entity_id: media_player.kitchen_display
+      entity_id: group.adults_media_players
       message: Kid is awake
       cache: true
+  - service: notify.mobile_app_oscar_phone
+    data:
+      message: Kid is awake
+  - service: notify.mobile_app_private_ophone
+    data:
+      message: Kid is awake
 - id: open_upstairs_blinds
   alias: Open Upstairs Blinds
   trigger:
