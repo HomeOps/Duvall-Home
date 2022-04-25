@@ -243,15 +243,17 @@
     platform: state
     to: 'on'
   condition:
-  - after: '20:30:00'
-    before: 03:00:00
-    condition: time
-  - condition: time
-    after: 03:00:00
-    before: '10:00:00'
-    weekday:
-    - sat
-    - sun
+  - condition: or
+    conditions:
+    - condition: time
+      after: '20:30:00'
+      before: 03:00:00
+    - condition: time
+      after: 03:00:00
+      before: '10:00:00'
+      weekday:
+      - sat
+      - sun
   action:
   - service: tts.google_translate_say
     data:
