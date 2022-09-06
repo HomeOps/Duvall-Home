@@ -31,6 +31,8 @@ http:
 
 cloud: !include cloud.yaml
 
+my:
+
 # Discover some devices automatically
 discovery:
 
@@ -44,10 +46,6 @@ lovelace:
       show_in_sidebar: true
       filename: administrative.yaml
       require_admin: true
-
-#zwave:
-#  usb_path: !secret zwave_usb_path
-#  network_key: !secret zwave_network_key
 
 zha:
   usb_path: !secret zha_usb_path
@@ -84,21 +82,13 @@ history:
       - weblink
       - updater
 
-spotify:
-  client_id: !secret spotify_client_id
-  client_secret: !secret spotify_client_secret
-
 ecobee:
   api_key: !secret ecobee_api_key
 
-#arlo:
-#  username: !secret arlo_username
-#  password: !secret arlo_password
-
-roomba:
-  - host: !secret roomba_host
-    blid: !secret roomba_blid
-    password: !secret roomba_password
+#roomba:
+#  - host: !secret roomba_host
+#    blid: !secret roomba_blid
+#    password: !secret roomba_password
 
 emulated_hue:
   expose_by_default: false
@@ -196,6 +186,7 @@ group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
 alert: !include alerts.yaml
+template: !include templates.yaml
 
 #logger:
 #  default: info

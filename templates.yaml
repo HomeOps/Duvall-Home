@@ -1,0 +1,6 @@
+- sensor:
+  - name: "Oscar Phone Number"
+    state: !secret sms_oscar
+- sensor:
+  - name: "Hazel Phone Number"
+    state: !secret sms_hazel
