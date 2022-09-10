@@ -3,19 +3,6 @@
   vapid_pub_key: !secret notify_vapid_pub_key
   vapid_prv_key: !secret notify_vapid_prv_key
   vapid_email: !secret notify_vapid_email
-- platform: pushover
-  name: PushOver
-  api_key: !secret pushover_api_key
-  user_key: !secret pushover_user_key
-- platform: sms
-  name: sms_oscar
-  recipient: !secret sms_oscar
-- platform: sms
-  name: sms_hazel
-  recipient: !secret sms_hazel
-- platform: sms
-  name: sms
-  recipient: "001"
 - platform: group
   name: all
   services:
