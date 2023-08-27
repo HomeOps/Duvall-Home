@@ -32,6 +32,8 @@ secrets_backup.log
 zwcfg_*.xml
 zwscene.xml
 zigbee.db
+zigbee.db-shm
+zigbee.db-wal
 harmony*.conf
 html5_push_registrations.conf
 neighbours
