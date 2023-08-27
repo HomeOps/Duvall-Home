@@ -453,7 +453,7 @@
   action:
   - data:
       message: Reboot
-    service: script.notify_sms_oscar
+    service: notify.sms_oscar
   - service: hassio.host_reboot
 - id: '1582498149789'
   alias: Notify if Internet Connection changes
@@ -467,7 +467,7 @@
   action:
   - data_template:
       message: Public IP has changed to {{ states("sensor.public_ip") }}
-    service: script.notify_sms_oscar
+    service: notify.sms_oscar
 - id: '1582741780213'
   alias: Turn off cable modem switch if cable modem connection is off for more than
     5 minutes
@@ -481,7 +481,7 @@
   action:
   - data:
       message: Restarting cable modem, it has been down for more than 5 minutes
-    service: script.notify_sms_oscar
+    service: notify.sms_oscar
   - entity_id: switch.cable_modem
     service: switch.turn_off
   - delay: '10'
@@ -530,7 +530,7 @@
     type: set_hvac_mode
   - data:
       message: AC condensation detected
-    service: script.notify_sms_oscar
+    service: notify.sms_oscar
   mode: single
 - id: '1615152063976'
   alias: Turn hallway lights when motion
@@ -623,7 +623,7 @@
     event_type: sms.incoming_sms
   condition: []
   action:
-  - service: script.notify_sms_oscar
+  - service: notify.sms_oscar
     data:
       message: 'From: {{trigger.event.data.phone}}
 
@@ -673,7 +673,7 @@
       entity_id: media_player.announce_group
       message: Someone is ringing the door
       cache: true
-  - service: script.notify_sms_oscar
+  - service: notify.sms_oscar
     data:
       message: Some is ringing the door. https://duvall.calvonet.com:8123/api/camera_proxy_stream/camera.doorbell?token={{
         state_attr('camera.doorbell', 'access_token') }}

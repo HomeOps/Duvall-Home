@@ -20,3 +20,15 @@
         entity_id: media_player.kitchen_display
         message: '{{ message }}'
         cache: true
+- platform: group
+  name: sms_oscar
+  services:
+    - service: sms
+      data:
+        target: !secret sms_oscar
+- platform: group
+  name: sms_hazel
+  services:
+    - service: sms
+      data:
+        target: !secret sms_hazel

@@ -122,7 +122,7 @@ notify_external:
   - data: {}
     data_template:
       message: Interface {{ sc_intf }} going into {{ sc_status }}
-    service: script.notify_sms_oscar
+    service: notify.sms_oscar
 irrigate_home:
   alias: Irrigate home
   sequence:
