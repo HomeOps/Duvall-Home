@@ -5,6 +5,7 @@ homeassistant:
   elevation: !secret loc_elevation_home
   unit_system: metric
   time_zone: America/Los_Angeles
+  country: US
   external_url: !secret http_external_url
 
   # Use external url for internal url to fix casting to google devices
@@ -34,7 +35,7 @@ cloud: !include cloud.yaml
 my:
 
 # Discover some devices automatically
-discovery:
+#discovery:
 
 lovelace:
   mode: storage
@@ -60,10 +61,6 @@ sms:
   device: !secret sms_device
 
 mobile_app:
-
-speedtestdotnet:
-  manual: true
-  server_id: !secret speedtestdotnet_server_id
 
 recorder:
   db_url: !secret recorder_db_url
@@ -187,9 +184,5 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 alert: !include alerts.yaml
 template: !include templates.yaml
+command_line: !include command.line.yaml
 
-#logger:
-#  default: info
-#  logs:
-#    homeassistant.components.smartthings: debug
-#    homeassistant.components.generic.camera: debug
