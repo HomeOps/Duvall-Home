@@ -34,9 +34,6 @@ cloud: !include cloud.yaml
 
 my:
 
-# Discover some devices automatically
-#discovery:
-
 lovelace:
   mode: storage
   dashboards:
@@ -48,17 +45,14 @@ lovelace:
       filename: administrative.yaml
       require_admin: true
 
-zha:
-  usb_path: !secret zha_usb_path
-  database_path: !secret zha_database_path
+#zha:
+#  usb_path: !secret zha_usb_path
+#  database_path: !secret zha_database_path
 
 nest:
   client_id: !secret nest_client_id
   client_secret: !secret nest_client_secret
   project_id: !secret nest_project_id
-
-sms:
-  device: !secret sms_device
 
 mobile_app:
 
@@ -81,11 +75,6 @@ history:
 
 ecobee:
   api_key: !secret ecobee_api_key
-
-#roomba:
-#  - host: !secret roomba_host
-#    blid: !secret roomba_blid
-#    password: !secret roomba_password
 
 emulated_hue:
   expose_by_default: false

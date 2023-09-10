@@ -224,7 +224,6 @@
     state: armed_night
   action:
   - service: script.good_morning
-  - service: speedtestdotnet.speedtest
 - id: close_all_blinds_after_sunset
   alias: Close all blinds after sunset
   trigger:
@@ -358,9 +357,10 @@
   action:
   - data:
       brightness: '255'
-      entity_id: light.living_lights
-      white_value: '255'
+      color_temp_kelvin: '6700'
     service: light.turn_on
+    target:
+      entity_id: light.living_lights
 - id: turn_off_living_lights
   alias: Turn off Living Lights
   trigger:
