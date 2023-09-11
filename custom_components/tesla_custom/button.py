@@ -1,11 +1,10 @@
 """Support for Tesla buttons."""
 import logging
 
-from teslajsonpy.car import TeslaCar
-
 from homeassistant.components.button import ButtonEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
+from teslajsonpy.car import TeslaCar
 
 from . import TeslaDataUpdateCoordinator
 from .base import TeslaCarEntity
@@ -16,34 +15,29 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
     """Set up the Tesla selects by config_entry."""
-    coordinator = hass.data[DOMAIN][config_entry.entry_id]["coordinator"]
-    cars = hass.data[DOMAIN][config_entry.entry_id]["cars"]
+    entry_data = hass.data[DOMAIN][config_entry.entry_id]
+    coordinators = entry_data["coordinators"]
+    cars = entry_data["cars"]
     entities = []
 
-    for car in cars.values():
-        entities.append(TeslaCarHorn(hass, car, coordinator))
-        entities.append(TeslaCarFlashLights(hass, car, coordinator))
-        entities.append(TeslaCarWakeUp(hass, car, coordinator))
-        entities.append(TeslaCarForceDataUpdate(hass, car, coordinator))
-        if car.homelink_device_count:
-            entities.append(TeslaCarTriggerHomelink(hass, car, coordinator))
+    for vin, car in cars.items():
+        coordinator = coordinators[vin]
+        entities.append(TeslaCarHorn(car, coordinator))
+        entities.append(TeslaCarFlashLights(car, coordinator))
+        entities.append(TeslaCarWakeUp(car, coordinator))
+        entities.append(TeslaCarForceDataUpdate(car, coordinator))
+        entities.append(TeslaCarTriggerHomelink(car, coordinator))
+        entities.append(TeslaCarRemoteStart(car, coordinator))
+        entities.append(TeslaCarEmissionsTest(car, coordinator))
 
-    async_add_entities(entities, True)
+    async_add_entities(entities, update_before_add=True)
 
 
 class TeslaCarHorn(TeslaCarEntity, ButtonEntity):
     """Representation of a Tesla car horn button."""
 
-    def __init__(
-        self,
-        hass: HomeAssistant,
-        car: TeslaCar,
-        coordinator: TeslaDataUpdateCoordinator,
-    ) -> None:
-        """Initialize horn entity."""
-        super().__init__(hass, car, coordinator)
-        self.type = "horn"
-        self._attr_icon = "mdi:bullhorn"
+    type = "horn"
+    _attr_icon = "mdi:bullhorn"
 
     async def async_press(self) -> None:
         """Handle the button press."""
@@ -53,16 +47,8 @@ class TeslaCarHorn(TeslaCarEntity, ButtonEntity):
 class TeslaCarFlashLights(TeslaCarEntity, ButtonEntity):
     """Representation of a Tesla car flash lights button."""
 
-    def __init__(
-        self,
-        hass: HomeAssistant,
-        car: TeslaCar,
-        coordinator: TeslaDataUpdateCoordinator,
-    ) -> None:
-        """Initialize flash light entity."""
-        super().__init__(hass, car, coordinator)
-        self.type = "flash lights"
-        self._attr_icon = "mdi:car-light-high"
+    type = "flash lights"
+    _attr_icon = "mdi:car-light-high"
 
     async def async_press(self) -> None:
         """Handle the button press."""
@@ -70,19 +56,11 @@ class TeslaCarFlashLights(TeslaCarEntity, ButtonEntity):
 
 
 class TeslaCarWakeUp(TeslaCarEntity, ButtonEntity):
-    """Representation of a Tesla car wake up button"""
+    """Representation of a Tesla car wake up button."""
 
-    def __init__(
-        self,
-        hass: HomeAssistant,
-        car: TeslaCar,
-        coordinator: TeslaDataUpdateCoordinator,
-    ) -> None:
-        """Initialize wake up button."""
-        super().__init__(hass, car, coordinator)
-        self.type = "wake up"
-        self._attr_icon = "mdi:moon-waning-crescent"
-        self._attr_entity_category = EntityCategory.DIAGNOSTIC
+    type = "wake up"
+    _attr_icon = "mdi:moon-waning-crescent"
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
 
     async def async_press(self) -> None:
         """Handle the button press."""
@@ -97,17 +75,9 @@ class TeslaCarWakeUp(TeslaCarEntity, ButtonEntity):
 class TeslaCarForceDataUpdate(TeslaCarEntity, ButtonEntity):
     """Representation of a Tesla car force data update button."""
 
-    def __init__(
-        self,
-        hass: HomeAssistant,
-        car: TeslaCar,
-        coordinator: TeslaDataUpdateCoordinator,
-    ) -> None:
-        """Initialize force data update button."""
-        super().__init__(hass, car, coordinator)
-        self.type = "force data update"
-        self._attr_icon = "mdi:database-sync"
-        self._attr_entity_category = EntityCategory.DIAGNOSTIC
+    type = "force data update"
+    _attr_icon = "mdi:database-sync"
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
 
     async def async_press(self) -> None:
         """Handle the button press."""
@@ -122,17 +92,61 @@ class TeslaCarForceDataUpdate(TeslaCarEntity, ButtonEntity):
 class TeslaCarTriggerHomelink(TeslaCarEntity, ButtonEntity):
     """Representation of a Tesla car Homelink button."""
 
+    type = "homelink"
+    _attr_icon = "mdi:garage"
+
     def __init__(
         self,
-        hass: HomeAssistant,
         car: TeslaCar,
         coordinator: TeslaDataUpdateCoordinator,
     ) -> None:
         """Initialise Homelink button."""
-        super().__init__(hass, car, coordinator)
-        self.type = "homelink"
-        self._attr_icon = "mdi:garage"
+        # Entity is only enabled upon first install if garages have been paired to homelink
+        self._enabled_by_default = car.homelink_device_count
+        super().__init__(car, coordinator)
+
+    @property
+    def available(self) -> bool:
+        """Return True if Homelink devices are nearby."""
+        return super().available and self._car.homelink_nearby
 
     async def async_press(self):
         """Send the command."""
         await self._car.trigger_homelink()
+
+
+class TeslaCarRemoteStart(TeslaCarEntity, ButtonEntity):
+    """Representation of a Tesla car remote start button."""
+
+    type = "remote start"
+    _attr_icon = "mdi:power"
+
+    async def async_press(self):
+        """Send the command."""
+        await self._car.remote_start()
+
+
+class TeslaCarEmissionsTest(TeslaCarEntity, ButtonEntity):
+    """Representation of a Tesla car emissions test button."""
+
+    type = "emissions test"
+    _attr_icon = "mdi:weather-windy"
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    def __init__(
+        self,
+        car: TeslaCar,
+        coordinator: TeslaDataUpdateCoordinator,
+    ) -> None:
+        """Initialize emissions test button."""
+        self._enabled_by_default = car.pedestrian_speaker
+        super().__init__(car, coordinator)
+
+    async def async_press(self) -> None:
+        """Handle the button press."""
+        await self._car.remote_boombox()
+
+    @property
+    def available(self) -> bool:
+        """Return True."""
+        return True

@@ -3,13 +3,12 @@
 SPDX-License-Identifier: Apache-2.0
 """
 import logging
-import voluptuous as vol
-
-from teslajsonpy import Controller
 
 from homeassistant.const import ATTR_COMMAND, CONF_EMAIL, CONF_SCAN_INTERVAL
 from homeassistant.core import callback
 from homeassistant.helpers import config_validation as cv
+from teslajsonpy import Controller
+import voluptuous as vol
 
 from .const import (
     ATTR_PARAMETERS,
@@ -96,7 +95,8 @@ def async_setup_services(hass) -> None:
                 and entry.title != email
             ):
                 continue
-            controller = hass.data[DOMAIN].get(entry.entry_id)["coordinator"].controller
+            entry_data = hass.data[DOMAIN][entry.entry_id]
+            controller = entry_data["controller"]
         if controller is None:
             raise ValueError(f"No Tesla controllers found for email {email}")
         command = call.data.get(ATTR_COMMAND)
@@ -113,12 +113,12 @@ def async_setup_services(hass) -> None:
     async def set_update_interval(call):
         """Handle api service request.
 
-        Arguments:
+        Arguments
             call.CONF_EMAIL {str: ""} -- email, optional
             call.ATTR_VIN {str: ""} -- vehicle VIN, optional
             call.CONF_SCAN_INTERVAL {int: 660} -- New scan interval
 
-        Returns:
+        Returns
             bool -- True if new interval is set
 
         """
@@ -135,7 +135,8 @@ def async_setup_services(hass) -> None:
                 and entry.title != email
             ):
                 continue
-            controller = hass.data[DOMAIN].get(entry.entry_id)["coordinator"].controller
+            entry_data = hass.data[DOMAIN][entry.entry_id]
+            controller = entry_data["controller"]
         if controller is None:
             raise ValueError(f"No Tesla controllers found for email {email}")
 
