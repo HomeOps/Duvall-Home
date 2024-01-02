@@ -1,15 +1,1 @@
-#- platform: myq
-#  username: !secret myq_username
-#  password: !secret myq_password
-#  type: liftmaster
-#- platform: opengarage
-#  covers:
-#    garage1:
-#      host: !secret opengarage_host1
-#      device_key: !secret opengarage_device_key1
-#      name: 'Garage Door 1'
-#    garage2:
-#      host: !secret opengarage_host2
-#      device_key: !secret opengarage_device_key2
-#      name: 'Garage Door 2'
 
