@@ -128,28 +128,6 @@ wemo:
     - 192.168.1.200
     - 192.168.1.201
 
-netgear_lte:
-  - host: !secret netgear_lte_ip
-    password: !secret netgear_lte_password
-    notify:
-    sensor:
-      monitored_conditions:
-        - cell_id
-        - connection_text
-        - connection_type
-        - current_band
-        - current_ps_service_type
-        - radio_quality
-        - register_network_display
-        - rx_level
-        - tx_level
-        - upstream
-        - usage
-    binary_sensor:
-      monitored_conditions:
-        - wire_connected
-        - mobile_connected
-
 stream:
 ffmpeg:
 
