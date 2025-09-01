@@ -46,7 +46,9 @@ class TeslaCarEntity(TeslaBaseEntity):
         display_name = car.display_name
         vehicle_name = (
             display_name
-            if display_name is not None and display_name != vin[-6:]
+            if display_name is not None
+            and display_name != vin[-6:]
+            and display_name != ""
             else f"Tesla Model {str(vin[3]).upper()}"
         )
         self._attr_device_info = DeviceInfo(
@@ -57,21 +59,21 @@ class TeslaCarEntity(TeslaBaseEntity):
             sw_version=car.car_version,
         )
         self._last_update_success: bool | None = None
-        self._last_controller_update_time: float | None = None
+        self.last_update_time: float | None = None
 
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         prev_last_update_success = self._last_update_success
-        prev_last_controller_update_time = self._last_controller_update_time
+        prev_last_update_time = self.last_update_time
         coordinator = self.coordinator
         current_last_update_success = coordinator.last_update_success
-        current_last_controller_update_time = coordinator.last_controller_update_time
+        current_last_update_time = coordinator.last_update_time
         self._last_update_success = current_last_update_success
-        self._last_controller_update_time = current_last_controller_update_time
+        self.last_update_time = current_last_update_time
         if (
             prev_last_update_success == current_last_update_success
-            and prev_last_controller_update_time == current_last_controller_update_time
+            and prev_last_update_time == current_last_update_time
         ):
             # If there was no change in the last update success or time,
             # avoid writing state to prevent unnecessary entity updates.
