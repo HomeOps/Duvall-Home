@@ -73,9 +73,6 @@ history:
       - weblink
       - updater
 
-ecobee:
-  api_key: !secret ecobee_api_key
-
 emulated_hue:
   expose_by_default: false
   entities:
