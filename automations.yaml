@@ -349,29 +349,31 @@
   - service: script.lights_off
 - id: turn_on_living_lights
   alias: Turn on Living Lights
-  trigger:
+  description: ''
+  triggers:
   - entity_id: light.living_lights_switch
-    platform: state
     to: 'on'
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - data:
       brightness: '255'
       color_temp_kelvin: '6700'
-    service: light.turn_on
+    action: light.turn_on
     target:
-      entity_id: light.living_lights
+      entity_id: light.living_room_lights
 - id: turn_off_living_lights
   alias: Turn off Living Lights
-  trigger:
+  description: ''
+  triggers:
   - entity_id: light.living_lights_switch
-    platform: state
     to: 'off'
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - data:
-      entity_id: light.living_lights
-    service: light.turn_off
+      entity_id: light.living_room_lights
+    action: light.turn_off
 - id: toggle_master_bed_lamp_1_when_button_is_pressed
   alias: Toggle Master Bed Lamp 1 when Button 1 is pressed
   trigger:
@@ -517,20 +519,22 @@
 - id: '1599102038214'
   alias: Condensation Detected
   description: ''
-  trigger:
-  - entity_id: binary_sensor.ac_condensation
-    platform: state
-    to: 'on'
-  condition: []
-  action:
-  - device_id: 41ccd3674f474fdb8d0214427a47b5cb
-    domain: climate
-    entity_id: climate.thermostat_hk
-    hvac_mode: 'off'
-    type: set_hvac_mode
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.ac_condensation
+    to:
+    - 'on'
+  conditions: []
+  actions:
+  - action: climate.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: climate.thermostat_hk
   - data:
       message: AC condensation detected
-    service: notify.sms_oscar
+    action: notify.sms_oscar
   mode: single
 - id: '1615152063976'
   alias: Turn hallway lights when motion
@@ -634,18 +638,17 @@
 - id: '1635904904000'
   alias: Living Left Lamp Switch mirrors Living Lights
   description: ''
-  trigger:
-  - platform: device
-    type: turned_on
-    device_id: 1f5c753cd4c14582ae2b4daba6b4ae6f
-    entity_id: light.living_lights_switch
-    domain: light
-  condition: []
-  action:
-  - type: turn_on
-    device_id: b313ed8cf20c4c4a91fe9453b208c76e
-    entity_id: switch.living_left_lamp
-    domain: switch
+  triggers:
+  - trigger: state
+    entity_id:
+    - light.living_lights_switch
+    to:
+    - 'on'
+  conditions: []
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.living_left_lamp
   mode: single
 - id: '1635905517974'
   alias: Turn garage lights at Sunset
@@ -677,4 +680,93 @@
     data:
       message: Some is ringing the door. https://duvall.calvonet.com:8123/api/camera_proxy_stream/camera.doorbell?token={{
         state_attr('camera.doorbell', 'access_token') }}
+  mode: single
+- id: '1757208742433'
+  alias: Den Roku bookshelve on
+  triggers:
+  - event_type: roku_command
+    event_data:
+      source_name: Home Assistant
+      key: PowerOn
+    trigger: event
+  conditions: []
+  actions:
+  - target:
+      entity_id: light.den_bookshelve
+    action: light.turn_on
+  mode: single
+- id: '1757208830039'
+  alias: Den Roku bookshelve off
+  description: ''
+  triggers:
+  - event_type: roku_command
+    event_data:
+      source_name: Home Assistant
+      key: PowerOff
+    trigger: event
+  conditions: []
+  actions:
+  - target:
+      entity_id: light.den_bookshelve
+    action: light.turn_off
+  mode: single
+- id: '1757208938679'
+  alias: Den Roku RetroINK off
+  description: ''
+  triggers:
+  - event_type: roku_command
+    event_data:
+      source_name: Home Assistant
+      key: Left
+    trigger: event
+  conditions: []
+  actions:
+  - target:
+      entity_id: switch.den_retroink
+    action: switch.turn_off
+  mode: single
+- id: '1757208989602'
+  alias: Den Roku RetroINK on
+  description: ''
+  triggers:
+  - event_type: roku_command
+    event_data:
+      source_name: Home Assistant
+      key: Right
+    trigger: event
+  conditions: []
+  actions:
+  - target:
+      entity_id: switch.den_retroink
+    action: switch.turn_on
+  mode: single
+- id: '1757209042385'
+  alias: Den Roku Mister on
+  description: ''
+  triggers:
+  - event_type: roku_command
+    event_data:
+      source_name: Home Assistant
+      key: Up
+    trigger: event
+  conditions: []
+  actions:
+  - target:
+      entity_id: switch.den_mister
+    action: switch.turn_on
+  mode: single
+- id: '1757209080142'
+  alias: Den Roku Mister off
+  description: ''
+  triggers:
+  - event_type: roku_command
+    event_data:
+      source_name: Home Assistant
+      key: Down
+    trigger: event
+  conditions: []
+  actions:
+  - target:
+      entity_id: switch.den_mister
+    action: switch.turn_off
   mode: single

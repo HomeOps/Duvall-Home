@@ -47,3 +47,5 @@ ui-lovelace.yaml
 /Lib
 /Scripts
 /pyvenv.cfg
+
+.ha_run.lock
