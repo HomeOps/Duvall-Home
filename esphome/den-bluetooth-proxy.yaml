@@ -1,0 +1,17 @@
+substitutions:
+  name: "den-bluetooth-proxy"
+  friendly_name: Den Bluetooth Proxy
+packages:
+  esphome.bluetooth-proxy: github://esphome/bluetooth-proxies/esp32-generic/esp32-generic.yaml@main
+esphome:
+  name: ${name}
+  name_add_mac_suffix: false
+  friendly_name: ${friendly_name}
+api:
+  encryption:
+    key: QEAYky6wDi6kKTH8n+e9axspmcytoOkHjL2nRM0uwCI=
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
