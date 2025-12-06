@@ -1,15 +1,12 @@
-cable_modem:
-  friendly_name: "Cable Modem"
+- default_entity_id: binary_sensor.cable_modem
   device_class: connectivity
-  value_template: >-
-    {{ (states("sensor.public_ip").split(".")|first) == "66" }}
-lte_modem:
-  friendly_name: "LTE Modem"
+  name: Cable Modem
+  state: '{{ (states("sensor.public_ip").split(".")|first) == "66" }}'
+- default_entity_id: binary_sensor.lte_modem
   device_class: connectivity
-  value_template: >-
-    {{ (states("sensor.public_ip").split(".")|first) == "172" }}
-house_sleep:
-  friendly_name: "House Sleep"
-  icon_template: mdi:sleep
-  value_template: >-
-    {{ states('group.sleep_motion_sensors') == 'off' and states('group.sleep_contacts') == 'off' and states('group.sleep_lights') == 'off' and states('alarm_control_panel.ha_alarm')=='armed_night' and states('sun.sun')=='below_horizon' }}
+  name: LTE Modem
+  state: '{{ (states("sensor.public_ip").split(".")|first) == "172" }}'
+- default_entity_id: binary_sensor.house_sleep
+  icon: mdi:sleep
+  name: House Sleep
+  state: '{{ states("group.sleep_motion_sensors") == "off" and states("group.sleep_contacts") == "off" and states("group.sleep_lights") == "off" and states("alarm_control_panel.ha_alarm")=="armed_night" and states("sun.sun")=="below_horizon" }}'
