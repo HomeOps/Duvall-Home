@@ -152,15 +152,3 @@ turn_on_samsung_kitchen_speaker:
       volume_level: 0.8
     entity_id: media_player.samsung_kitchen_soundbar
     service: media_player.volume_set
-notify_sms_oscar:
-  alias: Notify SMS Oscar
-  fields:
-    message:
-      description: The message content
-      example: The light is on!
-  sequence:
-  - service: notify.sms
-    data:
-      message: '{{ message }}'
-      target:
-      - '{{ states(''sensor.oscar_phone_number'') }}'
