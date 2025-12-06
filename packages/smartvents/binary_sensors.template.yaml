@@ -1,26 +1,26 @@
-bedroom_1_vent:
-  value_template: '{{state_attr("cover.bedroom_1_vent", "current_position")|int(0) > 50}}'
-bedroom_3_vent:
-  value_template: '{{state_attr("cover.bedroom_3_vent", "current_position")|int(0) > 50}}'
-den_vent:
-  value_template: '{{state_attr("cover.den_vent", "current_position")|int(0) > 50}}'
-dinning_vent:
-  value_template: '{{state_attr("cover.dinning_vent", "current_position")|int(0) > 50}}'
-guest_bathroom_vent:
-  value_template: '{{state_attr("cover.guest_bathroom_vent", "current_position")|int(0) > 50}}'
-guest_bedroom_vent:
-  value_template: '{{state_attr("cover.guest_bedroom_vent", "current_position")|int(0) > 50}}'
-hallway_vent:
-  value_template: '{{state_attr("cover.hallway_vent", "current_position")|int(0) > 50}}'
-kitchen_vent:
-  value_template: '{{state_attr("cover.kitchen_vent", "current_position")|int(0) > 50}}'
-living_vent:
-  value_template: '{{state_attr("cover.living_vent", "current_position")|int(0) > 50}}'
-master_bathroom_vent:
-  value_template: '{{state_attr("cover.master_bathroom_vent", "current_position")|int(0) > 50}}'
-master_bedroom_vent:
-  value_template: '{{state_attr("cover.master_bedroom_vent", "current_position")|int(0) > 50}}'
-mud_room_vent:
-  value_template: '{{state_attr("cover.mud_room_vent", "current_position")|int(0) > 50}}'
-tv_room_vent:
-  value_template: '{{state_attr("cover.tv_room_vent", "current_position")|int(0) > 50}}'
+- name: Bedroom 1 Vent
+  state: '{{state_attr("cover.bedroom_1_vent", "current_position")|int(0) > 50}}'
+- name: Bedroom 3 Vent
+  state: '{{state_attr("cover.bedroom_3_vent", "current_position")|int(0) > 50}}'
+- name: Den Vent
+  state: '{{state_attr("cover.den_vent", "current_position")|int(0) > 50}}'
+- name: Dinning Vent
+  state: '{{state_attr("cover.dinning_vent", "current_position")|int(0) > 50}}'
+- name: Guest Bathroom Vent
+  state: '{{state_attr("cover.guest_bathroom_vent", "current_position")|int(0) > 50}}'
+- name: Guest Bedroom Vent
+  state: '{{state_attr("cover.guest_bedroom_vent", "current_position")|int(0) > 50}}'
+- name: Hallway Vent
+  state: '{{state_attr("cover.hallway_vent", "current_position")|int(0) > 50}}'
+- name: Kitchen Vent
+  state: '{{state_attr("cover.kitchen_vent", "current_position")|int(0) > 50}}'
+- name: Living vent
+  state: '{{state_attr("cover.living_vent", "current_position")|int(0) > 50}}'
+- name: Master Bathroom Vent
+  state: '{{state_attr("cover.master_bathroom_vent", "current_position")|int(0) > 50}}'
+- name: Master Bedroom Vent
+  state: '{{state_attr("cover.master_bedroom_vent", "current_position")|int(0) > 50}}'
+- name: Mud Room Vent
+  state: '{{state_attr("cover.mud_room_vent", "current_position")|int(0) > 50}}'
+- name: TV Room Vent
+  state: '{{state_attr("cover.tv_room_vent", "current_position")|int(0) > 50}}'

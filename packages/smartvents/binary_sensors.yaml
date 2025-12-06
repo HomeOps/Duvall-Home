@@ -1,2 +1,2 @@
-- platform: template
-  sensors: !include binary_sensors.template.yaml
+#- platform: template
+#  sensors: !include binary_sensors.template.yaml

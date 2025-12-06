@@ -24,4 +24,4 @@ binary_sensor: !include binary_sensors.yaml
 sensor: !include sensors.yaml
 group: !include groups.yaml
 automation: !include automations.yaml
-
+template: !include templates.yaml
