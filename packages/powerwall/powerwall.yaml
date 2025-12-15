@@ -44,6 +44,6 @@ automation:
           value_template: "{{ states('binary_sensor.grid_status') == 'off' }}"
 
     action:
-      - service: script.notify_sms_oscar
-        data_template:
+      - data:
           message: "The electrical grid is reporting to be {{ (trigger.to_state.state)|replace('on', 'up')|replace('off', 'down') }}.  Please verify with Tesla App."
+        service: notify.sms_oscar
