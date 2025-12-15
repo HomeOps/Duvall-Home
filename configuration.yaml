@@ -48,10 +48,6 @@ lovelace:
       filename: administrative.yaml
       require_admin: true
 
-#zha:
-#  usb_path: !secret zha_usb_path
-#  database_path: !secret zha_database_path
-
 nest:
   client_id: !secret nest_client_id
   client_secret: !secret nest_client_secret
@@ -153,7 +149,3 @@ alert: !include alerts.yaml
 template: !include templates.yaml
 command_line: !include command.line.yaml
 
-#ics_calendar:
-#  calendars:
-#    - name: "AirBnB"
-#      url: !secret airbnb_cal

@@ -678,7 +678,7 @@
       cache: true
   - service: notify.sms_oscar
     data:
-      message: Some is ringing the door. https://duvall.calvonet.com:8123/api/camera_proxy_stream/camera.doorbell?token={{
+      message: Some is ringing the door. https://duvall.calvonet.com/api/camera_proxy_stream/camera.doorbell?token={{
         state_attr('camera.doorbell', 'access_token') }}
   mode: single
 - id: '1757208742433'
