@@ -42,7 +42,7 @@
       type: entities
     - entities:
         - entity: camera.garage
-        - entity: camera.tv_room
+        - entity: camera.family_room
         - entity: camera.den
         - entity: camera.doorbell
         - entity: camera.living

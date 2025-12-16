@@ -6,11 +6,11 @@
           - entity: sensor.thermostat_target_temperature
             name: Target
           - entity: sensor.bedroom_1_vent_temperature
-            name: Bed1Vent
+            name: BedWVent
           - entity: sensor.bedroom_1_temperature
-            name: Bed1Temp
+            name: BedWTemp
           - entity: binary_sensor.bedroom_1_vent
-            name: Bed1Open
+            name: BedWOpen
           - entity: sensor.guest_bedroom_vent_temperature
             name: GuestBedVent
           - entity: sensor.guest_bedroom_temperature
@@ -18,11 +18,11 @@
           - entity: binary_sensor.guest_bedroom_vent
             name: GuestBedOpen
           - entity: sensor.bedroom_3_vent_temperature
-            name: Bed3Vent
+            name: BedEVent
           - entity: sensor.bedroom_3_temperature
-            name: Bed3Temp
+            name: BedETemp
           - entity: binary_sensor.bedroom_3_vent
-            name: Bed3Open
+            name: BedEOpen
           - entity: sensor.master_bedroom_vent_temperature
             name: MasterVent
           - entity: sensor.master_bedroom_temperature
@@ -48,11 +48,11 @@
           - entity: binary_sensor.den_vent
             name: DenOpen
           - entity: sensor.dinning_vent_temperature
-            name: DinningVent
+            name: DiningVent
           - entity: sensor.dinning_temperature
-            name: DinningTemp
+            name: DiningTemp
           - entity: binary_sensor.dinning_vent
-            name: DinningOpen
+            name: DiningOpen
           - entity: sensor.guest_bathroom_vent_temperature
             name: GuestBathVent
           - entity: sensor.guest_bathroom_temperature
@@ -71,12 +71,12 @@
             name: LivingTemp
           - entity: binary_sensor.living_vent
             name: LivingOpen
-          - entity: sensor.tv_room_vent_temperature
-            name: TVRoomVent
-          - entity: sensor.tv_room_temperature
-            name: TVRoomTemp
-          - entity: binary_sensor.living_vent
-            name: TVRoomOpen
+          - entity: sensor.family_room_vent_temperature
+            name: FamilyRoomVent
+          - entity: sensor.family_room_temperature
+            name: FamilyRoomTemp
+          - entity: binary_sensor.family_room_vent
+            name: FamilyRoomOpen
           - entity: sensor.mud_room_vent_temperature
             name: MudRoomVent
           - entity: sensor.mud_room_temperature
@@ -105,8 +105,8 @@
         title: Downstairs Vents
         type: entities
       - entities:
-          - entity: cover.tv_room_vent
-            name: TV Room
+          - entity: cover.family_room_vent
+            name: Family Room
           - entity: cover.master_bedroom_vent
             name: Master
           - entity: cover.master_bathroom_vent
@@ -134,8 +134,8 @@
             name: Hallway
           - entity: sensor.living_vent_battery
             name: Living
-          - entity: sensor.tv_room_vent_battery
-            name: TV Room
+          - entity: sensor.family_room_vent_battery
+            name: Family Room
           - entity: sensor.mud_room_vent_battery
             name: Mud Room
           - entity: sensor.master_bathroom_vent_battery

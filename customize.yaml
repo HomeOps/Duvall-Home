@@ -46,7 +46,7 @@ light.master_bedroom_vent:
   hidden: true
 light.mud_room_vent:
   hidden: true
-light.tv_room_vent:
+light.family_room_vent:
   hidden: true
 binary_sensor.pantry_door_contact:
   device_class: door

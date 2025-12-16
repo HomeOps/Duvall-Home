@@ -22,5 +22,5 @@
   state: '{{state_attr("cover.master_bedroom_vent", "current_position")|int(0) > 50}}'
 - name: Mud Room Vent
   state: '{{state_attr("cover.mud_room_vent", "current_position")|int(0) > 50}}'
-- name: TV Room Vent
-  state: '{{state_attr("cover.tv_room_vent", "current_position")|int(0) > 50}}'
+- name: Family Room Vent
+  state: '{{state_attr("cover.family_room_vent", "current_position")|int(0) > 50}}'

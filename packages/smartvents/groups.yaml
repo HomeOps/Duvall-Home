@@ -12,7 +12,7 @@ all_vents:
     - cover.master_bathroom_vent
     - cover.master_bedroom_vent
     - cover.mud_room_vent
-    - cover.tv_room_vent
+    - cover.family_room_vent
 all_vents_sensors:
   entities:
     - sensor.bedroom_1_vent
@@ -27,7 +27,7 @@ all_vents_sensors:
     - sensor.master_bathroom_vent
     - sensor.master_bedroom_vent
     - sensor.mud_room_vent
-    - sensor.tv_room_vent
+    - sensor.family_room_vent
 all_vents_binary_sensors:
   entities:
     - binary_sensor.bedroom_1_vent
@@ -42,4 +42,4 @@ all_vents_binary_sensors:
     - binary_sensor.master_bathroom_vent
     - binary_sensor.master_bedroom_vent
     - binary_sensor.mud_room_vent
-    - binary_sensor.tv_room_vent
+    - binary_sensor.family_room_vent

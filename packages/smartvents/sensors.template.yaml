@@ -38,6 +38,6 @@
 - name: 'Mud Room Vent'
   state: '{{ float(state_attr("cover.mud_room_vent", "current_position"),default=0) | round(0) | int(0) }}'
   unit_of_measurement: '%'
-- name: 'TV Room Vent'
-  state: '{{ float(state_attr("cover.tv_room_vent", "current_position"),default=0) | round(0) | int(0) }}'
+- name: 'Familty Room Vent'
+  state: '{{ float(state_attr("cover.family_room_vent", "current_position"),default=0) | round(0) | int(0) }}'
   unit_of_measurement: '%'
