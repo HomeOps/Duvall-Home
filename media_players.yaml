@@ -1,5 +1,1 @@
-- platform: samsung_multi_room
-  name: "Samsung Kitchen Soundbar"
-  host: 192.168.1.82
-  max_volume: 80 # on 20 level glass breaks, and there are 80 levels more on K650...
-  power_options: True
+
