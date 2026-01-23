@@ -79,7 +79,7 @@ uart:
 
 climate:
   - platform: midea_xye
-    name: Heatpump
+    name: ${name}
     period: 1s                  # Optional. Defaults to 1s
     timeout: 200ms              # Optional. Defaults to 100ms
     beeper: false               # Optional. Beep on commands.
@@ -97,10 +97,10 @@ climate:
       - COOL
       - HEAT
       - DRY
-    supported_presets:      # Optional
-      - ECO
-      - BOOST
-      - SLEEP
+    #supported_presets:      # Optional
+    #  - ECO
+    #  - BOOST
+    #  - SLEEP
     outdoor_temperature:        # Optional. Outdoor temperature sensor
       name: Outside Temp
     temperature_2a:             # Optional. Inside coil temperature
@@ -121,13 +121,13 @@ climate:
 
 sensor:
   - platform: homeassistant
-    entity_id: sensor.downstairs_air_quality_sensor_temperature
+    entity_id: sensor.whole_home_temperature
     id: doownstairs_thermostat_follow_me
-    name: "Downstairs Temperature Sensor"
+    name: "Whole Home Temperature Sensor"
     internal: true
     filters:
       - throttle: 10s
-      - heartbeat: 1min
+      - heartbeat: 45s
       - debounce: 1s
     on_value:
       midea_ac.follow_me:
