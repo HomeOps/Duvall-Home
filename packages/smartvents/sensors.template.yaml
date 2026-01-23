@@ -1,7 +1,7 @@
 - name: 'Thermostat Target Temperature'
   unit_of_measurement: '°C'
   device_class: temperature
-  state: '{{ state_attr("climate.thermostat_hk", "temperature")|float(20) }}'
+  state: '{{ state_attr("climate.thermostat", "temperature")|float(20) }}'
 - name: 'Bedroom 1 Vent'
   state: '{{ float(state_attr("cover.bedroom_1_vent", "current_position"),default=0) | round(0) | int(0) }}'
   unit_of_measurement: '%'

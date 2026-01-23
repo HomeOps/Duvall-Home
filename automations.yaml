@@ -531,7 +531,7 @@
     metadata: {}
     data: {}
     target:
-      entity_id: climate.thermostat_hk
+      entity_id: climate.thermostat
   - data:
       message: AC condensation detected
     action: notify.sms_oscar

@@ -35,8 +35,8 @@
             sensor.{{get_name(light)}}_temperature
             {%- endmacro -%}
             {% macro get_close(light) -%}
-            {% set target = state_attr("climate.thermostat_hk", "temperature")|float(20) -%}
-            {% set hvacMode = state_attr("climate.thermostat_hk", "hvac_action")|lower -%}
+            {% set target = state_attr("climate.thermostat", "temperature")|float(20) -%}
+            {% set hvacMode = state_attr("climate.thermostat", "hvac_action")|lower -%}
             {% set room = states(get_room_temp(light))|float(20) -%}
             {% set level = state_attr(light.entity_id, "current_position") -%}
             {% if level == None -%}{% set level = 50 -%}{% endif -%}
@@ -68,8 +68,8 @@
             sensor.{{get_name(light)}}_temperature
             {%- endmacro -%}
             {% macro get_open(light) -%}
-            {% set target = state_attr("climate.thermostat_hk", "temperature")|float(20) -%}
-            {% set hvacMode = state_attr("climate.thermostat_hk", "hvac_action")|lower -%}
+            {% set target = state_attr("climate.thermostat", "temperature")|float(20) -%}
+            {% set hvacMode = state_attr("climate.thermostat", "hvac_action")|lower -%}
             {% set room = states(get_room_temp(light))|float(20) -%}
             {% set level = state_attr(light.entity_id, "current_position") -%}
             {% if level == None -%}{% set level = 50 -%}{% endif -%}

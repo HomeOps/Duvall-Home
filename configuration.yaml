@@ -16,6 +16,12 @@ homeassistant:
   packages: !include packages/packages.yaml
   auth_providers:
    - type: homeassistant
+   - type: trusted_networks
+     trusted_networks:
+       - 192.168.81.0/24
+     trusted_users:
+       192.168.81.50: !secret trusted_user1
+     allow_bypass_login: true
 
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
