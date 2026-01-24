@@ -9,8 +9,7 @@ esphome:
   min_version: 2025.11.0
 
 external_components:
-  #- source: github://HomeOps/ESPHome-Midea-XYE@v0.0.4
-  - source: github://mdrobnak/esphome@delays_updated
+  - source: github://HomeOps/ESPHome-Midea-XYE@v0.0.6
     components: [midea_xye]
     refresh: 0s
   
@@ -21,8 +20,6 @@ esp32:
 
 logger:
   level: VERY_VERBOSE
-  #logs:
-  #  cn40.climate: DEBUG
 
 # Enable Home Assistant API
 api:
@@ -72,11 +69,6 @@ uart:
     sequence:
       - lambda: UARTDebug::log_hex(direction, bytes, ' ');
 
-#climate:
-#  - platform: cn40
-#    uart_id: xye_bus
-#    name: EVOX CN40 Climate
-
 climate:
   - platform: midea_xye
     name: ${name}
@@ -85,18 +77,17 @@ climate:
     beeper: false               # Optional. Beep on commands.
     #default_target_temperature_low: 18°C
     #default_target_temperature_high: 24°C
-    #custom_auto: true
     use_fahrenheit: false
     visual:                     # Optional. Example of visual settings override.
       min_temperature: 17 °C    # min: 17
       max_temperature: 30 °C    # max: 30
-      temperature_step: 0.5 °C  # min: 0.5
+      temperature_step: 1.0 °C  # min: 0.5
     supported_modes:            # Optional. 
-      - FAN_ONLY
-      - HEAT_COOL              
+    #  - FAN_ONLY
+    #  - HEAT_COOL              
       - COOL
       - HEAT
-      - DRY
+    #  - DRY
     #supported_presets:      # Optional
     #  - ECO
     #  - BOOST
@@ -115,9 +106,9 @@ climate:
       name: Error Flags
     protect_flags:              # Optional. 
       name: Protect Flags
-    static_pressure:
-      name: Static Pressure
-      min_value: 0
+    #static_pressure:
+    #  name: Static Pressure
+    #  min_value: 0
 
 sensor:
   - platform: homeassistant
