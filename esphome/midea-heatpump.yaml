@@ -9,7 +9,7 @@ esphome:
   min_version: 2025.11.0
 
 external_components:
-  - source: github://HomeOps/ESPHome-Midea-XYE@v0.0.6
+  - source: github://HomeOps/ESPHome-Midea-XYE@v0.0.8
     components: [midea_xye]
     refresh: 0s
   
@@ -36,23 +36,6 @@ wifi:
     gateway: 192.168.81.1
     subnet: 255.255.255.0  
 
-# -------------------------------
-# RS485 Direction Control (M5Stack)
-# -------------------------------
-# GPIO33 controls RE/DE on the M5 RS485 Base.
-# LOW = Receive mode (required for sniffing CN40)
-# HIGH = Transmit mode (never use for read-only)
-#output:
-#  - platform: gpio
-#    id: rs485_dir
-#    pin: GPIO33
-
-#switch:
-#  - platform: output
-#    id: rs485_direction
-#    output: rs485_dir
-#    restore_mode: ALWAYS_OFF # ALWAYS_OFF = LOW = receive mode
-
 uart:
   # id: xye_bus
   rx_pin: GPIO22
@@ -75,23 +58,17 @@ climate:
     period: 1s                  # Optional. Defaults to 1s
     timeout: 200ms              # Optional. Defaults to 100ms
     beeper: false               # Optional. Beep on commands.
-    #default_target_temperature_low: 18°C
-    #default_target_temperature_high: 24°C
     use_fahrenheit: false
+    follow_me_sensor: thermostat_follow_me_sensor  # Automatically updates follow_me from this sensor
+    internal_current_temperature:
+      name: "Internal Current Temperature"
     visual:                     # Optional. Example of visual settings override.
       min_temperature: 17 °C    # min: 17
       max_temperature: 30 °C    # max: 30
-      temperature_step: 1.0 °C  # min: 0.5
+      temperature_step: 0.1 °C  # min: 0.5
     supported_modes:            # Optional. 
-    #  - FAN_ONLY
-    #  - HEAT_COOL              
       - COOL
       - HEAT
-    #  - DRY
-    #supported_presets:      # Optional
-    #  - ECO
-    #  - BOOST
-    #  - SLEEP
     outdoor_temperature:        # Optional. Outdoor temperature sensor
       name: Outside Temp
     temperature_2a:             # Optional. Inside coil temperature
@@ -113,16 +90,13 @@ climate:
 sensor:
   - platform: homeassistant
     entity_id: sensor.whole_home_temperature
-    id: doownstairs_thermostat_follow_me
+    id: thermostat_follow_me_sensor
     name: "Whole Home Temperature Sensor"
     internal: true
     filters:
       - throttle: 10s
       - heartbeat: 45s
       - debounce: 1s
-    on_value:
-      midea_ac.follow_me:
-        temperature: !lambda "return x;"
   - platform: wifi_signal
     name: ${friendly_name} Wi-Fi Signal
     update_interval: 60s
