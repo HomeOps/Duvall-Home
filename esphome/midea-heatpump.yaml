@@ -9,7 +9,7 @@ esphome:
   min_version: 2025.11.0
 
 external_components:
-  - source: github://HomeOps/ESPHome-Midea-XYE@v0.0.8
+  - source: github://HomeOps/ESPHome-Midea-XYE@v0.0.9
     components: [midea_xye]
     refresh: 0s
   
@@ -95,7 +95,7 @@ sensor:
     internal: true
     filters:
       - throttle: 10s
-      - heartbeat: 45s
+      - heartbeat: 30s
       - debounce: 1s
   - platform: wifi_signal
     name: ${friendly_name} Wi-Fi Signal
