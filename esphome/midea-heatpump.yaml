@@ -9,7 +9,7 @@ esphome:
   min_version: 2025.11.0
 
 external_components:
-  - source: github://HomeOps/ESPHome-Midea-XYE@v0.0.9
+  - source: github://HomeOps/ESPHome-Midea-XYE@v0.0.12
     components: [midea_xye]
     refresh: 0s
   
@@ -111,3 +111,61 @@ sensor:
     icon: mdi:clock-start
     unit_of_measurement: days
     update_interval: 60s
+
+# ---------------------------------------------------------
+# PRESET CONFIG VALUES (EDITABLE IN HOME ASSISTANT)
+# ---------------------------------------------------------
+number:
+  - platform: template
+    name: "Home Min Temp"
+    id: home_min
+    min_value: 16
+    max_value: 26
+    step: 1
+    initial_value: 21
+    optimistic: true
+
+  - platform: template
+    name: "Home Max Temp"
+    id: home_max
+    min_value: 17
+    max_value: 30
+    step: 1
+    initial_value: 23
+    optimistic: true
+
+  - platform: template
+    name: "Sleep Min Temp"
+    id: sleep_min
+    min_value: 16
+    max_value: 26
+    step: 1
+    initial_value: 19
+    optimistic: true
+
+  - platform: template
+    name: "Sleep Max Temp"
+    id: sleep_max
+    min_value: 17
+    max_value: 30
+    step: 1
+    initial_value: 21
+    optimistic: true
+
+  - platform: template
+    name: "Away Min Temp"
+    id: away_min
+    min_value: 16
+    max_value: 26
+    step: 1
+    initial_value: 16
+    optimistic: true
+
+  - platform: template
+    name: "Away Max Temp"
+    id: away_max
+    min_value: 17
+    max_value: 30
+    step: 1
+    initial_value: 25
+    optimistic: true
