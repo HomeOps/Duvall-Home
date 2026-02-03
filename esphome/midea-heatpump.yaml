@@ -9,7 +9,7 @@ esphome:
   min_version: 2025.11.0
 
 external_components:
-  - source: github://HomeOps/ESPHome-Midea-XYE@v0.0.12
+  - source: github://HomeOps/ESPHome-Midea-XYE@v0.1.1
     components: [midea_xye]
     refresh: 0s
   
@@ -69,6 +69,8 @@ climate:
     supported_modes:            # Optional. 
       - COOL
       - HEAT
+      - HEAT_COOL
+      - FAN_ONLY
     outdoor_temperature:        # Optional. Outdoor temperature sensor
       name: Outside Temp
     temperature_2a:             # Optional. Inside coil temperature
