@@ -1,6 +1,6 @@
 substitutions:
-  name: "east-bed"
-  friendly_name: East Bed
+  name: east-bedroom-bed-sensor
+  friendly_name: East Bedroom Bed Sensor 
 
 esphome:
   name: ${name}
@@ -47,6 +47,10 @@ wifi:
   password: !secret wifi_password # These are not part of the tt-sleep.factory.bin or tt-sleep.ota.bin, these are only added when you "take control" of the device
   ap:
     ssid: SlumberTek Fallback Hotspot
+  manual_ip:
+    static_ip: 192.168.81.186
+    gateway: 192.168.81.1
+    subnet: 255.255.255.0  
 
 dashboard_import:
   package_import_url: 
@@ -475,9 +479,7 @@ number:
         id(filter_amount) = x;
 
 - platform: template
-  name: Auto-calibration trigger sensitivity (How much the last 24hr Pressure 
-    Voltage range must be over the current Full-Empty bed threshold gap to 
-    trigger auto-calibration)
+  name: Auto-calibration trigger sensitivity
   id: auto_cali_trigger_number
   entity_category: diagnostic
   icon: mdi:cog-sync-outline

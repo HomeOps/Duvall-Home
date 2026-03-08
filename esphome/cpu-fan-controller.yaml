@@ -1,0 +1,72 @@
+esphome:
+  name: cpu-fan-controller
+  friendly_name: CPU Fan Controller
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "p1gGx2iauJ5jEk2TlRAuWaqQGdg3qwbqeD3MflNIGNE="
+
+ota:
+  - platform: esphome
+    password: "222816c008b8cbcb2da0396e127aa6d7"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Cpu-Fan-Controller"
+    password: "frVexN3uec6h"
+
+  manual_ip:
+    static_ip: 192.168.81.209
+    gateway: 192.168.81.1
+    subnet: 255.255.255.0  
+  
+captive_portal:
+
+# -----------------------------
+# PWM OUTPUT → Fan Blue Wire
+# -----------------------------
+output:
+  - platform: ledc
+    pin: GPIO26
+    id: fan_pwm
+    frequency: 25000 Hz   # Noctua spec: 25 kHz PWM
+
+# -----------------------------
+# TACH INPUT → Fan Green Wire
+# -----------------------------
+sensor:
+  - platform: pulse_counter
+    pin:
+      number: GPIO32
+      mode:
+        input: true
+        pullup: true
+    id: fan_rpm_raw
+    name: "Fan RPM"
+    update_interval: 2s
+    filters:
+      - multiply: 0.5        # Noctua = 2 pulses per revolution
+    unit_of_measurement: "RPM"
+
+# -----------------------------
+# FAN ENTITY
+# -----------------------------
+fan:
+  - platform: speed
+    output: fan_pwm
+    name: "CPU Cooling Fan"
+    id: cpu_cooling_fan
+    speed_count: 100
