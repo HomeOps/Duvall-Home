@@ -49,3 +49,5 @@ ui-lovelace.yaml
 /pyvenv.cfg
 
 .ha_run.lock
+.cache
+
