@@ -1,7 +1,7 @@
 all_vents:
   entities:
-    - cover.bedroom_1_vent
-    - cover.bedroom_3_vent
+    - cover.east_bedroom_vent
+    - cover.west_bedroom_vent
     - cover.den_vent
     - cover.dinning_vent
     - cover.guest_bathroom_vent
@@ -15,8 +15,8 @@ all_vents:
     - cover.family_room_vent
 all_vents_sensors:
   entities:
-    - sensor.bedroom_1_vent
-    - sensor.bedroom_3_vent
+    - sensor.east_bedroom_vent
+    - sensor.west_bedroom_vent
     - sensor.den_vent
     - sensor.dinning_vent
     - sensor.guest_bathroom_vent
@@ -30,8 +30,8 @@ all_vents_sensors:
     - sensor.family_room_vent
 all_vents_binary_sensors:
   entities:
-    - binary_sensor.bedroom_1_vent
-    - binary_sensor.bedroom_3_vent
+    - binary_sensor.east_bedroom_vent
+    - binary_sensor.west_bedroom_vent
     - binary_sensor.den_vent
     - binary_sensor.dinning_vent
     - binary_sensor.guest_bathroom_vent

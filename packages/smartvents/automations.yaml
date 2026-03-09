@@ -11,11 +11,11 @@
       data_template:
         object_id: "all_vents"
         entities: >-
-          {%- for light in states['light'] if ( (light.entity_id | lower).endswith('_vent') ) -%}
-            {{ light.entity_id }}{% if not loop.last %}, {% endif %}
+          {%- for vent in states['cover'] if ( (vent.entity_id | lower).endswith('_vent') ) -%}
+            {{ vent.entity_id }}{% if not loop.last %}, {% endif %}
           {%- endfor -%}
 - alias: vent_home
-  initial_state: 'on'
+  #initial_state: 'on'
   trigger:
     - platform: time_pattern
       minutes: '/1'
@@ -32,7 +32,7 @@
             sensor.{{get_name(light)}}_vent_temperature
             {%- endmacro -%}
             {% macro get_room_temp(light) -%}
-            sensor.{{get_name(light)}}_temperature
+            sensor.{{get_name(light)}}_sensor_air_temperature
             {%- endmacro -%}
             {% macro get_close(light) -%}
             {% set target = state_attr("climate.thermostat", "temperature")|float(20) -%}
@@ -65,7 +65,7 @@
             sensor.{{get_name(light)}}_vent_temperature
             {%- endmacro -%}
             {% macro get_room_temp(light) -%}
-            sensor.{{get_name(light)}}_temperature
+            sensor.{{get_name(light)}}_sensor_air_temperature
             {%- endmacro -%}
             {% macro get_open(light) -%}
             {% set target = state_attr("climate.thermostat", "temperature")|float(20) -%}

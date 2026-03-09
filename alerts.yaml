@@ -2,7 +2,7 @@ garage_door:
   name: Garage is open
   message: "Garage door has been opened for more than 5 minutes"
   done_message: Garage is closed
-  entity_id: cover.garage_door_1
+  entity_id: cover.garage_door_east
   state: "open"
   repeat: 5
   can_acknowledge: true

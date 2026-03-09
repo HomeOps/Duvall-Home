@@ -1,11 +1,11 @@
-- name: Bedroom 1 Vent
-  state: '{{state_attr("cover.bedroom_1_vent", "current_position")|int(0) > 50}}'
-- name: Bedroom 3 Vent
-  state: '{{state_attr("cover.bedroom_3_vent", "current_position")|int(0) > 50}}'
+- name: Bedroom East Vent
+  state: '{{state_attr("cover.east_bedroom_vent", "current_position")|int(0) > 50}}'
+- name: Bedroom West Vent
+  state: '{{state_attr("cover.west_bedroom_vent", "current_position")|int(0) > 50}}'
 - name: Den Vent
   state: '{{state_attr("cover.den_vent", "current_position")|int(0) > 50}}'
-- name: Dinning Vent
-  state: '{{state_attr("cover.dinning_vent", "current_position")|int(0) > 50}}'
+- name: Dining Vent
+  state: '{{state_attr("cover.dining_vent", "current_position")|int(0) > 50}}'
 - name: Guest Bathroom Vent
   state: '{{state_attr("cover.guest_bathroom_vent", "current_position")|int(0) > 50}}'
 - name: Guest Bedroom Vent

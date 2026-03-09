@@ -21,40 +21,6 @@
   - service: hassio.addon_restart
     data:
       addon: core_letsencrypt
-- id: turn_on_pantry_lights_when_door_opens
-  alias: Turn on pantry lights when door opens
-  trigger:
-  - entity_id: binary_sensor.pantry_door_contact
-    platform: state
-    to: 'on'
-  action:
-  - data:
-      entity_id: light.pantry
-    service: light.turn_on
-- id: turn_off_pantry_lights_when_door_closes
-  alias: Turn off pantry lights when door closes
-  trigger:
-  - entity_id: binary_sensor.pantry_door_contact
-    platform: state
-    to: 'off'
-  action:
-  - data:
-      entity_id: light.pantry
-    service: light.turn_off
-- id: open_garage_door_when_highlander_is_back
-  alias: Open garage door when Highlander is back
-  trigger:
-  - entity_id: binary_sensor.highlander_presence
-    for:
-      minutes: 5
-    from: 'off'
-    platform: state
-    to: 'on'
-  condition: []
-  action:
-  - data:
-      entity_id: cover.garage_door_opener
-    service: cover.open_cover
 - id: notify_mud_room_door_open
   alias: Notify Mud Room Door Open
   trigger:
@@ -73,22 +39,30 @@
   - delay: 00:00:30
 - id: vent_guest_bathroom
   alias: Vent Guest Bathroom
-  trigger:
-  - entity_id: switch.guest_bathroom_lights
-    for: 00:02:00
-    from: 'on'
-    platform: state
-    to: 'off'
-  condition: []
-  action:
+  triggers:
+  - entity_id:
+    - switch.guest_bathroom_light
+    for:
+      hours: 0
+      minutes: 2
+      seconds: 0
+    from:
+    - 'on'
+    to:
+    - 'off'
+    trigger: state
+  conditions: []
+  actions:
   - delay: 00:00:20
-  - data:
-      entity_id: light.guest_bathroom_vent
-    service: light.turn_off
+  - action: fan.turn_on
+    target:
+      entity_id: fan.guest_bathroom_fan
+    data: {}
   - delay: '30'
-  - data:
-      entity_id: light.guest_bathroom_vent
-    service: light.turn_off
+  - action: fan.turn_off
+    target:
+      entity_id: fan.guest_bathroom_fan
+    data: {}
 - id: turn_on_all_patio_lights_when_switch_is_on
   alias: Turn on all patio lights when switch is on
   trigger:
@@ -542,7 +516,7 @@
   use_blueprint:
     path: homeassistant/motion_light.yaml
     input:
-      motion_entity: binary_sensor.hallway_motion
+      motion_entity: binary_sensor.hallway_sensor_motion_detection
       light_target:
         entity_id: light.hallway_lights
 - id: '1615152262826'
@@ -551,37 +525,23 @@
   use_blueprint:
     path: homeassistant/motion_light.yaml
     input:
-      motion_entity: binary_sensor.den_motion
+      motion_entity: binary_sensor.den_sensor_motion_detection
       light_target:
         entity_id: light.den_lights
       no_motion_wait: 3600
-- id: '1615157508017'
-  alias: Turn on garage lights
-  description: ''
-  triggers:
-  - entity_id: sensor.garage_door_1_status
-    trigger: state
-  conditions: []
-  actions:
-  - action: light.turn_on
-    metadata: {}
-    target:
-      entity_id: light.garage_lights
-    data: {}
-  mode: single
 - id: '1616374692206'
   alias: Turn Laundry fan when Dryer is drying
   description: ''
-  trigger:
-  - platform: state
-    entity_id: sensor.dryer_washer_job_state
+  triggers:
+  - entity_id: sensor.dryer_washer_job_state
     to: drying
-  condition: []
-  action:
-  - service: light.turn_on
-    data: {}
+    trigger: state
+  conditions: []
+  actions:
+  - data: {}
+    action: fan.turn_on
     target:
-      entity_id: light.laundry_fan
+      entity_id: fan.laundry_fan
   mode: single
 - id: '1625018365149'
   alias: Turn mud room lights on motion
@@ -589,17 +549,18 @@
   use_blueprint:
     path: homeassistant/motion_light.yaml
     input:
-      motion_entity: binary_sensor.mud_room_motion
+      motion_entity: binary_sensor.mud_room_sensor_motion_detection
       no_motion_wait: 240
       light_target:
-        entity_id: light.mud_room
+        entity_id:
+        - light.mud_room_lights
 - id: '1625020669242'
   alias: Turn on Stair lights on motion
   description: ''
   use_blueprint:
     path: homeassistant/motion_light.yaml
     input:
-      motion_entity: binary_sensor.stairs_motion
+      motion_entity: binary_sensor.stairs_sensor_motion_detection
       light_target:
         entity_id: light.stairs_lights
 - id: '1625022374750'
@@ -623,18 +584,20 @@
 - id: '1635711871095'
   alias: Forward SMS
   description: ''
-  trigger:
-  - platform: event
-    event_type: sms.incoming_sms
-  condition: []
-  action:
-  - service: notify.sms_oscar
-    data:
-      message: 'From: {{trigger.event.data.phone}}
+  triggers:
+  - trigger: state
+    entity_id:
+    - sensor.sms_gateway_last_sms_received
+  conditions: []
+  actions:
+  - data:
+      message: 'From: {{ state_attr(''sensor.sms_gateway_last_sms_received'', ''Number'')
+        }}
 
-        {{trigger.event.data.text}}
+        {{ states(''sensor.sms_gateway_last_sms_received'') }}
 
         '
+    action: notify.sms_oscar
   mode: single
 - id: '1635904904000'
   alias: Living Left Lamp Switch mirrors Living Lights
@@ -770,4 +733,59 @@
   - target:
       entity_id: switch.den_mister
     action: switch.turn_off
+  mode: single
+- id: motion_sensors_auto_heal
+  alias: Motion Sensors Auto-Heal (Default Timeout)
+  triggers:
+  - entity_id:
+    - group.zwave_motion_sensor
+    to: 'on'
+    trigger: state
+  conditions:
+  - condition: template
+    value_template: '{{ state_attr(trigger.entity_id, ''device_class'') == ''motion''
+      }}'
+  - condition: template
+    value_template: '{{ (now_ts - last_changed) > heal_after }}'
+  actions:
+  - target:
+      entity_id: '{{ motion_entity }}'
+    action: homeassistant.update_entity
+  - delay: 00:00:02
+  - condition: template
+    value_template: '{{ states[motion_entity].state == ''on'' }}'
+  - data:
+      entity_id: '{{ motion_entity }}'
+      state: 'off'
+      attributes:
+        healed_by: enterprise_motion_autoheal
+        healed_at: '{{ now() }}'
+        assumed_param3: '{{ default_timeout }}'
+        heal_after_seconds: '{{ heal_after }}'
+    action: homeassistant.set_state
+  mode: parallel
+  variables:
+    default_timeout: 240
+    heal_margin: 30
+    heal_after: '{{ default_timeout + heal_margin }}'
+    motion_entity: '{{ trigger.entity_id }}'
+    last_changed: '{{ as_timestamp(states[motion_entity].last_changed) }}'
+    now_ts: '{{ as_timestamp(now()) }}'
+- id: '1773000828011'
+  alias: Turn On Garage Lights When Garage Door Opens
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - cover.garage_door_east
+    from:
+    - closed
+    - opening
+  conditions: []
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    target:
+      entity_id: light.garage_lights
+    data: {}
   mode: single

@@ -5,11 +5,11 @@
       - entities:
           - entity: sensor.thermostat_target_temperature
             name: Target
-          - entity: sensor.bedroom_1_vent_temperature
+          - entity: sensor.west_bedroom_vent_temperature
             name: BedWVent
-          - entity: sensor.bedroom_1_temperature
+          - entity: sensor.west_bedroom_temperature
             name: BedWTemp
-          - entity: binary_sensor.bedroom_1_vent
+          - entity: binary_sensor.west_bedroom_vent
             name: BedWOpen
           - entity: sensor.guest_bedroom_vent_temperature
             name: GuestBedVent
@@ -17,11 +17,11 @@
             name: GuestBedVent
           - entity: binary_sensor.guest_bedroom_vent
             name: GuestBedOpen
-          - entity: sensor.bedroom_3_vent_temperature
+          - entity: sensor.east_bedroom_vent_temperature
             name: BedEVent
-          - entity: sensor.bedroom_3_temperature
+          - entity: sensor.east_bedroom_temperature
             name: BedETemp
-          - entity: binary_sensor.bedroom_3_vent
+          - entity: binary_sensor.east_bedroom_vent
             name: BedEOpen
           - entity: sensor.master_bedroom_vent_temperature
             name: MasterVent
@@ -47,11 +47,11 @@
             name: DenTemp
           - entity: binary_sensor.den_vent
             name: DenOpen
-          - entity: sensor.dinning_vent_temperature
+          - entity: sensor.dining_vent_temperature
             name: DiningVent
-          - entity: sensor.dinning_temperature
+          - entity: sensor.dining_temperature
             name: DiningTemp
-          - entity: binary_sensor.dinning_vent
+          - entity: binary_sensor.dining_vent
             name: DiningOpen
           - entity: sensor.guest_bathroom_vent_temperature
             name: GuestBathVent
@@ -100,8 +100,8 @@
             name: Kitchen
           - entity: cover.living_vent
             name: Living
-          - entity: cover.dinning_vent
-            name: Dinning
+          - entity: cover.dining_vent
+            name: Dining
         title: Downstairs Vents
         type: entities
       - entities:
@@ -111,12 +111,12 @@
             name: Master
           - entity: cover.master_bathroom_vent
             name: Master Bathroom
-          - entity: cover.bedroom_1_vent
-            name: Bed1
+          - entity: cover.east_bedroom_vent
+            name: BedE
           - entity: cover.guest_bedroom_vent
             name: Guest Bedroom
-          - entity: cover.bedroom_3_vent
-            name: Bed3
+          - entity: cover.west_bedroom_vent
+            name: BedW
         title: Upstairs Vents
         type: entities
       - entities:
@@ -124,8 +124,8 @@
             name: Kitchen
           - entity: sensor.den_vent_battery
             name: Den
-          - entity: sensor.dinning_vent_battery
-            name: Dinning
+          - entity: sensor.dining_vent_battery
+            name: Dining
           - entity: sensor.guest_bathroom_vent_battery
             name: Guest Bathroom
           - entity: sensor.guest_bedroom_vent_battery
@@ -142,10 +142,10 @@
             name: MasterBath
           - entity: sensor.master_bedroom_vent_battery
             name: Master
-          - entity: sensor.bedroom_1_vent_battery
-            name: Bed1
-          - entity: sensor.bedroom_3_vent_battery
-            name: Bed3
+          - entity: sensor.east_bedroom_vent_battery
+            name: BedE
+          - entity: sensor.west_bedroom_vent_battery
+            name: BedW
         title: Vents Battery
         type: entities
 

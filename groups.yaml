@@ -5,75 +5,11 @@ perimeter_locks:
     - lock.main_door_lock
     - lock.mud_room_lock
     - lock.server_room_lock
-perimeter_contacts:
-  name: Perimeter Contacts
-  entities:
-    - binary_sensor.main_door_contact
-    - binary_sensor.patio_door_contact
-    - binary_sensor.garage_door_contact
-    - binary_sensor.mud_room_door_contact
-    - binary_sensor.den_window_1_contact
-    - binary_sensor.den_window_2_contact
 perimeter_covers:
   name: Perimeter Covers
   entities:
     - cover.garage_door
     - cover.all_blinds
-night_motion_sensors:
-  name: Motion Sensors for Good Night
-  entities:
-    - binary_sensor.living_motion
-    - binary_sensor.den_motion
-    - binary_sensor.hallway_motion
-    - binary_sensor.tv_room_motion
-    - binary_sensor.kitchen_motion
-    - binary_sensor.stairs_motion
-    - binary_sensor.mud_room_motion
-#    - binary_sensor.dinning_motion
-    - binary_sensor.front_door_motion
-    - binary_sensor.backyard_motion
-sleep_motion_sensors:
-  name: Motion Sensors for Sleep
-  entities:
-    - binary_sensor.living_motion
-    - binary_sensor.den_motion
-    - binary_sensor.hallway_motion
-    - binary_sensor.tv_room_motion
-    - binary_sensor.kitchen_motion
-    - binary_sensor.stairs_motion
-    - binary_sensor.mud_room_motion
-    - binary_sensor.living_tv_switch
-    - binary_sensor.master_bedroom_tv_switch
-    - media_player.family_room_tv
-person_adults:
-  name: Adult Persons
-  entities:
-    - person.oscar_calvo
-    - person.hazel_rojas
-    - person.valentina
-cars_presence:
-  name: Cars Presence
-  entities:
-    - binary_sensor.highlander_presence
-    - binary_sensor.tesla_model_3_presence
-kid_doors:
-  name: Kid doors
-  entities:
-    - binary_sensor.bedroom_1_door_sensor_contact
-    - binary_sensor.bedroom_3_door_sensor_contact
-sleep_contacts:
-  name: Internal Contacts for Sleep
-  entities:
-    - binary_sensor.bedroom_1_door_sensor_contact
-    - binary_sensor.bedroom_3_door_sensor_contact
-    - binary_sensor.master_bedroom_door_contact
-sleep_lights:
-  name: Lights for Sleep
-  entities:
-    - light.master_bedroom_lights
-    - light.master_bed_lamp_1
-    - light.master_bed_lamp_2
-    - light.master_bathroom_lights
 all_lights:
   entities:
     - light.backyard_light
@@ -167,3 +103,31 @@ adults_media_players:
     - media_player.master_bathroom_display
     - media_player.den_display
     - media_player.kitchen_display
+zwave_motion_sensors:
+  name: All Z-Wave Motion Sensors
+  entities:
+    - binary_sensor.dining_room_sensor_motion_detection
+    - binary_sensor.living_room_sensor_motion_detection
+    - binary_sensor.mud_room_sensor_motion_detection
+    - binary_sensor.kitchen_sensor_motion_detection
+    - binary_sensor.den_sensor_motion_detection
+    - binary_sensor.hallway_sensor_motion_detection
+    - binary_sensor.guest_bathroom_light_motion_detection
+    - binary_sensor.pantry_lights_motion_detection
+    - binary_sensor.air_handler_lights_motion_detection
+    - binary_sensor.garage_lights_motion_detection
+    - binary_sensor.west_bedroom_sensor_motion_detection
+    - binary_sensor.east_bedroom_sensor_motion_detection
+    - binary_sensor.upstairs_bathroom_sensor_motion_detection
+    - binary_sensor.guest_bedroom_sensor_motion_detection
+    - binary_sensor.laundry_room_sensor_motion_detection
+    - binary_sensor.master_bathroom_sensor_motion_detection
+    - binary_sensor.master_closet_sensor_motion_detection
+    - binary_sensor.master_bedroom_sensor_motion_detection
+    - binary_sensor.family_room_sensor_motion_detection
+    - binary_sensor.stairs_sensor_motion_detection
+    - binary_sensor.server_room_lights_motion_detection
+    - binary_sensor.laundry_room_lights_motion_detection
+    - binary_sensor.master_bathroom_closet_lights_motion_detection
+    - binary_sensor.master_bathroom_toilet_lights_motion_detection
+    - binary_sensor.master_bedroom_closet_lights_motion_detection
