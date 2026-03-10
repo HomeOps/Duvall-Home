@@ -51,3 +51,5 @@ ui-lovelace.yaml
 .ha_run.lock
 .cache
 
+notebooks/*.ipynb
+
