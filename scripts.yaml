@@ -152,3 +152,72 @@ turn_on_samsung_kitchen_speaker:
       volume_level: 0.8
     entity_id: media_player.samsung_kitchen_soundbar
     service: media_player.volume_set
+heal_stuck_motion_sensors_at_startup:
+  alias: Heal Stuck Motion Sensors at Startup
+  description: Heal any motion sensors already stuck ON when Home Assistant starts
+  mode: single
+  variables:
+    default_timeout: 240
+    start_time:
+      '[object Object]':
+    sensors:
+    - binary_sensor.dining_room_sensor_motion_detection
+    - binary_sensor.living_room_sensor_motion_detection
+    - binary_sensor.mud_room_sensor_motion_detection
+    - binary_sensor.kitchen_sensor_motion_detection
+    - binary_sensor.den_sensor_motion_detection
+    - binary_sensor.hallway_sensor_motion_detection
+    - binary_sensor.guest_bathroom_light_motion_detection
+    - binary_sensor.pantry_lights_motion_detection
+    - binary_sensor.air_handler_lights_motion_detection
+    - binary_sensor.garage_lights_motion_detection
+    - binary_sensor.west_bedroom_sensor_motion_detection
+    - binary_sensor.east_bedroom_sensor_motion_detection
+    - binary_sensor.upstairs_bathroom_sensor_motion_detection
+    - binary_sensor.guest_bedroom_sensor_motion_detection
+    - binary_sensor.laundry_room_sensor_motion_detection
+    - binary_sensor.master_bathroom_sensor_motion_detection
+    - binary_sensor.master_walking_closet_lights_motion_detection
+    - binary_sensor.master_bedroom_sensor_motion_detection
+    - binary_sensor.family_room_sensor_motion_detection
+    - binary_sensor.stairs_sensor_motion_detection
+    - binary_sensor.server_room_lights_motion_detection
+    - binary_sensor.laundry_room_lights_motion_detection
+    - binary_sensor.master_bathroom_toilet_lights_motion_detection
+    - binary_sensor.master_bedroom_closet_lights_motion_detectionn
+  sequence:
+  - repeat:
+      for_each: '{{ sensors }}'
+      sequence:
+      - variables:
+          id: '{{ repeat.item|string }}'
+          st: '{{ states[id] }}
+
+            '
+          sensor_state: '{{ (states(id))|string }}
+
+            '
+          motion_on: '{{ sensor_state == ''on'' }}
+
+            '
+      - if:
+        - condition: template
+          value_template: '{{ motion_on }}'
+        then:
+        - variables:
+            last_changed: '{{ as_timestamp(states[id].last_changed) }}'
+            now_timestamp: '{{ as_timestamp(now()) }}'
+            seconds_in_motion: '{{ now_timestamp - last_changed }}'
+            should_reset: '{{ seconds_in_motion > default_timeout }}'
+        - if:
+          - condition: template
+            value_template: '{{ should_reset }}'
+          then:
+          - data:
+              entity_id: '{{ id }}'
+              state: 'off'
+              attributes:
+                healed_by: motion_autoheal_startup
+                healed_at: '{{ now() }}'
+                assumed_param3: '{{ default_timeout }}'
+            action: python_script.set_state

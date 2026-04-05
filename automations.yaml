@@ -736,33 +736,50 @@
   mode: single
 - id: motion_sensors_auto_heal
   alias: Motion Sensors Auto-Heal (Default Timeout)
+  description: Heal stuck motion sensors
   triggers:
   - entity_id:
-    - group.zwave_motion_sensor
-    to: 'on'
+    - binary_sensor.dining_room_sensor_motion_detection
+    - binary_sensor.living_room_sensor_motion_detection
+    - binary_sensor.mud_room_sensor_motion_detection
+    - binary_sensor.kitchen_sensor_motion_detection
+    - binary_sensor.den_sensor_motion_detection
+    - binary_sensor.hallway_sensor_motion_detection
+    - binary_sensor.guest_bathroom_light_motion_detection
+    - binary_sensor.pantry_lights_motion_detection
+    - binary_sensor.air_handler_lights_motion_detection
+    - binary_sensor.garage_lights_motion_detection
+    - binary_sensor.west_bedroom_sensor_motion_detection
+    - binary_sensor.east_bedroom_sensor_motion_detection
+    - binary_sensor.upstairs_bathroom_sensor_motion_detection
+    - binary_sensor.guest_bedroom_sensor_motion_detection
+    - binary_sensor.laundry_room_sensor_motion_detection
+    - binary_sensor.master_bathroom_sensor_motion_detection
+    - binary_sensor.master_walking_closet_lights_motion_detection
+    - binary_sensor.master_bedroom_sensor_motion_detection
+    - binary_sensor.family_room_sensor_motion_detection
+    - binary_sensor.stairs_sensor_motion_detection
+    - binary_sensor.server_room_lights_motion_detection
+    - binary_sensor.laundry_room_lights_motion_detection
+    - binary_sensor.master_bathroom_toilet_lights_motion_detection
+    - binary_sensor.master_bedroom_closet_lights_motion_detection
     trigger: state
-  conditions:
-  - condition: template
-    value_template: '{{ state_attr(trigger.entity_id, ''device_class'') == ''motion''
-      }}'
-  - condition: template
-    value_template: '{{ (now_ts - last_changed) > heal_after }}'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 240
+    to:
+    - 'on'
   actions:
-  - target:
-      entity_id: '{{ motion_entity }}'
-    action: homeassistant.update_entity
-  - delay: 00:00:02
-  - condition: template
-    value_template: '{{ states[motion_entity].state == ''on'' }}'
   - data:
       entity_id: '{{ motion_entity }}'
       state: 'off'
       attributes:
-        healed_by: enterprise_motion_autoheal
+        healed_by: motion_autoheal
         healed_at: '{{ now() }}'
         assumed_param3: '{{ default_timeout }}'
         heal_after_seconds: '{{ heal_after }}'
-    action: homeassistant.set_state
+    action: python_script.set_state
   mode: parallel
   variables:
     default_timeout: 240
@@ -788,4 +805,14 @@
     target:
       entity_id: light.garage_lights
     data: {}
+  mode: single
+- id: '1773517270156'
+  alias: Heal Motion Sensors at Startup
+  description: Run the startup script to heal any motion sensors stuck ON when HA
+    boots
+  triggers:
+  - event: start
+    trigger: homeassistant
+  actions:
+  - action: script.heal_stuck_motion_sensors_at_startup
   mode: single

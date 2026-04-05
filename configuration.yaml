@@ -127,6 +127,8 @@ emulated_hue:
 stream:
 ffmpeg:
 
+python_script:
+
 tts:
   - platform: google_translate
 
