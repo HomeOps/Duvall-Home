@@ -49,6 +49,7 @@ from .const import (
     DEFAULT_HOME_MIN,
     DEFAULT_SLEEP_MAX,
     DEFAULT_SLEEP_MIN,
+    INSIDE_DEADBAND,
     MAX_TEMP,
     MIN_TEMP,
     MIN_TEMP_DIFF,
@@ -141,6 +142,10 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
         self._updating_from_control: bool = False
         self._updating_from_real: bool = False
 
+        # Tracks the last HEAT/COOL mode sent to the real device; used by
+        # _desired_real_mode to apply hysteresis and avoid rapid cycling.
+        self._last_real_mode: HVACMode | None = None
+
     # ------------------------------------------------------------------
     # ClimateEntity properties
     # ------------------------------------------------------------------
@@ -182,9 +187,16 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
 
     @property
     def target_temperature(self) -> float | None:
-        """Return single-point target temperature (used in HEAT / COOL modes)."""
+        """Return single-point target temperature.
+
+        In HEAT / COOL modes this is the direct user-configured setpoint.
+        In AUTO mode the midpoint of the active comfort range is returned so
+        that the ``temperature`` state attribute is never ``null`` – it gives
+        users a meaningful reference value while ``target_temp_low`` /
+        ``target_temp_high`` still describe the full range.
+        """
         if self._hvac_mode == HVACMode.AUTO:
-            return None
+            return (self._target_temp_low + self._target_temp_high) / 2.0
         return self._target_temperature
 
     @property
@@ -303,6 +315,14 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
             except ValueError:
                 pass
 
+        # Seed _last_real_mode so hysteresis works correctly from the first update
+        try:
+            current_mode = HVACMode(state.state)
+            if current_mode in (HVACMode.HEAT, HVACMode.COOL):
+                self._last_real_mode = current_mode
+        except ValueError:
+            pass
+
     def _sync_from_sensors(self) -> None:
         """Pull current temperatures from the sensor entities at startup."""
         inside_state = self.hass.states.get(self._inside_sensor_id)
@@ -365,7 +385,7 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
         ):
             real_target = state.attributes.get("temperature")
             if real_target is not None:
-                expected = self._preset_midpoint()
+                expected = self._expected_real_target()
                 if abs(float(real_target) - expected) > 0.5:
                     _LOGGER.debug(
                         "Real climate setpoint changed externally "
@@ -453,8 +473,12 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
         Decision logic mirrors the ESPHome smart_climate component:
         1. If inside temp is below the low setpoint → heat
         2. If inside temp is above the high setpoint → cool
-        3. If inside temp is within range, use outside temp as tiebreaker;
-           fall back to relative position within the range.
+        3. If inside temp is within range, apply a hysteresis deadband around
+           the midpoint to prevent rapid mode cycling:
+             - If last mode was HEAT, stay in HEAT until inside > mid + INSIDE_DEADBAND
+             - If last mode was COOL, stay in COOL until inside < mid - INSIDE_DEADBAND
+        4. When no prior mode (or temp has crossed the deadband boundary), use
+           outside temperature as a tiebreaker; fall back to relative position.
         """
         if self._hvac_mode == HVACMode.OFF:
             return HVACMode.OFF
@@ -475,7 +499,15 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
         if inside > high:
             return HVACMode.COOL
 
-        # Inside the comfort band – use outside temperature when available
+        # Inside the comfort band – apply hysteresis around the midpoint to
+        # prevent rapid HEAT ↔ COOL cycling when temperature hovers near centre.
+        if self._last_real_mode == HVACMode.HEAT and inside <= mid + INSIDE_DEADBAND:
+            return HVACMode.HEAT
+        if self._last_real_mode == HVACMode.COOL and inside >= mid - INSIDE_DEADBAND:
+            return HVACMode.COOL
+
+        # No prior mode, or temperature has clearly crossed the deadband boundary.
+        # Use outside temperature as a tiebreaker when available.
         if (
             self._outside_temperature is not None
             and not math.isnan(self._outside_temperature)
@@ -489,17 +521,52 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
     # Real-climate synchronisation
     # ------------------------------------------------------------------
 
+    def _expected_real_target(self) -> float:
+        """Return the temperature the real device should currently be set to.
+
+        In AUTO mode the target depends on whether we are heating or cooling:
+        HEAT targets the *low* setpoint and COOL targets one below the *high*
+        setpoint (high - 1).  Using high - 1 prevents real devices that only
+        accept integer setpoints from overshooting to high + 0.5 due to their
+        own internal hysteresis, which would push the effective upper limit one
+        degree above the configured band.  The result is capped at low so it
+        never falls below the heating target for very narrow bands.
+        """
+        if self._hvac_mode != HVACMode.AUTO:
+            return self._target_temperature
+        low, high = self._active_range()
+        if self._last_real_mode == HVACMode.HEAT:
+            return low
+        if self._last_real_mode == HVACMode.COOL:
+            return max(low, high - 1)
+        return self._preset_midpoint()
+
     async def _async_sync_real_climate(self) -> None:
         """Push the desired mode and setpoint to the real climate device."""
         if self._updating_from_real or self._updating_from_control:
             return
 
         real_mode = self._desired_real_mode()
-        target_temp = (
-            self._preset_midpoint()
-            if self._hvac_mode == HVACMode.AUTO
-            else self._target_temperature
-        )
+        # Track the decided HEAT/COOL mode so subsequent calls can apply
+        # hysteresis and avoid rapid cycling near the midpoint.
+        if real_mode in (HVACMode.HEAT, HVACMode.COOL):
+            self._last_real_mode = real_mode
+
+        # In AUTO mode, target the *low* setpoint when heating and the *high*
+        # setpoint when cooling.  This prevents the real device from actively
+        # heating/cooling into the comfort band's interior and eliminates the
+        # rapid temperature oscillation that occurs when both modes chase the
+        # same midpoint target.
+        if self._hvac_mode == HVACMode.AUTO:
+            low, high = self._active_range()
+            if real_mode == HVACMode.HEAT:
+                target_temp = low
+            elif real_mode == HVACMode.COOL:
+                target_temp = max(low, high - 1)
+            else:
+                target_temp = self._preset_midpoint()
+        else:
+            target_temp = self._target_temperature
 
         real_state = self.hass.states.get(self._real_climate_id)
         if real_state is None:
