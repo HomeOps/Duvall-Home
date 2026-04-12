@@ -53,3 +53,5 @@ ui-lovelace.yaml
 
 notebooks/*.ipynb
 
+.claude
+
