@@ -15,7 +15,6 @@
             {{ vent.entity_id }}{% if not loop.last %}, {% endif %}
           {%- endfor -%}
 - alias: vent_home
-  #initial_state: 'on'
   trigger:
     - platform: time_pattern
       minutes: '/1'
@@ -25,31 +24,34 @@
       data_template:
         object_id: "closed_vents"
         entities: >-
-            {% macro get_name(light) -%}
-            {{ light.entity_id.replace('_vent','').replace('cover.','')}}
+            {% macro get_name(vent) -%}
+            {{- vent.entity_id.replace('_vent','').replace('cover.','') -}}
             {%- endmacro -%}
-            {% macro get_vent_temp(light) -%}
-            sensor.{{get_name(light)}}_vent_temperature
+            {% macro get_room_temp(vent) -%}
+            sensor.{{get_name(vent)}}_sensor_air_temperature
             {%- endmacro -%}
-            {% macro get_room_temp(light) -%}
-            sensor.{{get_name(light)}}_sensor_air_temperature
-            {%- endmacro -%}
-            {% macro get_close(light) -%}
+            {% macro get_close(vent) -%}
             {% set target = state_attr("climate.smart_climate", "temperature")|float(20) -%}
             {% set hvacMode = state_attr("climate.smart_climate", "hvac_action")|lower -%}
-            {% set room = states(get_room_temp(light))|float(20) -%}
-            {% set level = state_attr(light.entity_id, "current_position") -%}
+            {% set room = states(get_room_temp(vent))|float(20) -%}
+            {% set level = state_attr(vent.entity_id, "current_position") -%}
             {% if level == None -%}{% set level = 50 -%}{% endif -%}
             {% set delta = 0.25 -%}
-            {% set roomIsHot = (room - target)>delta -%}
-            {% set roomIsCold = (target - room)>delta -%}
-            {% set requestOpen = (roomIsHot and (hvacMode == 'cooling')) or (roomIsCold and hvacMode == 'heating') -%}
+            {% set roomIsHot = (room - target) > delta -%}
+            {% set roomIsCold = (target - room) > delta -%}
             {% set requestClose = (roomIsCold and hvacMode == 'cooling') or (roomIsHot and hvacMode == 'heating') -%}
-            {% if requestClose and level>50 -%}{{light.entity_id}},{%- endif -%}
+            {% if requestClose and level > 50 -%}
+            {{vent.entity_id}}
+            {%- endif -%}
             {%- endmacro -%}
-            {% for light in states['cover'] if ( (light.entity_id | lower).endswith('_vent') ) %}
-                {{get_close(light)}}
-            {%- endfor -%}cover.dummy
+            {% set ns = namespace(results=[]) %}
+            {% for vent in states.cover if vent.entity_id.endswith('_vent') %}
+              {% set result = get_close(vent) %}
+              {% if result %}
+                {% set ns.results = ns.results + [result] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.results | join(',') }}
     - service: cover.set_cover_position
       data_template:
         position: "{{ states('input_number.vent_aperture_min') | int(0) }}"
@@ -58,33 +60,35 @@
       data_template:
         object_id: "open_vents"
         entities: >-
-            {% macro get_name(light) -%}
-            {{ light.entity_id.replace('_vent','').replace('cover.','')}}
+            {% macro get_name(vent) -%}
+            {{- vent.entity_id.replace('_vent','').replace('cover.','') -}}
             {%- endmacro -%}
-            {% macro get_vent_temp(light) -%}
-            sensor.{{get_name(light)}}_vent_temperature
+            {% macro get_room_temp(vent) -%}
+            sensor.{{get_name(vent)}}_sensor_air_temperature
             {%- endmacro -%}
-            {% macro get_room_temp(light) -%}
-            sensor.{{get_name(light)}}_sensor_air_temperature
-            {%- endmacro -%}
-            {% macro get_open(light) -%}
+            {% macro get_open(vent) -%}
             {% set target = state_attr("climate.smart_climate", "temperature")|float(20) -%}
             {% set hvacMode = state_attr("climate.smart_climate", "hvac_action")|lower -%}
-            {% set room = states(get_room_temp(light))|float(20) -%}
-            {% set level = state_attr(light.entity_id, "current_position") -%}
+            {% set room = states(get_room_temp(vent))|float(20) -%}
+            {% set level = state_attr(vent.entity_id, "current_position") -%}
             {% if level == None -%}{% set level = 50 -%}{% endif -%}
             {% set delta = 0.25 -%}
-            {% set roomIsHot = (room - target)>delta and (room!=0) -%}
-            {% set roomIsCold = (target - room)>delta and (room!=0) -%}
+            {% set roomIsHot = (room - target) > delta and (room != 0) -%}
+            {% set roomIsCold = (target - room) > delta and (room != 0) -%}
             {% set requestOpen = (roomIsHot and (hvacMode == 'cooling')) or (roomIsCold and hvacMode == 'heating') -%}
-            {% set requestClose = (roomIsCold and hvacMode == 'cooling') or (roomIsHot and hvacMode == 'heating') -%}
-            {% if requestOpen and level<50 -%}{{light.entity_id}},{%- endif -%}
+            {% if requestOpen and level < 50 -%}
+            {{vent.entity_id}}
+            {%- endif -%}
             {%- endmacro -%}
-            {% for light in states['cover'] if ( (light.entity_id | lower).endswith('_vent') ) %}
-                {{get_open(light)}}
-            {%- endfor -%}cover.dummy
+            {% set ns = namespace(results=[]) %}
+            {% for vent in states.cover if vent.entity_id.endswith('_vent') %}
+              {% set result = get_open(vent) %}
+              {% if result %}
+                {% set ns.results = ns.results + [result] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.results | join(',') }}
     - service: cover.set_cover_position
       data_template:
         position: "{{ states('input_number.vent_aperture_max') | int(100) }}"
         entity_id: group.open_vents
-
