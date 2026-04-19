@@ -134,6 +134,9 @@ tts:
 
 alarm_control_panel:
   - platform: manual
+    name: Home Alarm
+    code: 2003
+    code_arm_required: false
 
 cover: !include covers.yaml
 media_player: !include media_players.yaml
