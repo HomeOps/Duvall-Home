@@ -1,0 +1,25 @@
+# Downstairs alarm keypad — Guition ESP32-S3-4848S040
+# Pinned to HomeOps/esphome-hass-panels @ v1.2.0
+
+substitutions:
+  name: downstairs-panel
+  friendly_name: DownStairs Panel
+  alarm_entity_id: alarm_control_panel.home_alarm
+  thermostat_entity_id: climate.smart_climate
+  garage_entity_id: cover.garage_door_east
+  nav_page_1: thermostat_page
+  nav_page_2: garage_page
+  nav_page_count: "3"
+
+packages:
+  keypad:
+    url: https://github.com/HomeOps/esphome-hass-panels
+    ref: v1.8.0
+    file: esp32-hass-panel.yaml
+    refresh: 0d
+
+wifi:
+  manual_ip:
+    static_ip: 192.168.81.44
+    gateway: 192.168.81.1
+    subnet: 255.255.255.0  
