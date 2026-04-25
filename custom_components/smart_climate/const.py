@@ -31,13 +31,14 @@ TEMP_STEP = 0.5
 # Minimum allowed difference between low and high setpoints
 MIN_TEMP_DIFF = 0.5
 
-# Hysteresis deadband (°C) around the comfort-band midpoint used when the
-# inside temperature is already within the target range.  Without this buffer
-# any sensor jitter near the midpoint causes rapid HEAT ↔ COOL cycling.
-INSIDE_DEADBAND = 0.5
-
-# How long (seconds) the inside temperature must remain comfortably within the
-# comfort band while the outside-sensor logic would otherwise keep the real
-# device running before we force it off.  Prevents the HVAC from running
-# indefinitely when the room is already comfortable.
-STABLE_IN_BAND_TIMEOUT = 900  # 15 minutes
+# AUTO mode picks HEAT or COOL once and holds it; the real device's setpoint
+# is the comfort-band midpoint and the (modulating) device is left to settle
+# on it.  HEAT↔COOL flips only when the inside temperature has been
+# continuously past the midpoint by FLIP_MARGIN for FLIP_DWELL seconds —
+# i.e. the room is asking for the opposite mode, not just jittering across
+# the boundary.  This is sized for inverter heat pumps where the cost of
+# restarting the compressor far exceeds the energy of holding low
+# modulation, and where short OFF cycles defeat the unit's own steady-state
+# operation.
+FLIP_MARGIN = 0.5
+FLIP_DWELL = 1800  # 30 min

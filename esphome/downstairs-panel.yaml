@@ -1,5 +1,4 @@
 # Downstairs alarm keypad — Guition ESP32-S3-4848S040
-# Pinned to HomeOps/esphome-hass-panels @ v1.2.0
 
 substitutions:
   name: downstairs-panel
@@ -14,7 +13,7 @@ substitutions:
 packages:
   keypad:
     url: https://github.com/HomeOps/esphome-hass-panels
-    ref: v1.8.0
+    ref: v1.9.0
     file: esp32-hass-panel.yaml
     refresh: 0d
 
