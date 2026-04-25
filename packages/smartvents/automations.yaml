@@ -40,7 +40,7 @@
             {% set roomIsHot = (room - target) > delta -%}
             {% set roomIsCold = (target - room) > delta -%}
             {% set requestClose = (roomIsCold and hvacMode == 'cooling') or (roomIsHot and hvacMode == 'heating') -%}
-            {% if requestClose and level > 50 -%}
+            {% if requestClose -%}
             {{vent.entity_id}}
             {%- endif -%}
             {%- endmacro -%}
@@ -76,7 +76,7 @@
             {% set roomIsHot = (room - target) > delta and (room != 0) -%}
             {% set roomIsCold = (target - room) > delta and (room != 0) -%}
             {% set requestOpen = (roomIsHot and (hvacMode == 'cooling')) or (roomIsCold and hvacMode == 'heating') -%}
-            {% if requestOpen and level < 50 -%}
+            {% if requestOpen -%}
             {{vent.entity_id}}
             {%- endif -%}
             {%- endmacro -%}
