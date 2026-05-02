@@ -816,3 +816,50 @@
   actions:
   - action: script.heal_stuck_motion_sensors_at_startup
   mode: single
+- id: '1777240114710'
+  alias: fresh_air_fan_when_idle_and_outdoor_cool
+  description: Whole-home fan ON during HVAC idle when outdoor is colder than indoor
+    and indoor is above target.  Free pre-cooling — does not fight an active heating
+    or cooling cycle (fan turns off the moment hvac_action leaves 'idle').  Defaults
+    are chosen so any missing/unknown sensor value resolves to "fan off".
+  triggers:
+  - entity_id: climate.smart_climate
+    attribute: hvac_action
+    trigger: state
+  - entity_id:
+    - sensor.outdoor_air_quality_sensor_temperature
+    - sensor.whole_home_temperature
+    for: 00:02:00
+    trigger: state
+  - minutes: /15
+    trigger: time_pattern
+  actions:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ should_be_on and not fan_on_now }}'
+      sequence:
+      - target:
+          entity_id: switch.whole_home_fan
+        action: switch.turn_on
+    - conditions:
+      - condition: template
+        value_template: '{{ (not should_be_on) and fan_on_now }}'
+      sequence:
+      - target:
+          entity_id: switch.whole_home_fan
+        action: switch.turn_off
+  mode: single
+  variables:
+    indoor: '{{ state_attr(''climate.smart_climate'', ''current_temperature'') | float(0)
+      }}'
+    target: '{{ state_attr(''climate.smart_climate'', ''temperature'')         | float(99)
+      }}'
+    outdoor: '{{ states(''sensor.outdoor_air_quality_sensor_temperature'')    | float(99)
+      }}'
+    action: '{{ state_attr(''climate.smart_climate'', ''hvac_action'') | string |
+      lower }}'
+    margin: 1
+    fan_on_now: '{{ is_state(''switch.whole_home_fan'', ''on'') }}'
+    should_be_on: "{{ action == 'idle'\n   and outdoor < (indoor - margin)\n   and
+      indoor > target }}"

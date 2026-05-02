@@ -8,6 +8,7 @@ Wraps a physical climate device and adds:
 """
 from __future__ import annotations
 
+import collections
 import datetime
 import logging
 import math
@@ -44,6 +45,8 @@ from .const import (
     CONF_REAL_CLIMATE,
     CONF_SLEEP_MAX,
     CONF_SLEEP_MIN,
+    COMMAND_GRACE_SECONDS,
+    COOL_RESTART_OFFSET,
     DEFAULT_AWAY_MAX,
     DEFAULT_AWAY_MIN,
     DEFAULT_HOME_MAX,
@@ -55,6 +58,9 @@ from .const import (
     MAX_TEMP,
     MIN_TEMP,
     MIN_TEMP_DIFF,
+    OUT_OF_BAND_ALERT_MINUTES,
+    SENSOR_STALE_MINUTES,
+    SHORT_CYCLE_THRESHOLD_PER_H,
     TEMP_STEP,
 )
 
@@ -165,6 +171,25 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
         # _auto_mode once it has been set continuously for FLIP_DWELL.
         self._pending_flip_since: datetime.datetime | None = None
 
+        # Last unit command (HEAT/COOL/OFF) the wrapper computed for the
+        # real device.  Used by the hvac_action property to surface IDLE
+        # while in AUTO + deliberate-OFF (inside the comfort band) so the
+        # frontend distinguishes "AUTO resting" from "user turned it off".
+        self._unit_command: HVACMode | None = None
+
+        # Timestamp of the last `_unit_command` change.  Used by the
+        # desync detector to allow the real device a grace period to
+        # transition into the commanded state.  Don't update this on
+        # every sync — only when the command itself changes.
+        self._unit_command_at: datetime.datetime | None = None
+
+        # Problem-detection state (surfaced via `problems` attribute).
+        # Updated by sensor / sync callbacks; checked at attribute read.
+        self._out_of_band_since: datetime.datetime | None = None
+        self._cool_start_times: collections.deque[datetime.datetime] = (
+            collections.deque(maxlen=20)
+        )
+
     # ------------------------------------------------------------------
     # ClimateEntity properties
     # ------------------------------------------------------------------
@@ -186,7 +211,19 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
 
     @property
     def hvac_action(self) -> HVACAction | None:
-        """Return the current running HVAC action (mirrored from real device)."""
+        """Return the current running HVAC action.
+
+        In AUTO mode, when the wrapper has commanded the real device OFF
+        (deliberate-OFF inside the comfort band), surface IDLE so the
+        frontend distinguishes "AUTO resting between calls for work" from
+        "user turned the thermostat off entirely".  Otherwise mirror the
+        real device's reported action.
+        """
+        if (
+            self._hvac_mode == HVACMode.AUTO
+            and self._unit_command == HVACMode.OFF
+        ):
+            return HVACAction.IDLE
         return self._hvac_action
 
     @property
@@ -258,6 +295,31 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
         """Return the supported step size for target temperature."""
         return TEMP_STEP
 
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Surface diagnostic + persisted state alongside HA's standard ones.
+
+        - ``problems`` is a list of detected issues (empty when healthy).
+        - ``auto_mode_committed`` is the sticky direction (`heat`/`cool`)
+          the wrapper has chosen in AUTO mode.  Persisted via RestoreEntity
+          so it survives HA restarts; the wrapper restores it in
+          `async_added_to_hass` to skip the initial pick on potentially
+          glitchy post-restart sensor data.
+        - ``last_unit_command`` is the wrapper's last command to the
+          real device (`heat`/`cool`/`off`).  Persisted for the same
+          reason — keeps COOL hysteresis state continuous across
+          restarts.
+        """
+        return {
+            "problems": self._detect_problems(),
+            "auto_mode_committed": (
+                self._auto_mode.value if self._auto_mode else None
+            ),
+            "last_unit_command": (
+                self._unit_command.value if self._unit_command else None
+            ),
+        }
+
     # ------------------------------------------------------------------
     # Lifecycle
     # ------------------------------------------------------------------
@@ -289,6 +351,27 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
                 self._target_temp_high = float(attrs[ATTR_TARGET_TEMP_HIGH])
             if ATTR_TEMPERATURE in attrs and attrs[ATTR_TEMPERATURE] is not None:
                 self._target_temperature = float(attrs[ATTR_TEMPERATURE])
+
+            # Restore the AUTO state machine: the sticky committed
+            # direction and the last unit command.  Without this, every
+            # HA restart re-runs the initial pick — and on 2026-04-26
+            # that picked HEAT against a glitchy startup sensor reading
+            # (Z-Wave aggregator briefly reported 21.66 °C while
+            # sensors were re-initialising), committing the wrapper to
+            # 30 minutes of wrong-direction heating.  Persisting these
+            # across restarts keeps the state machine stable.
+            committed = attrs.get("auto_mode_committed")
+            if committed:
+                try:
+                    self._auto_mode = HVACMode(committed)
+                except ValueError:
+                    self._auto_mode = None
+            last_cmd = attrs.get("last_unit_command")
+            if last_cmd:
+                try:
+                    self._unit_command = HVACMode(last_cmd)
+                except ValueError:
+                    self._unit_command = None
 
         # Populate initial state from current entity states
         self._sync_from_real_climate()
@@ -410,6 +493,19 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
         old_temp = self._current_temperature
         self._current_temperature = new_temp
 
+        # Track sustained out-of-band excursions for problem detection.
+        # Only meaningful in AUTO mode — manual HEAT/COOL/OFF is on the
+        # user's terms.
+        if self._hvac_mode == HVACMode.AUTO:
+            low, high = self._active_range()
+            if new_temp < low or new_temp > high:
+                if self._out_of_band_since is None:
+                    self._out_of_band_since = self._now()
+            else:
+                self._out_of_band_since = None
+        else:
+            self._out_of_band_since = None
+
         # In AUTO preset mode, re-evaluate the real device's mode
         if (
             self._hvac_mode == HVACMode.AUTO
@@ -464,27 +560,131 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
         """Return the current UTC time.  Indirection point for tests."""
         return datetime.datetime.now(datetime.timezone.utc)
 
+    def _detect_problems(self) -> list[str]:
+        """Return a list of detected issues, empty when healthy.
+
+        Checks (in order):
+        - inside-sensor unavailable / unknown / missing
+        - inside-sensor stale (no update for SENSOR_STALE_MINUTES)
+        - real climate device unavailable
+        - sustained out-of-band temperature in AUTO
+        - COOL short-cycling (more than SHORT_CYCLE_THRESHOLD_PER_H starts/h)
+
+        Each problem is a short string code with optional context, e.g.
+        ``out_of_band:42min``, ``short_cycle:8/h``, ``sensor_stale:18min``.
+        """
+        problems: list[str] = []
+        now = self._now()
+
+        # Inside sensor health.
+        inside_state = self.hass.states.get(self._inside_sensor_id)
+        if inside_state is None:
+            problems.append("inside_sensor_missing")
+        elif inside_state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN, None, ""):
+            problems.append(f"inside_sensor_{inside_state.state}")
+        else:
+            try:
+                last = inside_state.last_updated
+                if last.tzinfo is None:
+                    last = last.replace(tzinfo=datetime.timezone.utc)
+                stale_min = (now - last).total_seconds() / 60.0
+                if stale_min > SENSOR_STALE_MINUTES:
+                    problems.append(f"sensor_stale:{int(stale_min)}min")
+            except (AttributeError, TypeError):
+                pass
+
+        # Real climate device health.
+        real_state = self.hass.states.get(self._real_climate_id)
+        if real_state is None:
+            problems.append("real_climate_missing")
+        elif real_state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN, None, ""):
+            problems.append("real_climate_unavailable")
+
+        # Sustained out-of-band in AUTO.  AUTO that can't keep the room
+        # in band over half-hour windows means the unit is undersized,
+        # blocked, or fighting an unmet load — the user should know.
+        if (
+            self._hvac_mode == HVACMode.AUTO
+            and self._out_of_band_since is not None
+        ):
+            duration = (now - self._out_of_band_since).total_seconds() / 60.0
+            if duration > OUT_OF_BAND_ALERT_MINUTES:
+                problems.append(f"out_of_band:{int(duration)}min")
+
+        # Short cycling.  Count COOL starts in the trailing hour; if it's
+        # over the threshold the wrapper is flicking the compressor too
+        # hard, likely from sensor jitter near the band edge.
+        one_hour_ago = now - datetime.timedelta(hours=1)
+        recent = sum(1 for t in self._cool_start_times if t > one_hour_ago)
+        if recent > SHORT_CYCLE_THRESHOLD_PER_H:
+            problems.append(f"short_cycle:{recent}/h")
+
+        # Command desync.  We track the wrapper's last commanded state
+        # (`_unit_command`) and the timestamp of the last *change*.  If
+        # more than COMMAND_GRACE_SECONDS have passed since the change
+        # AND the real device's state still doesn't match what the
+        # wrapper believes it commanded, surface that — silently
+        # diverging state is the failure mode that produced the
+        # 2026-04-26 ghost-HEAT incident.  We compare against
+        # `_unit_command.value` (e.g. "cool") which is what the real
+        # device's state should read.  The check skips when the real
+        # device is unavailable (already covered by another problem
+        # code) or when no command has been sent yet.
+        if (
+            self._unit_command is not None
+            and self._unit_command_at is not None
+            and real_state is not None
+            and real_state.state not in (STATE_UNAVAILABLE, STATE_UNKNOWN, None, "")
+        ):
+            elapsed = (now - self._unit_command_at).total_seconds()
+            if elapsed > COMMAND_GRACE_SECONDS:
+                expected = self._unit_command.value
+                actual = real_state.state
+                if expected != actual:
+                    problems.append(f"command_desync:want={expected}_got={actual}")
+
+        return problems
+
     def _desired_real_mode(self) -> HVACMode:
         """Determine which mode (HEAT/COOL/OFF) the real device should be in.
 
         For non-AUTO modes the user's choice is passed through.
 
-        In AUTO mode:
-        1. If no mode has been chosen yet, pick HEAT or COOL once based on
-           the outside sensor (or inside-vs-midpoint when no outside sensor
-           is configured).  Tie-break to COOL.
-        2. Otherwise stick with the previously-committed mode regardless of
-           where the inside temperature sits — the (modulating) real device
-           is expected to settle on the band midpoint.
-        3. Flip to the opposite mode only when the inside temperature has
-           been continuously past the midpoint by FLIP_MARGIN against the
-           committed mode for FLIP_DWELL seconds.  The dwell timer is reset
-           only when the temperature crosses fully back to the correct side
-           of the midpoint, so jitter near the FLIP_MARGIN threshold doesn't
-           keep stalling the flip.
+        In AUTO mode the wrapper maintains a sticky **committed direction**
+        (HEAT or COOL) using v2.0.0's FLIP_DWELL/FLIP_MARGIN logic — same
+        as before.  The **unit command** sent to the real device is then
+        derived asymmetrically by committed direction:
 
-        AUTO never returns OFF — the real device is left running at low
-        modulation rather than being repeatedly start/stop cycled.
+        **Committed HEAT** — return HEAT unconditionally (v2.0.0 contract
+        unchanged).  The Midea unit modulates its compressor down to true
+        idle in HEAT when the room is at setpoint, so continuous HEAT at
+        min modulation costs less than OFF/ON cycling.
+
+        **Committed COOL** — narrow, surgical change vs. v2.0.0, with
+        hysteresis above the band midpoint:
+        - currently OFF & `current > mid + COOL_RESTART_OFFSET`  →  COOL  (start)
+        - currently COOL & `current > mid`                       →  COOL  (keep cooling)
+        - currently COOL & `current ≤ mid`                       →  OFF   (stop at mid)
+        - currently OFF & `current ≤ mid + COOL_RESTART_OFFSET`  →  OFF
+        - `current > high`                                       →  COOL  (above-band, always)
+        - `current < low`                                        →  COOL  (v2.0.0 wrong-side;
+                                                                   FLIP_DWELL flips to HEAT)
+
+        The hysteresis (start at `mid + COOL_RESTART_OFFSET`, stop at
+        `mid`) prevents short-cycling at the band edge.  With the default
+        home preset (21-23, mid=22, offset=0.75) cooling kicks in at
+        22.75 and pulls down to 22 — leaving the upper 0.25 °C of the
+        comfort band as headroom rather than the active operating zone.
+        Tightens control vs. waiting for the high edge, at the cost of
+        more frequent but still-meaningful compressor pulls.
+
+        Why only COOL needs this: on this Midea unit the COOL mode holds
+        a minimum-frequency floor and keeps pushing 12-14 °C supply air
+        into rooms already in band — diagnosed empirically 2026-04-25.
+        HEAT does not have this defect (refrigerant migrates outdoors
+        when stopped, no slug-on-restart risk), and COOL outside the band
+        still has real demand to chase.  The wrong-side COOL case (below
+        low) is rare and the existing 30-min dwell flip handles it.
         """
         if self._hvac_mode == HVACMode.OFF:
             return HVACMode.OFF
@@ -499,19 +699,48 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
         low, high = self._active_range()
         mid = (low + high) / 2.0
 
-        # Initial mode pick.
+        # Initial mode pick — inside-vs-midpoint, full stop.  Outside is
+        # NOT consulted: empirically the outside sensor in this
+        # deployment doesn't correlate with the building's thermodynamics
+        # (solar gain, occupancy, internal sources dominate), and using
+        # it caused the live HEAT-at-23 bug on 2026-04-26 where cool
+        # outside drove a HEAT pick while the room sat at the band's
+        # high edge.  FLIP_DWELL (30 min sustained excursion past
+        # mid + FLIP_MARGIN) corrects any wrong pick.
         if self._auto_mode is None:
-            ref: float | None = self._outside_temperature
-            if ref is None or math.isnan(ref):
-                ref = inside
-            self._auto_mode = HVACMode.HEAT if ref < mid else HVACMode.COOL
+            self._auto_mode = HVACMode.HEAT if inside < mid else HVACMode.COOL
             self._pending_flip_since = None
-            return self._auto_mode
+            # fall through to the band-aware unit-command logic below
 
-        # Flip evaluation.  Wrong-side / right-side bands have a deadzone
-        # in between (mid ± FLIP_MARGIN) where the timer keeps running but
-        # is not reset, so sensor jitter near the margin doesn't repeatedly
-        # cancel an in-progress flip.
+        # Fast-flip on band-edge violation: when the committed direction
+        # is the *opposite* of what's needed AND the room is past the
+        # band edge, flip immediately — skip FLIP_DWELL.
+        #
+        # The dwell timer (30 min sustained excursion past mid ± FLIP_MARGIN)
+        # is sized for sensor jitter / natural drift around the midpoint.
+        # That's the wrong filter for the case where committed=HEAT but
+        # inside is already > high (or committed=COOL and inside < low):
+        # there's no jitter explanation for that, only a wrong pick or
+        # an external swing the dwell would take 30 min to correct.
+        # During those 30 min the wrapper actively heats a hot room (or
+        # cools a cold one), making the excursion worse.  Live bug
+        # 2026-04-26 (PR #62 fixed the *initial* pick that caused it;
+        # this is the belt-and-suspenders catch for any future scenario
+        # that lands committed-direction at odds with the band).
+        if (
+            (self._auto_mode == HVACMode.HEAT and inside > high)
+            or (self._auto_mode == HVACMode.COOL and inside < low)
+        ):
+            self._auto_mode = (
+                HVACMode.COOL if self._auto_mode == HVACMode.HEAT else HVACMode.HEAT
+            )
+            self._pending_flip_since = None
+
+        # Sticky direction-flip evaluation (unchanged from v2.0.0).  Wrong-
+        # side / right-side bands have a deadzone in between (mid ± FLIP_MARGIN)
+        # where the timer keeps running but is not reset, so sensor jitter
+        # near the margin doesn't repeatedly cancel an in-progress flip.
+        # This handles the in-band drift case the fast-flip above doesn't.
         if self._auto_mode == HVACMode.COOL:
             wrong_side = inside <= mid - FLIP_MARGIN
             right_side = inside >= mid
@@ -531,7 +760,31 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
         elif right_side:
             self._pending_flip_since = None
 
-        return self._auto_mode
+        # Unit command — asymmetric between committed directions.
+        # HEAT: always HEAT (v2.0.0 contract unchanged; the unit modulates
+        # to true idle in HEAT when no demand).
+        # COOL: hysteresis above midpoint inside the band, v2.0.0 elsewhere.
+        #   above high                              → COOL (above-band; v2.0.0)
+        #   below low                               → COOL (wrong-side; v2.0.0)
+        #   was COOL, current > mid                 → COOL (keep cooling to mid)
+        #   was COOL, current ≤ mid                 → OFF (full pull achieved)
+        #   was OFF, current > mid + RESTART_OFFSET → COOL (start, lead high edge)
+        #   was OFF, current ≤ mid + RESTART_OFFSET → OFF
+        # The restart offset (default 0.75 °C above mid) leads the high
+        # edge so the compressor has time to ramp before current would
+        # otherwise overshoot the band.  Stopping at midpoint gives each
+        # start a meaningful pull, amortising start-up cost.
+        if self._auto_mode == HVACMode.COOL:
+            if inside > high or inside < low:
+                return HVACMode.COOL
+            # Inside the band: hysteresis keyed on the previous command.
+            if self._unit_command == HVACMode.COOL:
+                return HVACMode.COOL if inside > mid else HVACMode.OFF
+            # Was OFF (or first sync) — restart well shy of the high edge.
+            if inside > mid + COOL_RESTART_OFFSET:
+                return HVACMode.COOL
+            return HVACMode.OFF
+        return HVACMode.HEAT
 
     # ------------------------------------------------------------------
     # Real-climate synchronisation
@@ -543,6 +796,22 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
             return
 
         real_mode = self._desired_real_mode()
+        # Record COOL transitions for short-cycle detection.  A "start"
+        # is OFF → COOL (or None → COOL on first sync).
+        if (
+            real_mode == HVACMode.COOL
+            and self._unit_command != HVACMode.COOL
+        ):
+            self._cool_start_times.append(self._now())
+        # Track command changes for desync detection (only when the
+        # command actually changes — re-issuing the same command
+        # shouldn't reset the grace window).
+        if real_mode != self._unit_command:
+            self._unit_command_at = self._now()
+        # Record the wrapper's intent so hvac_action can surface IDLE for
+        # deliberate-OFF (AUTO + OFF inside the comfort band) without
+        # re-running _desired_real_mode (which has timer side-effects).
+        self._unit_command = real_mode
 
         real_state = self.hass.states.get(self._real_climate_id)
         if real_state is None:
@@ -550,10 +819,12 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
 
         current_mode = real_state.state
 
-        # OFF is only reachable here when the user commanded smart climate
-        # OFF after a sensor callback was already queued — AUTO never
-        # returns OFF.  Forward the OFF; only send the command if the real
-        # device isn't already off.
+        # OFF reaches here in two cases now: (a) the user commanded smart
+        # climate OFF, and (b) AUTO is in deliberate-OFF — the wrapper
+        # provides the idle state Midea inverters can't (their HEAT/COOL
+        # modes hold a min-frequency floor instead of truly idling).
+        # Forward the OFF; only send the command if the real device isn't
+        # already off.
         if real_mode == HVACMode.OFF:
             if current_mode != HVACMode.OFF.value:
                 await self.hass.services.async_call(
@@ -564,14 +835,53 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
                 )
             return
 
-        # In AUTO mode, the modulating real device is asked to settle on the
-        # comfort-band midpoint; mode selection (HEAT vs COOL) is what
-        # determines whether the room is being warmed or cooled towards it.
+        # In AUTO mode, the setpoint sent to the real device is biased
+        # toward the band edge that matches the committed direction —
+        # NOT the band midpoint, NOT the band edge itself.  The Midea
+        # unit's actual hysteresis is asymmetric: it holds the room
+        # **at or slightly above setpoint** in BOTH modes (~setpoint to
+        # setpoint + 0.3-0.5).  Live observation 2026-04-29 with COOL
+        # setpoint=23 showed room sitting at 23.2-23.3 — *above* the
+        # band high edge (23).  v4.0.0's `setpoint=high` formula was
+        # therefore wrong: it pushed the room out of the comfort band.
+        #
+        # Corrected formulas (since v4.0.x):
+        #
+        #   HEAT setpoint = low      → unit holds room at [low, low+0.5]
+        #   COOL setpoint = high - 1 → unit holds room at [high-1, high-0.5]
+        #
+        # For default home preset (21-23):
+        #   HEAT setpoint=21 → room ~21..21.5  (in band, near low)
+        #   COOL setpoint=22 → room ~22..22.5  (in band, mid)
+        #   Intermediate band (no active pumping): 21.5..22
+        #
+        # Why "-1" for COOL but "+0" for HEAT: the unit's overshoot is
+        # always positive (above setpoint), so HEAT setpoint=low gives
+        # room at low+ε (above floor, OK) while COOL setpoint=high
+        # would give room at high+ε (above ceiling, NOT OK).  Subtract
+        # 1 °C from COOL's setpoint to leave room for the overshoot.
+        #
+        # The mid-targeting that v2.0.0 used was actively wasteful in
+        # sunny PNW climates: HEAT mode at mid=22 would heat a 21.4 °C
+        # room to 22 even though 21.4 is well within the comfort band.
+        # Diagnosed empirically from 48 h of v3.1.x data showing two
+        # 64-min daily HEAT pulses initiated at inside ~21.45 °C.
+        # Band-edge setpoints fix this by leveraging the unit's own
+        # setpoint logic as defense in depth: even if the wrapper
+        # commits HEAT incorrectly, the unit refuses to actively pump
+        # heat unless the room is genuinely below the floor.
         low: float | None = None
         high: float | None = None
         if self._hvac_mode == HVACMode.AUTO:
             low, high = self._active_range()
-            target_temp = (low + high) / 2.0
+            if real_mode == HVACMode.HEAT:
+                target_temp = float(low)
+            elif real_mode == HVACMode.COOL:
+                target_temp = float(high) - 1.0
+            else:
+                # OFF — value is irrelevant (set_hvac_mode=off path); use
+                # mid as a neutral fallback.
+                target_temp = (low + high) / 2.0
         else:
             target_temp = self._target_temperature
 
@@ -581,11 +891,11 @@ class SmartClimateEntity(ClimateEntity, RestoreEntity):
         # send — otherwise it silently rounds (e.g. 22.5 → 22) and every
         # inside-sensor update drives another set_temperature call trying to
         # "correct" the mismatch, producing target flutter.
-        # Round directionally (up for HEAT, down for COOL) and stay inside
-        # the comfort band, falling back to the opposite-direction integer
-        # bound when the band is too narrow for the directional rounding to
-        # land inside it (e.g. mid 21.25 in a 21–21.5 band: ceil=22 is
-        # above high → use floor(high)=21 instead).
+        # Round directionally (up for HEAT, down for COOL).  With band-edge
+        # setpoints the rounding usually lands on the integer band edge
+        # itself, but for non-integer bands we still want to stay inside the
+        # comfort band — fall back to the opposite-direction integer bound
+        # when the directional rounding lands outside it.
         if real_mode == HVACMode.HEAT:
             target_temp = float(math.ceil(target_temp))
             if high is not None and target_temp > high:
