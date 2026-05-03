@@ -60,15 +60,7 @@ nest:
 
 mobile_app:
 
-recorder:
-  db_url: !secret recorder_db_url
-  auto_purge: true
-  purge_keep_days: 30
-  commit_interval: 1
-  exclude:
-    domains:
-      - weblink
-      - updater
+recorder: !include recorder.yaml
 
 history:
   exclude:

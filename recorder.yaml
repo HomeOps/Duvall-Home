@@ -1,0 +1,19 @@
+db_url: !secret recorder_db_url
+auto_purge: true
+auto_repack: true              # weekly OPTIMIZE TABLE → reclaims .ibd file space
+purge_keep_days: 7             # was 30 — biggest single win
+commit_interval: 30            # batch writes; default is 1s, this cuts I/O frequency by 30×
+exclude:
+  domains:
+    - automation               # last_triggered is in registry; full history rarely useful
+    - updater
+    - sun                      # only changes twice a day but no query value
+  entity_globs:
+    - sensor.*_now             # powerwall_charge_now/load_now/site_now/solar_now (kW, second-by-second)
+    - sensor.*_linkquality     # Zigbee/Z-Wave RSSI churn
+    - sensor.*_rssi
+    - sensor.*_lqi
+    - binary_sensor.*_motion   # ⚠ only if you don't query motion history; remove this if you do
+  entities:
+    - sensor.cpu_temperature   # 60s polling, no query value
+    - sensor.public_ip         # changes monthly at most
