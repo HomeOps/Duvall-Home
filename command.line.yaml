@@ -3,3 +3,8 @@
     name: CPU Temperature
     unit_of_measurement: "°C"
     value_template: '{{ value | multiply(0.001) | round(1) }}'
+- sensor:
+    command: "awk '/^CmaFree:/ {print $2}' /proc/meminfo"
+    name: CMA Free
+    unit_of_measurement: "MiB"
+    value_template: '{{ (value | int / 1024) | round(0) }}'
