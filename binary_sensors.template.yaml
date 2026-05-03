@@ -10,3 +10,7 @@
   icon: mdi:sleep
   name: House Sleep
   state: '{{ states("group.sleep_motion_sensors") == "off" and states("group.sleep_contacts") == "off" and states("group.sleep_lights") == "off" and states("alarm_control_panel.ha_alarm")=="armed_night" and states("sun.sun")=="below_horizon" }}'
+- default_entity_id: binary_sensor.cma_low
+  device_class: problem
+  name: CMA Low
+  state: '{{ states("sensor.cma_free") | int(default=999) < 64 }}'

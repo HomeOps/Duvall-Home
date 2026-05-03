@@ -12,7 +12,11 @@ garage_door:
     - sms_hazel
 water_leak:
   name: Water leak detected
-  message: "Water leak has been detected"
+  message: >-
+    Water leak has been detected:
+    {{ expand('group.water_leak_sensors')
+       | selectattr('state', 'eq', 'on')
+       | map(attribute='name') | list | join(', ') }}
   done_message: Water leak no longer detected
   entity_id: group.water_leak_sensors
   state: "on"
@@ -22,3 +26,15 @@ water_leak:
   notifiers:
     - sms_oscar
     - sms_hazel
+cma_low:
+  name: CMA low
+  message: >-
+    Free CMA is critically low: {{ states('sensor.cma_free') }} MiB
+  done_message: CMA recovered
+  entity_id: binary_sensor.cma_low
+  state: "on"
+  repeat: 15
+  can_acknowledge: true
+  skip_first: false
+  notifiers:
+    - sms_oscar
