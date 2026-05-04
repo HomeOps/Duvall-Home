@@ -863,3 +863,35 @@
     fan_on_now: '{{ is_state(''switch.whole_home_fan'', ''on'') }}'
     should_be_on: "{{ action == 'idle'\n   and outdoor < (indoor - margin)\n   and
       indoor > target }}"
+- id: ping_dead_zwave_nodes
+  alias: Ping Dead Z-Wave Nodes
+  description: Pings any Z-Wave node currently in 'dead' state. Discovers nodes dynamically
+    from sensor.*_node_status — never hard-coded. Runs every 2 minutes so a flapping
+    driver cannot spam pings.
+  triggers:
+  - minutes: /2
+    trigger: time_pattern
+  conditions:
+  - value_template: '{{ states.sensor | selectattr(''entity_id'',''search'',''_node_status$'')
+      | selectattr(''state'',''eq'',''dead'') | list | count > 0 }}'
+    condition: template
+  actions:
+  - variables:
+      dead_nodes: '{{ states.sensor | selectattr(''entity_id'',''search'',''_node_status$'')
+        | selectattr(''state'',''eq'',''dead'') | map(attribute=''entity_id'') | list
+        }}'
+  - action: logbook.log
+    data:
+      name: Z-Wave heal
+      message: 'Pinging dead nodes: {{ dead_nodes | join('', '') }}'
+  - repeat:
+      sequence:
+      - target:
+          entity_id: '{{ repeat.item | replace(''sensor.'',''button.'') | replace(''_node_status'',''_ping'')
+            }}'
+        continue_on_error: true
+        action: button.press
+      - delay: 00:00:02
+      for_each: '{{ dead_nodes }}'
+  max_exceeded: silent
+  mode: single
