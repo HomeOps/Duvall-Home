@@ -26,15 +26,3 @@ water_leak:
   notifiers:
     - sms_oscar
     - sms_hazel
-cma_low:
-  name: CMA low
-  message: >-
-    Free CMA is critically low: {{ states('sensor.cma_free') }} MiB
-  done_message: CMA recovered
-  entity_id: binary_sensor.cma_low
-  state: "on"
-  repeat: 15
-  can_acknowledge: true
-  skip_first: false
-  notifiers:
-    - sms_oscar
