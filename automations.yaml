@@ -563,15 +563,6 @@
       motion_entity: binary_sensor.stairs_sensor_motion_detection
       light_target:
         entity_id: light.stairs_lights
-- id: '1625022374750'
-  alias: Turn garage lights when Mud room opens
-  description: ''
-  use_blueprint:
-    path: homeassistant/motion_light.yaml
-    input:
-      motion_entity: binary_sensor.mud_room_door_contact
-      light_target:
-        entity_id: light.garage
 - id: '1625022595254'
   alias: Turn outside lights when motion outside
   description: ''
@@ -734,7 +725,7 @@
       entity_id: switch.den_mister
     action: switch.turn_off
   mode: single
-- id: motion_sensors_auto_heal
+- id: motion_sensors_auto_heal_default_timeout
   alias: Motion Sensors Auto-Heal (Default Timeout)
   description: Heal stuck motion sensors
   triggers:
@@ -788,7 +779,7 @@
     motion_entity: '{{ trigger.entity_id }}'
     last_changed: '{{ as_timestamp(states[motion_entity].last_changed) }}'
     now_ts: '{{ as_timestamp(now()) }}'
-- id: '1773000828011'
+- id: turn_on_garage_lights_when_garage_opens
   alias: Turn On Garage Lights When Garage Door Opens
   description: ''
   triggers:
@@ -798,6 +789,9 @@
     from:
     - closed
     - opening
+  - trigger: numeric_state
+    entity_id: sensor.garage_sensor_east_dist
+    below: 20
   conditions: []
   actions:
   - action: light.turn_on
