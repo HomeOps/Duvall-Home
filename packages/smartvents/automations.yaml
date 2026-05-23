@@ -6,6 +6,13 @@
     - platform: time_pattern
       minutes: '/30'
       seconds: 00
+  condition:
+    - condition: state
+      entity_id: climate.thermostat
+      attribute: hvac_action
+      state:
+        - cooling
+        - heating
   action:
     - service: group.set
       data_template:

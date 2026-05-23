@@ -889,3 +889,31 @@
       for_each: '{{ dead_nodes }}'
   max_exceeded: silent
   mode: single
+- id: '1779486503618'
+  alias: CPU Fan - Temperature Control
+  description: Steps a variable-speed CPU fan to match CPU temperature (55-82 C range).
+    Always-on, idling at 30 %. Only sends a command when the speed changes.
+  triggers:
+  - trigger: state
+    entity_id: sensor.system_monitor_processor_temperature
+  - trigger: time_pattern
+    minutes: /2
+  conditions: []
+  actions:
+  - variables:
+      cpu_sensor: sensor.system_monitor_processor_temperature
+      cpu_fan: fan.cpu_fan_controller
+      current_pct: '{{ state_attr(cpu_fan, ''percentage'') | int(-1) }}'
+      target_pct: '{% set t = states(cpu_sensor) | float(-1) %} {% if t < 0 %} -1
+        {% elif t < 60 %} 30 {% elif t < 66 %} 50 {% elif t < 72 %} 70 {% elif t <
+        78 %} 85 {% else %} 100 {% endif %}'
+  - condition: template
+    value_template: '{{ (target_pct | int) >= 0 and (target_pct | int) != (current_pct
+      | int) }}'
+  - action: fan.set_percentage
+    target:
+      entity_id: '{{ cpu_fan }}'
+    data:
+      percentage: '{{ target_pct | int }}'
+  mode: single
+  max_exceeded: silent
