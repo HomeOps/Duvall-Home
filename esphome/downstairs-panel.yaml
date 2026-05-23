@@ -3,17 +3,27 @@
 substitutions:
   name: downstairs-panel
   friendly_name: DownStairs Panel
+  
   alarm_entity_id: alarm_control_panel.home_alarm
+  nav_page_1: alarm_page
+  
   thermostat_entity_id: climate.smart_climate
-  garage_entity_id: cover.garage_door_east
-  nav_page_1: thermostat_page
-  nav_page_2: garage_page
-  nav_page_count: "3"
+  nav_page_2: thermostat_page
+  
+  cover_entity_id: cover.garage_door_east
+  nav_page_3: cover_page
+  
+  energy_battery_entity_id: sensor.powerwall_charge
+  energy_grid_status_entity_id: binary_sensor.grid_status
+  energy_low_power_entity_id: binary_sensor.very_low_power
+  nav_page_4: energy_page
+
+  nav_page_count: "4"
 
 packages:
   keypad:
     url: https://github.com/HomeOps/esphome-hass-panels
-    ref: v1.9.0
+    ref: v2.1.0
     file: esp32-hass-panel.yaml
     refresh: 0d
 

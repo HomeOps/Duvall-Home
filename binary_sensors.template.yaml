@@ -14,3 +14,11 @@
   device_class: problem
   name: CMA Low
   state: '{{ states("sensor.cma_free") | int(default=999) < 64 }}'
+- name: "Very Low Power"
+  unique_id: very_low_power
+  device_class: battery
+  state: >
+    {{ states('sensor.powerwall_charge') | float(100) < 30 and is_state('binary_sensor.grid_status', 'off') }}
+  availability: >
+    {{ has_value('sensor.powerwall_charge') and has_value('binary_sensor.grid_status') }}
+
