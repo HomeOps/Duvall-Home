@@ -1,1 +1,9 @@
-
+- name: "Smart Climate Current Temperature"
+  unique_id: smart_climate_current_temperature
+  unit_of_measurement: "°C"
+  device_class: temperature
+  state_class: measurement
+  availability: >
+    {{ state_attr('climate.smart_climate', 'current_temperature') is not none }}
+  state: >
+    {{ state_attr('climate.smart_climate', 'current_temperature') | float(0) | round(2) }}

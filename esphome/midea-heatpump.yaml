@@ -99,10 +99,12 @@ climate:
 
 sensor:
   - platform: homeassistant
-    entity_id: sensor.whole_home_temperature
+    entity_id: climate.smart_climate
+    attribute: current_temperature
     id: thermostat_follow_me_sensor
     name: "Whole Home Temperature Sensor"
     internal: true
+    accuracy_decimals: 2
     filters:
       - throttle: 10s
       - heartbeat: 30s
