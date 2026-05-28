@@ -23,7 +23,7 @@ substitutions:
 packages:
   keypad:
     url: https://github.com/HomeOps/esphome-hass-panels
-    ref: v2.1.0
+    ref: v2.1.1
     file: esp32-hass-panel.yaml
     refresh: 0d
 

@@ -932,13 +932,14 @@
   - condition: not
     conditions:
     - condition: state
-      entity_id: alarm_control_panel.ha_alarm
-      state: armed_away
+      entity_id: alarm_control_panel.home_alarm
+      state:
+      - armed_away
   actions:
   - action: climate.set_preset_mode
     target:
       entity_id: climate.smart_climate
     data:
-      preset_mode: '{{ ''sleep'' if is_state(''schedule.sleep_schedule'', ''on'')
-        else ''home'' }}'
+      preset_mode: '{{ ''sleep'' if is_state(''schedule.sleep'', ''on'') else ''home''
+        }}'
   mode: single
