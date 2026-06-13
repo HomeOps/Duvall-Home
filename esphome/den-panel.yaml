@@ -1,0 +1,29 @@
+substitutions:
+  name: den-panel
+  friendly_name: Den Panel
+  
+  area_name: "Den"
+  area_lights_entity_id: light.den_panel_lights
+  nav_page_1: area_page
+
+  alarm_entity_id: alarm_control_panel.home_alarm
+  nav_page_2: thermostat_page
+  
+  thermostat_entity_id: climate.smart_climate
+  nav_page_3: alarm_page
+ 
+  nav_page_count: "3"
+
+  # Orientation override (package default is 270); drives display + lvgl.rotation
+  display_rotation: "0"
+
+#esp32_ble_tracker:
+#bluetooth_proxy:
+#  active: true
+
+packages:
+  keypad:
+    url: https://github.com/HomeOps/esphome-hass-panels
+    ref: v2.2.0
+    file: esp32-hass-panel.yaml
+    refresh: 0d
