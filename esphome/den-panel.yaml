@@ -6,24 +6,36 @@ substitutions:
   area_lights_entity_id: light.den_panel_lights
   nav_page_1: area_page
 
-  alarm_entity_id: alarm_control_panel.home_alarm
-  nav_page_2: thermostat_page
-  
   thermostat_entity_id: climate.smart_climate
+  nav_page_2: thermostat_page
+
+  alarm_entity_id: alarm_control_panel.home_alarm
   nav_page_3: alarm_page
- 
+
   nav_page_count: "3"
 
   # Orientation override (package default is 270); drives display + lvgl.rotation
   display_rotation: "0"
 
-#esp32_ble_tracker:
-#bluetooth_proxy:
-#  active: true
+  # Flash / OTA partition layout. Default "4MB" → ~1.75MB per OTA app slot,
+  # fully OTA-friendly. Override to "16MB" on a >=16MB device whose firmware
+  # has outgrown that slot → ESPHome auto-sizes ~7.75MB app slots. NOTE: a
+  # partition-table change only takes effect via a one-time USB-serial flash
+  # (OTA never rewrites the partition table); erase_flash first.
+  flash_size: "16MB"
+
+esp32_ble_tracker:
+bluetooth_proxy:
+  active: true
 
 packages:
-  keypad:
+  panel:
     url: https://github.com/HomeOps/esphome-hass-panels
-    ref: v2.2.0
-    file: esp32-hass-panel.yaml
+    ref: v2.3.0
     refresh: 0d
+    files:
+      - packages/core.yaml            # board + nav + sleep + connectivity
+      - packages/area-ui.yaml         # page 1
+      - packages/thermostat-ui.yaml   # page 2
+      - packages/alarm-keypad-ui.yaml # page 3
+      # cover-ui / energy-ui omitted -> not compiled
