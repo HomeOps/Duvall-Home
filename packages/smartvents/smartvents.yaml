@@ -19,7 +19,6 @@ input_number:
     max: 100
     initial: 100
 
-cover: !include covers.yaml
 binary_sensor: !include binary_sensors.yaml
 sensor: !include sensors.yaml
 group: !include groups.yaml
