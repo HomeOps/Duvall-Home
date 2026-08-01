@@ -1,0 +1,129 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "L'appareil est déjà configuré",
+      "already_in_progress": "L'appareil est en attente de configuration",
+      "no_mac": "Cet appareil n'est pas reconnu comme une télécommande Unfolded Circle valide (pas d'adresse MAC)",
+      "reauth_successful": "Réauthentification avec succès"
+    },
+    "error": {
+      "cannot_connect": "Echec de la connexion",
+      "invalid_dock_password": "Mot de passe du Dock incorrect. Renseigner un mot de passe vide pour ignorer",
+      "invalid_auth": "Authentification incorrecte",
+      "unknown": "Erreur inattendue",
+      "ha_driver_failure": "Erreur inattendue lors de la configuration des entités de la télécommande",
+      "cannot_create_ha_token": "Impossible de créer un jeton Home Assistant"
+    },
+    "step": {
+      "user": {
+        "data": {
+          "host": "Hôte",
+          "pin": "Code PIN",
+          "ha_ws_url": "Adresse Websocket Home Assistant"
+        }
+      },
+      "dock": {
+        "title": "Renseigner le mot de passe {name} {count}",
+        "description": "Si vous ne connaissez pas le mot de passe, validez le champ vide. Pour reprendre la configuration du dock, aller dans les paramètres et finalisez la correction",
+        "data": {
+          "password": "Mot de passe"
+        }
+      },
+      "select_entities": {
+        "title": "Configurer les entités",
+        "description": "Lien vers la [la configuration]({remote_ha_config_url})",
+        "data": {
+          "add_entities": "Entités à ajouter à la télécommande",
+          "remove_entities": "Entités à retirer de la télécommande",
+          "subscribe_entities": "Activer toutes les entités synchronisées"
+        },
+        "menu_options": {
+          "remote_websocket": "La télécommande n'est pas connectée, essayez de reconfigurer l'adresse",
+          "finish": "Ignorer cette étape et terminer",
+          "error": "Impossible de commmuniquer avec la télécommande. Réessayer ?"
+        }
+      },
+      "zeroconf_confirm": {
+        "data": {
+          "pin": "Code PIN",
+          "ha_ws_url": "Adresse Websocket Home Assistant"
+        },
+        "title": "Remote Two ou 3"
+      },
+      "reauth_confirm": {
+        "data": {
+          "pin": "Code PIN",
+          "ha_ws_url": "Adresse Websocket Home Assistant"
+        },
+        "title": "Réauthentification avec le code PIN"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options Unfolded Circle",
+        "menu_options": {
+          "select_entities": "Configurer les entités accessibles par la télécommande {remote}",
+          "activities": "Configurer l'intégration"
+        }
+      },
+      "media_player": {
+        "title": "Options Unfolded Circle",
+        "description": "Configurer les lecteurs multimédias",
+        "data": {
+          "global_media_entity": "Active un lecteur multimédia pour toutes les activités",
+          "activity_group_media_entities": "Active des lecteurs multimédia pour chaque groupe d'activité",
+          "activity_media_entities": "Activer des entités de lecteur multimédia supplémentaires pour chaque activité"
+        }
+      },
+      "activities": {
+        "title": "Unfolded Circle Options",
+        "description": "Configurer les activités",
+        "data": {
+          "activities_as_switches": "Create all activities as switches",
+          "suppress_activity_groups": "Supprimer la création d'entités de groupe d'activités"
+        }
+      },
+      "select_entities": {
+        "title": "Configurer les entités",
+        "description": "Lien vers la [la configuration]({remote_ha_config_url})",
+        "data": {
+          "add_entities": "Entités à ajouter à la télécommande",
+          "remove_entities": "Entités à retirer de la télécommande",
+          "subscribe_entities": "Activer toutes les entités synchronisées"
+        },
+        "menu_options": {
+          "remote_websocket": "La télécommande n'est pas connectée, essayez de reconfigurer l'adresse",
+          "finish": "Ignorer cette étape et terminer",
+          "error": "Impossible de commmuniquer avec la télécommande. Réessayer ?"
+        }
+      }
+    }
+  },
+  "issues": {
+    "dock_password": {
+      "title": "Renseigner le mot de passe du Dock {name}",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Renseigner le mot de passe du Dock {name}",
+            "description": "Le mot de passe du dock est nécessaire pour permettre l'apprentissage des commandes",
+            "data": {
+              "password": "{name} Mot de passe"
+            }
+          }
+        },
+        "error": {
+          "cannot_connect": "Impossible de se connecter",
+          "invalid_dock_password": "Mot de passe du dock incorrect. Essayez à nouveau",
+          "invalid_auth": "Code PIN fourni incorrect. Essayez à nouveau",
+          "unknown": "Erreur inattendue"
+        },
+        "abort": {
+          "reauth_successful": "Authentification du Dock avec succès"
+        }
+      }
+    }
+  }
+}

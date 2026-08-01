@@ -1,0 +1,66 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "pin": "[%key:common::config_flow::data::pin%]",
+          "host": "[%key:common::config_flow::data::host%]"
+        }
+      },
+      "dock": {
+        "title": "Docks",
+        "data": {
+          "password": "{name} Password"
+        }
+      },
+      "zeroconf_confirm": {
+        "data": {
+          "pin": "[%key:common::config_flow::data::pin%]"
+        },
+        "title": "[%key:common::config_flow::title%]"
+      },
+      "reauth_confirm": {
+        "data": {
+          "pin": "[%key:common::config_flow::data::pin%]"
+        },
+        "title": "[%key:common::config_flow::title%]"
+      }
+    },
+    "error": {
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
+      "unknown": "[%key:common::config_flow::error::unknown%]"
+    },
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "already_in_progress": "[%key:common::config_flow::abort::already_in_progress%]",
+      "no_mac": "[%key:common::config_flow::abort::no_mac%]"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "pin": "[%key:common::config_flow::data::pin%]",
+          "host": "[%key:common::config_flow::data::host%]"
+        }
+      },
+      "media_player": {
+        "title": "[%key:common::config_flow::title%]",
+        "data": {
+          "global_media_entity": "[%key:common::config_flow::data::global_media_entity%]",
+          "activity_group_media_entities": "[%key:common::config_flow::data::activity_group_media_entities%]"
+        },
+        "description": "[%key:common::config_flow::media_player::description%]"
+      },
+      "activities": {
+        "title": "[%key:common::config_flow::title%]",
+        "data": {
+          "activities_as_switches": "[%key:common::config_flow::data::activities_as_switches%]",
+          "suppress_activity_groups": "[%key:common::config_flow::data::suppress_activity_groups%]"
+        },
+        "description": "[%key:common::config_flow::activities::description%]"
+      }
+    }
+  }
+}

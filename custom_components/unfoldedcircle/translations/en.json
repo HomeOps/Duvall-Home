@@ -1,0 +1,271 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Device is already configured",
+      "already_in_progress": "Device is pending setup",
+      "no_mac": "This device is not recognized as a valid Unfolded Circle Remote (No MAC Address)",
+      "reauth_successful": "Reauthentication was successful",
+      "unique_id_required": "Device missing unique identification required for discovery.",
+      "reconfigure_successful": "Reconfigured successfully"
+    },
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "invalid_dock_password": "Incorrect dock password. Submit with an empty password to skip",
+      "invalid_auth": "Incorrect pin supplied. Please try again",
+      "unknown": "Unexpected error",
+      "cannot_create_ha_token": "Unable to create Home Assistant Token",
+      "invalid_websocket_address": "An invalid home assistant websocket address was supplied"
+    },
+    "step": {
+      "user": {
+        "data": {
+          "host": "Host",
+          "pin": "PIN Code",
+          "ha_ws_url": "Home Assistant Websocket URL",
+          "activities_as_switches": "Create activities as Switch entities"
+        }
+      },
+      "select_entities": {
+        "title": "Configure Entities",
+        "description": "Finish [configuration]({remote_ha_config_url}) on your remote",
+        "data": {
+          "add_entities": "Entities to share with Remote",
+          "remove_entities": "Entities to remove from Remote",
+          "subscribe_entities": "Automatically configure entities shared with Remote"
+        },
+        "menu_options": {
+          "remote_websocket": "Remote is not connected, try to reconfigure the URL",
+          "finish": "Ignore this step and finish",
+          "fix_ws": "Update Home Assistant Websocket URL"
+        }
+      },
+      "zeroconf_confirm": {
+        "data": {
+          "pin": "PIN Code",
+          "ha_ws_url": "Home Assistant Websocket URL",
+          "activities_as_switches": "Create activities as Switch entities"
+        },
+        "title": "Unfolded Circle Remote"
+      },
+      "reauth_confirm": {
+        "data": {
+          "pin": "PIN Code",
+          "ha_ws_url": "Home Assistant Websocket URL"
+        },
+        "title": "Reauthenticate with PIN"
+      },
+      "reconfigure": {
+        "title": "Reconfigure Connection",
+        "description": "Choose which connection setting to update.",
+        "menu_options": {
+          "reconfigure_host": "Update Remote Host",
+          "reconfigure_websocket": "Update WebSocket URL"
+        },
+        "abort": {
+          "reconfigure_successful": "Reconfigured successfully"
+        }
+      },
+      "reconfigure_host": {
+        "title": "Update Remote Host",
+        "description": "Update the IP address or hostname of your Unfolded Circle Remote.",
+        "data": {
+          "host": "[%key:common::config_flow::data::host%]"
+        }
+      },
+      "reconfigure_websocket": {
+        "title": "Update WebSocket URL",
+        "description": "Update the Home Assistant WebSocket URL used by the remote.",
+        "data": {
+          "websocket_url": "WebSocket URL"
+        }
+      }
+    }
+  },
+  "config_subentries": {
+    "dock": {
+      "title": "Docks",
+      "step": {
+        "user": {
+          "title": "Docks",
+          "data": {
+            "dock_id": "Which dock would you like to add?"
+          }
+        },
+        "dock": {
+          "title": "Supply {name} password",
+          "description": "If you do not remember your dock password, you can update it in the web configurator.",
+          "data": {
+            "password": "Password"
+          }
+        }
+      },
+      "initiate_flow": {
+        "user": "Add dock"
+      },
+      "entry_type": "Dock",
+      "error": {
+        "cannot_connect": "Failed to connect",
+        "invalid_dock_password": "Incorrect dock password. Please try again",
+        "invalid_auth": "Incorrect pin supplied. Please try again",
+        "unknown": "Unexpected error"
+      },
+      "abort": {
+        "reauth_successful": "Dock authentication was successful",
+        "no_docks_available": "No docks are available to be configured"
+      }
+    }
+  },
+  "options": {
+    "error": {
+      "ha_driver_failure": "Unexpected error when configuring remote entities",
+      "cannot_create_ha_token": "Unable to create Home Assistant Token",
+      "invalid_websocket_address": "An invalid home assistant websocket address was supplied",
+      "invalid_host": "An invalid host was supplied for the remote",
+      "user_determination": "Unable to determine Home Assistant User"
+    },
+    "step": {
+      "init": {
+        "title": "Unfolded Circle Options",
+        "menu_options": {
+          "select_entities": "Share entities with {remote}",
+          "activities": "Configure local settings",
+          "remote_host": "Configure connection settings"
+        }
+      },
+      "media_player": {
+        "title": "Unfolded Circle Options",
+        "description": "Configure Media Players",
+        "data": {
+          "global_media_entity": "Create a global media player entity for all activities",
+          "activity_group_media_entities": "Create additional media player entities for each activity group",
+          "activity_media_entities": "Create additional media player entities for each activity"
+        }
+      },
+      "activities": {
+        "title": "Unfolded Circle Options",
+        "description": "Configure Activities",
+        "data": {
+          "activities_as_switches": "Create all activities as switch entities",
+          "suppress_activity_groups": "Suppress creation of activity group entities"
+        }
+      },
+      "remote": {
+        "title": "Unfolded Circle Options",
+        "data": {
+          "remote_on_behavior": "Activity to start when remote entity is toggled on"
+        }
+      },
+      "remote_host": {
+        "title": "Unfolded Circle Options",
+        "description": "Configure Host / IP Address of {name}",
+        "data": {
+          "host": "Host / IP Address"
+        }
+      },
+      "websocket": {
+        "title": "Unfolded Circle Options",
+        "description": "Configure Home Assistant Websocket Address",
+        "data": {
+          "websocket_url": "Home Assistant Websocket Address"
+        }
+      },
+      "fix_ws": {
+        "title": "Unfolded Circle Options",
+        "description": "Configure Home Assistant Websocket Address",
+        "data": {
+          "websocket_url": "Home Assistant Websocket Address"
+        }
+      },
+      "select_entities": {
+        "title": "Configure Entities",
+        "description": "Finish [configuration]({remote_ha_config_url}) on your remote after submitting",
+        "data": {
+          "add_entities": "Entities to share with Remote",
+          "remove_entities": "Entities to remove from Remote",
+          "subscribe_entities": "Automatically configure entities shared with Remote"
+        },
+        "menu_options": {
+          "remote_websocket": "Remote is not connected, try to reconfigure the URL",
+          "finish": "Ignore this step and finish",
+          "fix_ws": "Update Home Assistant Websocket URL"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "integration_not_loaded": { "message": "Integration not loaded" },
+    "activity_not_found": {
+      "message": "Unable to determine activity from entity"
+    },
+    "unknown_config_entry": {
+      "message": "Unable to determine remote from the given input"
+    },
+    "unknown_dock": {
+      "message": "Unable to determine dock from the given input"
+    },
+    "no_activity_running": {
+      "message": "No activity is running, activity was not specified, or activity was invalid"
+    },
+    "invalid_button_command": { "message": "The button command is not valid" },
+    "remote_is_sleeping": {
+      "message": "The remote is sleeping and did not respond to the wake command"
+    },
+    "entity_command_error": {
+      "message": "There was an error sending the command to the remote"
+    },
+    "failed_to_send_command": {
+      "message": "Failed to send command to remote. Please double check your inputs"
+    }
+  },
+  "issues": {
+    "websocket_connection": {
+      "title": "Enable improved communications between {name} and Home Assistant",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Home Assistant Websocket URL",
+            "description": "To improve communications {name} requires the websocket address of this home assistant server.",
+            "data": {
+              "websocket_url": "Home Assistant Websocket URL"
+            }
+          }
+        },
+        "error": {
+          "cannot_connect": "Failed to connect",
+          "websocket_failure": "Invalid Websocket URL",
+          "unknown": "Unexpected error"
+        },
+        "abort": {
+          "ws_connection_successful": "Improved communications enabled"
+        }
+      }
+    },
+    "dock_password": {
+      "title": "Supply dock password for {name}",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Supply dock password for {name}",
+            "description": "Your dock password is needed to offer learning support",
+            "data": {
+              "password": "{name} Password"
+            }
+          }
+        },
+        "error": {
+          "cannot_connect": "Failed to connect",
+          "invalid_dock_password": "Incorrect dock password. Please try again",
+          "invalid_auth": "Incorrect pin supplied. Please try again",
+          "unknown": "Unexpected error"
+        },
+        "abort": {
+          "reauth_successful": "Dock authentication was successful"
+        }
+      }
+    },
+    "dock_unreachable": {
+      "title": "Dock {name} is unreachable",
+      "description": "The dock could not be reached during initialization. Error: {error}. The main remote will continue to work normally, but dock-specific features will be unavailable until the dock is back online. Try reloading the integration once the dock is accessible."
+    }
+  }
+}

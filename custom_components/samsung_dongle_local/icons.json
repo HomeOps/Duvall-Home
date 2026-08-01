@@ -1,0 +1,59 @@
+{
+  "entity": {
+    "sensor": {
+      "state": {
+        "default": "mdi:state-machine"
+      },
+      "progress": {
+        "default": "mdi:progress-clock"
+      },
+      "progress_percentage": {
+        "default": "mdi:percent"
+      },
+      "remaining_time": {
+        "default": "mdi:timer-sand"
+      },
+      "dry_level": {
+        "default": "mdi:tumble-dryer"
+      },
+      "dry_time": {
+        "default": "mdi:timer"
+      },
+      "soil_level": {
+        "default": "mdi:liquid-spot"
+      },
+      "spin_level": {
+        "default": "mdi:rotate-3d-variant"
+      },
+      "water_temperature": {
+        "default": "mdi:thermometer-water"
+      }
+    },
+    "binary_sensor": {
+      "running": {
+        "default": "mdi:washing-machine",
+        "state": {
+          "off": "mdi:washing-machine-off"
+        }
+      },
+      "power": {
+        "default": "mdi:power-plug",
+        "state": {
+          "off": "mdi:power-plug-off"
+        }
+      },
+      "child_lock": {
+        "default": "mdi:account-lock-open",
+        "state": {
+          "on": "mdi:account-lock"
+        }
+      },
+      "wrinkle_prevent": {
+        "default": "mdi:tshirt-crew-outline",
+        "state": {
+          "on": "mdi:tshirt-crew"
+        }
+      }
+    }
+  }
+}

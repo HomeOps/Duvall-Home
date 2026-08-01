@@ -1,0 +1,103 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung appliance (local)",
+        "description": "Enter the appliance's IP address and the Samsung AC14K_M CA certificate and private key.\n\nThe CA is only needed for the first appliance — later ones reuse it automatically. Leave the token blank to pair now; supply one only if you already have it.",
+        "data": {
+          "host": "IP address",
+          "cert_pem": "CA certificate (PEM)",
+          "key_pem": "CA private key (PEM)",
+          "token": "Device token (optional)"
+        }
+      },
+      "pair": {
+        "title": "Press the button on the appliance",
+        "description": "Home Assistant will ask {host} for a token and listen for its reply.\n\n**Before you continue — turn Child Lock OFF.** Samsung disables Smart Control entirely while it is engaged. The panel still beeps on every press, so a locked machine looks exactly like a working one that is ignoring you.\n\nSubmit below, then within three minutes press **Smart Control** on the appliance once.\n\nOn some washers that button must first be *held* for about three seconds to light its indicator. Do not keep holding — if `AP` appears on the display it has entered onboarding mode and left your Wi‑Fi; release and let it rejoin."
+      }
+    },
+    "error": {
+      "cannot_connect": "No response on port 8888. If this appliance has no port 8888 open it is probably the newer CoAP‑DTLS generation, which needs the LocalThings integration instead.",
+      "invalid_certificate": "That certificate and key could not be loaded, or they are not a matching pair.",
+      "invalid_token": "The appliance rejected the token.",
+      "pairing_failed": "No token arrived. The confirmation button was not pressed while a pairing window was open, or Child Lock is still engaged."
+    },
+    "abort": {
+      "already_configured": "This appliance is already set up."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "state": { "name": "State" },
+      "progress": {
+        "name": "Progress",
+        "state": {
+          "none": "Idle",
+          "weightsensing": "Weight sensing",
+          "wash": "Wash",
+          "rinse": "Rinse",
+          "spin": "Spin",
+          "drying": "Drying",
+          "cooling": "Cooling",
+          "finish": "Finished"
+        }
+      },
+      "progress_percentage": { "name": "Progress percentage" },
+      "remaining_time": { "name": "Remaining time" },
+      "dry_level": {
+        "name": "Dry level",
+        "state": {
+          "none": "Not set",
+          "damp": "Damp",
+          "less": "Less",
+          "normal": "Normal",
+          "more": "More",
+          "very": "Very"
+        }
+      },
+      "dry_time": { "name": "Dry time" },
+      "soil_level": {
+        "name": "Soil level",
+        "state": {
+          "none": "Not set",
+          "light": "Light",
+          "down": "Down",
+          "normal": "Normal",
+          "up": "Up",
+          "heavy": "Heavy"
+        }
+      },
+      "spin_level": {
+        "name": "Spin level",
+        "state": {
+          "rinse_hold": "Rinse hold",
+          "no_spin": "No spin",
+          "low": "Low",
+          "medium": "Medium",
+          "high": "High",
+          "extra_high": "Extra high"
+        }
+      },
+      "water_temperature": {
+        "name": "Water temperature",
+        "state": {
+          "none": "Not set",
+          "tap_cold": "Tap cold",
+          "cold": "Cold",
+          "warm": "Warm",
+          "medium_low": "Medium low",
+          "medium": "Medium",
+          "hot": "Hot",
+          "extra_low": "Extra low",
+          "extra_hot": "Extra hot"
+        }
+      }
+    },
+    "binary_sensor": {
+      "running": { "name": "Running" },
+      "power": { "name": "Power" },
+      "child_lock": { "name": "Child lock" },
+      "wrinkle_prevent": { "name": "Wrinkle prevent" }
+    }
+  }
+}

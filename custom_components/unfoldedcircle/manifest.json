@@ -1,0 +1,25 @@
+{
+  "domain": "unfoldedcircle",
+  "name": "Unfolded Circle",
+  "codeowners": [
+    "@jackjpowell"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "infrared",
+    "zeroconf"
+  ],
+  "documentation": "https://github.com/JackJPowell/hass-unfoldedcircle",
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/JackJPowell/hass-unfoldedcircle/issues",
+  "requirements": [
+    "websockets>=15.0,<17.0",
+    "pyUnfoldedCircleRemote==0.16.2",
+    "wakeonlan==3.1.0"
+  ],
+  "version": "v1.1.6",
+  "zeroconf": [
+    "_uc-remote._tcp.local."
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "domain": "samsung_dongle_local",
+  "name": "Samsung Dongle (Local)",
+  "codeowners": [
+    "@ocalvo"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/HomeOps/HASS-Samsung-Dongle-Local",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/HomeOps/HASS-Samsung-Dongle-Local/issues",
+  "requirements": [],
+  "version": "0.2.0"
+}
