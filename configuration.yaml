@@ -32,13 +32,12 @@ default_config:
 frontend:
   themes: !include_dir_merge_named themes
 
-http:
-  #ssl_certificate: !secret http_ssl_certificate
-  #ssl_key: !secret http_ssl_key
-  use_x_forwarded_for: true
-  trusted_proxies:
-    - 172.30.33.0/24
-
+#http:
+#  #ssl_certificate: !secret http_ssl_certificate
+#  #ssl_key: !secret http_ssl_key
+#  use_x_forwarded_for: true
+#  trusted_proxies:
+#    - 172.30.33.0/24
 
 my:
 
@@ -146,3 +145,12 @@ alert: !include alerts.yaml
 template: !include templates.yaml
 command_line: !include command.line.yaml
 
+
+shell_command:
+  # Sends over the modem's second AT port (-if06) so it coexists with the SMS
+  # Gammu Gateway add-on on -if02. Bypasses gammu; see notify.yaml.
+  # HA shlex.splits a templated command and runs it without a shell, so the
+  # arguments only need quoting to survive tokenisation. Double quotes keep
+  # apostrophes intact; stray double quotes in the message are dropped.
+  send_sms_if06: >-
+    /config/shell/send_sms.py "{{ number }}" "{{ text | replace('"', '') }}"
