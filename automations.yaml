@@ -943,19 +943,3 @@
       preset_mode: '{{ ''sleep'' if is_state(''schedule.sleep'', ''on'') else ''home''
         }}'
   mode: single
-
-- id: sms_via_if06
-  alias: SMS via if06
-  description: Receives notify.sms and sends over -if06, one at a time.
-  mode: queued
-  max: 10
-  trigger:
-  - platform: webhook
-    webhook_id: sms_if06
-    local_only: true
-  condition: []
-  action:
-  - service: shell_command.send_sms_if06
-    data:
-      number: '{{ trigger.json.number }}'
-      text: '{{ trigger.json.text }}'

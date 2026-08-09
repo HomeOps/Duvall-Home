@@ -17,16 +17,11 @@
         cache: true
 - platform: rest
   name: sms
-  # Add-on path disabled: libGammu does not recognise this modem's SMS prompt,
-  # so every send times out. Fix pending: https://github.com/gammu/gammu/pull/1177
-  # To roll back: uncomment the four lines below, delete the resource line that
-  # follows them, and disable the "SMS via if06" automation.
-  # resource: !secret sms_gateway
-  # authentication: basic
-  # username: !secret sms_gateway_user
-  # password: !secret sms_gateway_password
-  resource: http://127.0.0.1:8123/api/webhook/sms_if06
+  resource: !secret sms_gateway
   method: POST_JSON
+  authentication: basic
+  username: !secret sms_gateway_user
+  password: !secret sms_gateway_password
   target_param_name: number
   message_param_name: text
 - platform: group
